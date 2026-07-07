@@ -30,6 +30,7 @@ npm run rag:query -- alice "What do we know about the production outage?"
 npm run rag:query -- bob "What do we know about the production outage?"
 npm run authz:check -- alice document:postmortem-platform-204 read --provider=local
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
+npm run terraform:review
 npm run authz:validate
 ```
 
@@ -130,6 +131,26 @@ The intended production shape is:
 3. Allowed read-only calls are routed to Terraform MCP.
 4. Plans remain proposal-only.
 5. Applies remain behind human approval and controlled workflow handoff.
+
+## Terraform Plan Review
+
+To tie the demo back to platform engineering work, the repo includes a small Terraform plan reviewer:
+
+```bash
+npm run terraform:review
+```
+
+It reviews `data/terraform-plan.prod-network.json` and flags:
+
+- Public security group ingress.
+- Wildcard IAM permissions.
+- Monitoring deletion.
+
+The point is not to replace policy-as-code. The point is to show how an AI-native workflow can explain infrastructure risk, require authorization to inspect production plans, and keep apply behind human approval.
+
+See:
+
+`docs/terraform-plan-review.md`
 
 ## Product Scenario
 

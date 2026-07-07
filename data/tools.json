@@ -6,6 +6,12 @@
     "risk": "read"
   },
   {
+    "name": "terraform.review_plan",
+    "permission": "terraform.read.prod",
+    "description": "Review a Terraform plan for production risk signals.",
+    "risk": "read"
+  },
+  {
     "name": "terraform.create_rollback_plan",
     "permission": "terraform.plan.rollback",
     "description": "Create a non-destructive rollback proposal.",

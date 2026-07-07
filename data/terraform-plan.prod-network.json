@@ -1,0 +1,79 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "workspace": "prod-network",
+  "run_id": "run-prod-network-2026-07-07",
+  "resource_changes": [
+    {
+      "address": "aws_security_group.payments_ingress",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "payments_ingress",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "ingress": [
+            {
+              "description": "Payments load balancer only",
+              "from_port": 443,
+              "to_port": 443,
+              "protocol": "tcp",
+              "cidr_blocks": ["10.40.0.0/16"]
+            }
+          ]
+        },
+        "after": {
+          "ingress": [
+            {
+              "description": "Temporary vendor callback access",
+              "from_port": 443,
+              "to_port": 443,
+              "protocol": "tcp",
+              "cidr_blocks": ["0.0.0.0/0"]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_policy.deploy_bot",
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "deploy_bot",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "policy": {
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": ["ecs:UpdateService"],
+                "Resource": ["arn:aws:ecs:us-east-1:111122223333:service/prod/payments-api"]
+              }
+            ]
+          }
+        },
+        "after": {
+          "policy": {
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": ["ecs:*", "iam:PassRole"],
+                "Resource": ["*"]
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.payments_latency",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "payments_latency",
+      "change": {
+        "actions": ["delete"]
+      }
+    }
+  ]
+}

@@ -60,3 +60,17 @@ This is the product lesson:
 
 > AI-native infrastructure workflows need clear boundaries around context, tools, actions, and approval.
 
+## 4. Terraform Plan Review
+
+Run:
+
+```bash
+npm run terraform:review
+```
+
+Point out:
+
+- The plan includes public ingress, wildcard IAM, and monitoring deletion.
+- The output is a review and recommendation, not an apply.
+- This maps to familiar platform engineering workflows: plan, review, approve, audit.
+

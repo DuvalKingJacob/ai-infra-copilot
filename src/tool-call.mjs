@@ -26,6 +26,13 @@ const readOnlyResults = {
     officialMcpHandoff:
       "In production, this request would be routed to the official HashiCorp Terraform MCP Server after authorization.",
   },
+  "terraform.review_plan": {
+    mode: "read-only-review",
+    result:
+      "Terraform plan review is available through npm run terraform:review. The gateway authorizes access before plan findings are returned.",
+    officialMcpHandoff:
+      "In production, Terraform MCP would provide plan/workspace context after this authorization check.",
+  },
   "terraform.create_rollback_plan": {
     mode: "proposal-only",
     result:

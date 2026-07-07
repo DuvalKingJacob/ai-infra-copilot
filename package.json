@@ -10,6 +10,7 @@
     "authz:load": "node src/load-spicedb.mjs",
     "authz:check": "node src/authz-check.mjs",
     "authz:validate": "node src/validate-spicedb-fixtures.mjs",
+    "terraform:review": "node src/review-terraform-plan.mjs",
     "tool:call": "node src/tool-call.mjs",
     "check": "node src/check-demo-script.mjs"
   }

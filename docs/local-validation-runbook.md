@@ -109,6 +109,7 @@ npm run authz:validate
 npm run embeddings:build
 npm run rag:query -- alice "What do we know about the production outage?"
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
+npm run terraform:review
 ```
 
 ## Troubleshooting
