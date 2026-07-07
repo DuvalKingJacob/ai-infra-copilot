@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Secure RAG Authorization Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f9;
+        --panel: #ffffff;
+        --ink: #16191f;
+        --muted: #5d6675;
+        --line: #d7dce4;
+        --accent: #0f766e;
+        --accent-soft: #d9f3ef;
+        --warn: #a15c00;
+        --deny: #b42318;
+        --deny-soft: #fde7e4;
+        --allow: #14713f;
+        --allow-soft: #e2f6ea;
+        --shadow: 0 14px 34px rgba(21, 30, 43, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      header {
+        background: #101820;
+        color: #fff;
+        padding: 22px 28px;
+        border-bottom: 4px solid var(--accent);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 24px;
+        line-height: 1.2;
+        font-weight: 720;
+        letter-spacing: 0;
+      }
+
+      header p {
+        margin: 8px 0 0;
+        color: #c7d2df;
+        max-width: 980px;
+        line-height: 1.45;
+      }
+
+      main {
+        padding: 24px;
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar {
+        padding: 18px;
+        align-self: start;
+        display: grid;
+        gap: 18px;
+      }
+
+      .section-title {
+        margin: 0 0 10px;
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 760;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      select,
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 11px;
+        color: var(--ink);
+        background: #fff;
+      }
+
+      .preset-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .preset-grid button,
+      .primary-action {
+        border: 1px solid #b8c0cb;
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #fff;
+        color: var(--ink);
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .preset-grid button:hover {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+      }
+
+      .primary-action {
+        text-align: center;
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+        font-weight: 740;
+      }
+
+      .content {
+        display: grid;
+        gap: 18px;
+      }
+
+      .query-box {
+        padding: 18px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .query-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+      }
+
+      .answer {
+        padding: 18px;
+      }
+
+      .answer h2,
+      .results h2,
+      .audit h2 {
+        margin: 0 0 10px;
+        font-size: 17px;
+        letter-spacing: 0;
+      }
+
+      .answer-body {
+        line-height: 1.55;
+        color: #20242c;
+        margin: 0;
+      }
+
+      .badge-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 26px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 720;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: #fff;
+      }
+
+      .badge.allow {
+        color: var(--allow);
+        background: var(--allow-soft);
+        border-color: #b9e8cc;
+      }
+
+      .badge.deny {
+        color: var(--deny);
+        background: var(--deny-soft);
+        border-color: #f5b6ad;
+      }
+
+      .results {
+        display: grid;
+        gap: 12px;
+      }
+
+      .results-inner {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+      }
+
+      .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .doc {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        display: grid;
+        gap: 9px;
+        min-height: 170px;
+      }
+
+      .doc.allowed {
+        border-color: #a6dec0;
+        background: #f5fcf8;
+      }
+
+      .doc.denied {
+        border-color: #efb0a7;
+        background: #fff8f7;
+      }
+
+      .doc h3 {
+        margin: 0;
+        font-size: 15px;
+        letter-spacing: 0;
+      }
+
+      .doc p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 13px;
+      }
+
+      .doc-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px 7px;
+        font-size: 11px;
+        color: #414957;
+        background: #fff;
+        font-weight: 650;
+      }
+
+      .audit {
+        padding: 18px;
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: #111820;
+        color: #d7e2ef;
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 12px;
+        line-height: 1.5;
+        overflow: auto;
+        max-height: 420px;
+      }
+
+      .explain {
+        padding: 14px;
+        border-radius: 8px;
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 13px;
+      }
+
+      @media (max-width: 900px) {
+        main {
+          grid-template-columns: 1fr;
+          padding: 14px;
+        }
+
+        header {
+          padding: 18px;
+        }
+
+        .query-row,
+        .doc-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1>Secure RAG Authorization Demo</h1>
+        <p>
+          Same question, different user, different context. Retrieval is filtered by permissions
+          before any document text is sent to the model.
+        </p>
+      </header>
+
+      <main>
+        <aside class="sidebar panel">
+          <section>
+            <h2 class="section-title">Identity</h2>
+            <label>
+              Acting user
+              <select id="userSelect"></select>
+            </label>
+          </section>
+
+          <section>
+            <h2 class="section-title">Try A Prompt</h2>
+            <div class="preset-grid" id="presetGrid"></div>
+          </section>
+
+          <section class="explain">
+            This demo uses simple keyword retrieval plus a relationship-style permission check.
+            In a real system, the retrieval step would use embeddings or hybrid search, and the
+            authorization check could be backed by SpiceDB/AuthZed.
+          </section>
+        </aside>
+
+        <section class="content">
+          <div class="query-box panel">
+            <label>
+              User question
+              <div class="query-row">
+                <input id="queryInput" />
+                <button class="primary-action" id="askButton">Ask</button>
+              </div>
+            </label>
+          </div>
+
+          <section class="answer panel">
+            <h2>Answer</h2>
+            <p class="answer-body" id="answerBody"></p>
+            <div class="badge-row" id="summaryBadges"></div>
+          </section>
+
+          <section class="results panel">
+            <div class="results-inner">
+              <h2>Retrieved Documents</h2>
+              <div class="doc-grid" id="docGrid"></div>
+            </div>
+          </section>
+
+          <section class="audit panel">
+            <h2>Audit Trail</h2>
+            <pre id="auditLog"></pre>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const users = [
+        {
+          id: "alice",
+          name: "Alice - Platform Engineer",
+          permissions: ["doc:view:public", "doc:view:platform", "doc:view:prod"],
+        },
+        {
+          id: "bob",
+          name: "Bob - Support Engineer",
+          permissions: ["doc:view:public", "doc:view:support", "doc:view:customer"],
+        },
+        {
+          id: "casey",
+          name: "Casey - Contractor",
+          permissions: ["doc:view:public"],
+        },
+      ];
+
+      const documents = [
+        {
+          id: "runbook-public-001",
+          title: "Public Incident Response Overview",
+          requiredPermission: "doc:view:public",
+          sensitivity: "public",
+          keywords: ["incident", "outage", "runbook", "response", "status"],
+          body:
+            "The incident response flow starts with triage, customer impact assessment, and an owner assigned in the incident channel.",
+        },
+        {
+          id: "prod-db-rotation-017",
+          title: "Production Database Credential Rotation",
+          requiredPermission: "doc:view:prod",
+          sensitivity: "production",
+          keywords: ["database", "credential", "rotate", "rotation", "production", "secret"],
+          body:
+            "Production database credentials are rotated through the privileged deployment workflow. The apply step requires platform approval and a break-glass audit entry.",
+        },
+        {
+          id: "cust-arch-acme-042",
+          title: "ACME Customer Architecture Note",
+          requiredPermission: "doc:view:customer",
+          sensitivity: "customer",
+          keywords: ["customer", "acme", "architecture", "affected", "systems", "outage"],
+          body:
+            "ACME runs the payments API in the shared enterprise cell. During the June outage, queue latency affected settlement reconciliation jobs.",
+        },
+        {
+          id: "platform-postmortem-204",
+          title: "Platform Postmortem: Production Outage",
+          requiredPermission: "doc:view:platform",
+          sensitivity: "internal-platform",
+          keywords: ["production", "outage", "postmortem", "rollback", "terraform", "kubernetes"],
+          body:
+            "The production outage was triggered by an unsafe Terraform security group change. The rollback restored the previous ingress rule and restarted the affected Kubernetes services.",
+        },
+        {
+          id: "support-faq-088",
+          title: "Support FAQ: Customer-Facing Outage Language",
+          requiredPermission: "doc:view:support",
+          sensitivity: "support",
+          keywords: ["customer", "outage", "status", "support", "affected"],
+          body:
+            "Support should tell customers that engineers identified elevated latency in the shared enterprise cell and are monitoring recovery.",
+        },
+      ];
+
+      const prompts = [
+        "What do we know about the production outage?",
+        "How do I rotate database credentials?",
+        "What customer systems were affected?",
+        "Should we roll back the Terraform change?",
+      ];
+
+      const userSelect = document.querySelector("#userSelect");
+      const queryInput = document.querySelector("#queryInput");
+      const askButton = document.querySelector("#askButton");
+      const presetGrid = document.querySelector("#presetGrid");
+      const answerBody = document.querySelector("#answerBody");
+      const summaryBadges = document.querySelector("#summaryBadges");
+      const docGrid = document.querySelector("#docGrid");
+      const auditLog = document.querySelector("#auditLog");
+
+      function tokenize(text) {
+        return text
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, " ")
+          .split(/\s+/)
+          .filter(Boolean);
+      }
+
+      function scoreDocument(query, doc) {
+        const terms = tokenize(query);
+        const haystack = new Set([...doc.keywords, ...tokenize(doc.title), ...tokenize(doc.body)]);
+        return terms.reduce((score, term) => score + (haystack.has(term) ? 1 : 0), 0);
+      }
+
+      function canView(user, doc) {
+        return user.permissions.includes(doc.requiredPermission);
+      }
+
+      function retrieve(query, user) {
+        return documents
+          .map((doc) => ({
+            ...doc,
+            score: scoreDocument(query, doc),
+            allowed: canView(user, doc),
+          }))
+          .filter((doc) => doc.score > 0)
+          .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+      }
+
+      function buildAnswer(query, user, candidates) {
+        const allowed = candidates.filter((doc) => doc.allowed);
+        const denied = candidates.filter((doc) => !doc.allowed);
+
+        if (allowed.length === 0) {
+          const deniedNote =
+            denied.length > 0
+              ? " Some matching documents existed, but this user was not authorized to use them as model context."
+              : " No matching documents were found.";
+          return `I cannot answer that from authorized context for ${user.name}.${deniedNote}`;
+        }
+
+        const context = allowed
+          .slice(0, 3)
+          .map((doc) => `${doc.title}: ${doc.body}`)
+          .join(" ");
+
+        const deniedNote =
+          denied.length > 0
+            ? ` ${denied.length} matching document(s) were withheld because the user lacks permission.`
+            : "";
+
+        return `Based only on documents ${user.name} is allowed to access: ${context}${deniedNote}`;
+      }
+
+      function renderBadges(candidates) {
+        const allowed = candidates.filter((doc) => doc.allowed).length;
+        const denied = candidates.filter((doc) => !doc.allowed).length;
+        summaryBadges.innerHTML = `
+          <span class="badge allow">${allowed} allowed</span>
+          <span class="badge deny">${denied} denied</span>
+          <span class="badge">${candidates.length} candidates</span>
+        `;
+      }
+
+      function renderDocs(candidates) {
+        if (candidates.length === 0) {
+          docGrid.innerHTML = `<div class="doc"><h3>No retrieval candidates</h3><p>Try a different prompt.</p></div>`;
+          return;
+        }
+
+        docGrid.innerHTML = candidates
+          .map(
+            (doc) => `
+              <article class="doc ${doc.allowed ? "allowed" : "denied"}">
+                <div class="doc-meta">
+                  <span class="tag">${doc.allowed ? "ALLOWED" : "DENIED"}</span>
+                  <span class="tag">${doc.sensitivity}</span>
+                  <span class="tag">score ${doc.score}</span>
+                </div>
+                <h3>${doc.title}</h3>
+                <p>${doc.allowed ? doc.body : "Text withheld from model context."}</p>
+                <p><strong>Required:</strong> ${doc.requiredPermission}</p>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      function renderAudit(query, user, candidates, answer) {
+        const entry = {
+          timestamp: new Date().toISOString(),
+          actor: user.id,
+          query,
+          retrievalCandidates: candidates.map((doc) => ({
+            docId: doc.id,
+            title: doc.title,
+            score: doc.score,
+            requiredPermission: doc.requiredPermission,
+            decision: doc.allowed ? "allow" : "deny",
+          })),
+          contextSentToModel: candidates
+            .filter((doc) => doc.allowed)
+            .map((doc) => ({ docId: doc.id, title: doc.title })),
+          withheldFromModel: candidates
+            .filter((doc) => !doc.allowed)
+            .map((doc) => ({ docId: doc.id, title: doc.title })),
+          answer,
+        };
+
+        auditLog.textContent = JSON.stringify(entry, null, 2);
+      }
+
+      function ask() {
+        const user = users.find((candidate) => candidate.id === userSelect.value);
+        const query = queryInput.value.trim();
+        const candidates = retrieve(query, user);
+        const answer = buildAnswer(query, user, candidates);
+
+        answerBody.textContent = answer;
+        renderBadges(candidates);
+        renderDocs(candidates);
+        renderAudit(query, user, candidates, answer);
+      }
+
+      users.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = user.name;
+        userSelect.appendChild(option);
+      });
+
+      prompts.forEach((prompt) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = prompt;
+        button.addEventListener("click", () => {
+          queryInput.value = prompt;
+          ask();
+        });
+        presetGrid.appendChild(button);
+      });
+
+      askButton.addEventListener("click", ask);
+      queryInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          ask();
+        }
+      });
+      userSelect.addEventListener("change", ask);
+
+      queryInput.value = prompts[0];
+      ask();
+    </script>
+  </body>
+</html>

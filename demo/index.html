@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI-Native Infrastructure Copilot</title>
+    <style>
+      :root {
+        --bg: #f5f7fa;
+        --panel: #ffffff;
+        --ink: #151a22;
+        --muted: #5d6675;
+        --line: #d8dee8;
+        --accent: #0f766e;
+        --accent-2: #255e91;
+        --allow: #166534;
+        --allow-bg: #e8f7ee;
+        --deny: #b42318;
+        --deny-bg: #fdecea;
+        --wait: #925b00;
+        --wait-bg: #fff4d8;
+        --shadow: 0 14px 36px rgba(24, 35, 52, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      header {
+        background: #111820;
+        color: #fff;
+        padding: 22px 28px;
+        border-bottom: 4px solid var(--accent);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: 25px;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      header p {
+        margin: 8px 0 0;
+        max-width: 1100px;
+        color: #cbd5e1;
+        line-height: 1.45;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(290px, 370px) minmax(0, 1fr);
+        gap: 18px;
+        padding: 22px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar {
+        align-self: start;
+        display: grid;
+        gap: 18px;
+        padding: 18px;
+      }
+
+      .content {
+        display: grid;
+        gap: 18px;
+      }
+
+      .section-title {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 780;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 680;
+      }
+
+      select,
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 11px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      .hint {
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f8fafc;
+        color: var(--muted);
+        line-height: 1.48;
+        font-size: 13px;
+      }
+
+      .prompt-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .prompt-grid button,
+      .primary,
+      .secondary {
+        border: 1px solid #b8c1cd;
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #fff;
+        color: var(--ink);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .prompt-grid button:hover,
+      .secondary:hover {
+        border-color: var(--accent);
+        background: #e2f5f2;
+      }
+
+      .primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .secondary {
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .query {
+        padding: 18px;
+      }
+
+      .query-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+      }
+
+      .answer,
+      .stage,
+      .audit {
+        padding: 18px;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        font-size: 17px;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin: 0;
+        font-size: 15px;
+        letter-spacing: 0;
+      }
+
+      p {
+        line-height: 1.5;
+      }
+
+      .answer-body {
+        margin: 0;
+        color: #20242c;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 13px;
+        display: grid;
+        gap: 9px;
+        min-height: 150px;
+      }
+
+      .allowed {
+        border-color: #a8dfbd;
+        background: var(--allow-bg);
+      }
+
+      .denied {
+        border-color: #f0b5af;
+        background: var(--deny-bg);
+      }
+
+      .pending {
+        border-color: #efd38b;
+        background: var(--wait-bg);
+      }
+
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px 7px;
+        background: #fff;
+        color: #414957;
+        font-size: 11px;
+        font-weight: 720;
+      }
+
+      .tag.allow {
+        color: var(--allow);
+        border-color: #a8dfbd;
+      }
+
+      .tag.deny {
+        color: var(--deny);
+        border-color: #f0b5af;
+      }
+
+      .tag.wait {
+        color: var(--wait);
+        border-color: #efd38b;
+      }
+
+      .stage-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: #111820;
+        color: #d7e2ef;
+        border-radius: 8px;
+        padding: 14px;
+        font-size: 12px;
+        line-height: 1.5;
+        max-height: 440px;
+        overflow: auto;
+      }
+
+      @media (max-width: 920px) {
+        main {
+          grid-template-columns: 1fr;
+          padding: 14px;
+        }
+
+        header {
+          padding: 18px;
+        }
+
+        .query-row,
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>AI-Native Infrastructure Copilot</h1>
+      <p>
+        A portfolio demo for platform teams: permission-aware RAG, MCP-style
+        Terraform and Kubernetes tools, action proposals, approval gates, and audit logs.
+      </p>
+    </header>
+
+    <main>
+      <aside class="sidebar panel">
+        <section>
+          <h2 class="section-title">Actor</h2>
+          <label>
+            Acting user
+            <select id="userSelect"></select>
+          </label>
+        </section>
+
+        <section>
+          <h2 class="section-title">Sample Prompts</h2>
+          <div class="prompt-grid" id="promptGrid"></div>
+        </section>
+
+        <section class="hint">
+          The demo separates retrieval, reasoning, and action. MCP-style tools
+          expose infrastructure facts, but every document and tool call is checked
+          before it can influence the answer.
+        </section>
+      </aside>
+
+      <section class="content">
+        <section class="query panel">
+          <label>
+            Ask the copilot
+            <div class="query-row">
+              <input id="queryInput" />
+              <button class="primary" id="askButton">Run</button>
+            </div>
+          </label>
+        </section>
+
+        <section class="answer panel">
+          <h2>Answer</h2>
+          <p class="answer-body" id="answerBody"></p>
+          <div class="toolbar" id="summaryTags"></div>
+        </section>
+
+        <section class="stage panel">
+          <h2>1. Permission-Aware Retrieval</h2>
+          <div class="grid-2" id="docGrid"></div>
+        </section>
+
+        <section class="stage panel">
+          <h2>2. MCP-Style Tool Calls</h2>
+          <div class="grid-2" id="toolGrid"></div>
+        </section>
+
+        <section class="stage panel">
+          <h2>3. Action Proposal And Approval</h2>
+          <div class="stage-grid" id="approvalPanel"></div>
+        </section>
+
+        <section class="audit panel">
+          <h2>Audit Trail</h2>
+          <pre id="auditLog"></pre>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const users = [
+        {
+          id: "alice",
+          name: "Alice - Platform Engineer",
+          permissions: [
+            "doc.read.public",
+            "doc.read.platform",
+            "doc.read.prod",
+            "terraform.read.dev",
+            "terraform.read.prod",
+            "terraform.plan.rollback",
+            "kubernetes.read.prod",
+          ],
+        },
+        {
+          id: "bob",
+          name: "Bob - Support Engineer",
+          permissions: [
+            "doc.read.public",
+            "doc.read.support",
+            "doc.read.customer",
+            "kubernetes.read.status",
+          ],
+        },
+        {
+          id: "casey",
+          name: "Casey - Contractor",
+          permissions: ["doc.read.public"],
+        },
+        {
+          id: "dana",
+          name: "Dana - Platform Lead",
+          permissions: [
+            "doc.read.public",
+            "doc.read.platform",
+            "doc.read.prod",
+            "terraform.read.dev",
+            "terraform.read.prod",
+            "terraform.plan.rollback",
+            "kubernetes.read.prod",
+            "incident.remediation.approve",
+          ],
+        },
+      ];
+
+      const docs = [
+        {
+          id: "runbook-public-001",
+          title: "Incident Response Overview",
+          permission: "doc.read.public",
+          sensitivity: "public",
+          keywords: ["incident", "outage", "runbook", "response", "status", "latency"],
+          body:
+            "Start with triage, identify customer impact, assign an owner, and keep status updates factual.",
+        },
+        {
+          id: "postmortem-platform-204",
+          title: "Platform Postmortem: Production Outage",
+          permission: "doc.read.platform",
+          sensitivity: "platform",
+          keywords: ["production", "outage", "postmortem", "rollback", "terraform", "security", "group"],
+          body:
+            "The outage was triggered by a Terraform security group change. Rollback restored the previous ingress rule.",
+        },
+        {
+          id: "terraform-prod-017",
+          title: "Production Terraform Change Procedure",
+          permission: "doc.read.prod",
+          sensitivity: "production",
+          keywords: ["terraform", "production", "plan", "apply", "rollback", "credential", "database"],
+          body:
+            "Production Terraform changes require a plan, peer review, approval, and an audit entry before apply.",
+        },
+        {
+          id: "customer-acme-042",
+          title: "ACME Customer Impact Note",
+          permission: "doc.read.customer",
+          sensitivity: "customer",
+          keywords: ["customer", "acme", "affected", "payments", "latency", "outage"],
+          body:
+            "ACME saw elevated payments API latency and delayed settlement reconciliation during the incident.",
+        },
+        {
+          id: "support-faq-088",
+          title: "Support Outage FAQ",
+          permission: "doc.read.support",
+          sensitivity: "support",
+          keywords: ["support", "customer", "status", "message", "outage", "latency"],
+          body:
+            "Support should tell customers engineers identified elevated latency and are monitoring recovery.",
+        },
+      ];
+
+      const tools = [
+        {
+          name: "terraform.get_recent_changes",
+          permission: "terraform.read.prod",
+          triggers: ["terraform", "change", "changed", "rollback", "production"],
+          result:
+            "prod-network workspace changed aws_security_group.payments_ingress at 14:08 UTC. Last apply altered ingress from the payments load balancer.",
+        },
+        {
+          name: "terraform.create_rollback_plan",
+          permission: "terraform.plan.rollback",
+          triggers: ["rollback", "roll", "terraform", "apply"],
+          result:
+            "Rollback plan would restore the previous ingress rule. Estimated blast radius: payments API only. Apply is blocked pending approval.",
+        },
+        {
+          name: "kubernetes.get_service_status",
+          permission: "kubernetes.read.prod",
+          fallbackPermission: "kubernetes.read.status",
+          triggers: ["kubernetes", "service", "healthy", "status", "payments", "latency"],
+          result:
+            "payments-api in prod is serving traffic. Error rate is normal, p95 latency is recovering, and two pods restarted after rollback.",
+        },
+      ];
+
+      const prompts = [
+        "What do we know about the production outage?",
+        "Check whether the payments service is healthy and whether there were recent Terraform changes.",
+        "Create a rollback proposal for the last Terraform change.",
+        "Apply the rollback to production.",
+        "What customer systems were affected?",
+        "Why was that action denied?",
+      ];
+
+      const state = {
+        lastRun: null,
+        pendingProposal: null,
+      };
+
+      const userSelect = document.querySelector("#userSelect");
+      const queryInput = document.querySelector("#queryInput");
+      const askButton = document.querySelector("#askButton");
+      const promptGrid = document.querySelector("#promptGrid");
+      const answerBody = document.querySelector("#answerBody");
+      const summaryTags = document.querySelector("#summaryTags");
+      const docGrid = document.querySelector("#docGrid");
+      const toolGrid = document.querySelector("#toolGrid");
+      const approvalPanel = document.querySelector("#approvalPanel");
+      const auditLog = document.querySelector("#auditLog");
+
+      function tokenize(text) {
+        return text
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, " ")
+          .split(/\s+/)
+          .filter(Boolean);
+      }
+
+      function hasPermission(user, permission) {
+        return user.permissions.includes(permission);
+      }
+
+      function scoreDoc(query, doc) {
+        const haystack = new Set([...doc.keywords, ...tokenize(doc.title), ...tokenize(doc.body)]);
+        return tokenize(query).reduce((score, term) => score + (haystack.has(term) ? 1 : 0), 0);
+      }
+
+      function retrieveDocs(query, user) {
+        return docs
+          .map((doc) => ({
+            ...doc,
+            score: scoreDoc(query, doc),
+            allowed: hasPermission(user, doc.permission),
+          }))
+          .filter((doc) => doc.score > 0)
+          .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title));
+      }
+
+      function wantsTool(query, tool) {
+        const terms = new Set(tokenize(query));
+        return tool.triggers.some((trigger) => terms.has(trigger));
+      }
+
+      function runTools(query, user) {
+        return tools
+          .filter((tool) => wantsTool(query, tool))
+          .map((tool) => {
+            const allowed =
+              hasPermission(user, tool.permission) ||
+              Boolean(tool.fallbackPermission && hasPermission(user, tool.fallbackPermission));
+            return {
+              name: tool.name,
+              permission: tool.permission,
+              fallbackPermission: tool.fallbackPermission || null,
+              decision: allowed ? "allow" : "deny",
+              result: allowed ? tool.result : "Tool result withheld. Actor lacks required permission.",
+            };
+          });
+      }
+
+      function classifyIntent(query) {
+        const normalized = query.toLowerCase();
+        if (normalized.includes("apply") || normalized.includes("execute")) {
+          return "destructive_action";
+        }
+        if (normalized.includes("rollback") || normalized.includes("roll back")) {
+          return "proposal";
+        }
+        return "answer";
+      }
+
+      function buildProposal(query, user, toolCalls) {
+        const intent = classifyIntent(query);
+        if (intent === "answer") return null;
+
+        const canPlan = hasPermission(user, "terraform.plan.rollback");
+        const requiresApproval = intent === "destructive_action" || query.toLowerCase().includes("production");
+
+        if (!canPlan) {
+          return {
+            status: "denied",
+            title: "Rollback proposal denied",
+            reason: "Actor lacks terraform.plan.rollback.",
+            requiresApproval,
+          };
+        }
+
+        const rollbackTool = toolCalls.find((tool) => tool.name === "terraform.create_rollback_plan");
+        return {
+          status: requiresApproval ? "pending_approval" : "ready",
+          title: "Production Terraform rollback proposal",
+          reason:
+            rollbackTool && rollbackTool.decision === "allow"
+              ? rollbackTool.result
+              : "A rollback can be proposed, but the plan should be generated through the Terraform MCP tool.",
+          requiresApproval,
+          requestedBy: user.id,
+        };
+      }
+
+      function buildAnswer(user, docsFound, toolCalls, proposal) {
+        const allowedDocs = docsFound.filter((doc) => doc.allowed);
+        const deniedDocs = docsFound.filter((doc) => !doc.allowed);
+        const allowedTools = toolCalls.filter((tool) => tool.decision === "allow");
+        const deniedTools = toolCalls.filter((tool) => tool.decision === "deny");
+
+        const parts = [];
+        if (allowedDocs.length > 0) {
+          parts.push(
+            `From authorized docs: ${allowedDocs
+              .slice(0, 3)
+              .map((doc) => `${doc.title} says ${doc.body}`)
+              .join(" ")}`
+          );
+        }
+
+        if (allowedTools.length > 0) {
+          parts.push(
+            `From MCP-style tools: ${allowedTools.map((tool) => `${tool.name} returned ${tool.result}`).join(" ")}`
+          );
+        }
+
+        if (proposal) {
+          if (proposal.status === "denied") {
+            parts.push(`Action proposal denied: ${proposal.reason}`);
+          } else if (proposal.status === "pending_approval") {
+            parts.push(
+              `I created a proposal but will not apply it. ${proposal.reason} A platform lead must approve before execution.`
+            );
+          } else {
+            parts.push(`I created a non-destructive proposal: ${proposal.reason}`);
+          }
+        }
+
+        if (parts.length === 0) {
+          parts.push(`I cannot answer that for ${user.name} from authorized context or allowed tools.`);
+        }
+
+        if (deniedDocs.length > 0 || deniedTools.length > 0) {
+          parts.push(
+            `${deniedDocs.length} document(s) and ${deniedTools.length} tool call(s) were withheld by authorization.`
+          );
+        }
+
+        return parts.join(" ");
+      }
+
+      function renderTags(docsFound, toolCalls, proposal) {
+        const allowedDocs = docsFound.filter((doc) => doc.allowed).length;
+        const deniedDocs = docsFound.filter((doc) => !doc.allowed).length;
+        const allowedTools = toolCalls.filter((tool) => tool.decision === "allow").length;
+        const deniedTools = toolCalls.filter((tool) => tool.decision === "deny").length;
+        const proposalTag = proposal ? `<span class="tag wait">${proposal.status}</span>` : "";
+
+        summaryTags.innerHTML = `
+          <span class="tag allow">${allowedDocs} docs allowed</span>
+          <span class="tag deny">${deniedDocs} docs denied</span>
+          <span class="tag allow">${allowedTools} tools allowed</span>
+          <span class="tag deny">${deniedTools} tools denied</span>
+          ${proposalTag}
+        `;
+      }
+
+      function renderDocs(docsFound) {
+        if (docsFound.length === 0) {
+          docGrid.innerHTML = `<article class="card"><h3>No matching docs</h3><p>No candidate documents matched this query.</p></article>`;
+          return;
+        }
+
+        docGrid.innerHTML = docsFound
+          .map(
+            (doc) => `
+              <article class="card ${doc.allowed ? "allowed" : "denied"}">
+                <div class="meta">
+                  <span class="tag ${doc.allowed ? "allow" : "deny"}">${doc.allowed ? "ALLOWED" : "DENIED"}</span>
+                  <span class="tag">${doc.sensitivity}</span>
+                  <span class="tag">score ${doc.score}</span>
+                </div>
+                <h3>${doc.title}</h3>
+                <p>${doc.allowed ? doc.body : "Document text withheld from model context."}</p>
+                <p><strong>Required:</strong> ${doc.permission}</p>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      function renderTools(toolCalls) {
+        if (toolCalls.length === 0) {
+          toolGrid.innerHTML = `<article class="card"><h3>No tool needed</h3><p>The planner answered from retrieved docs only.</p></article>`;
+          return;
+        }
+
+        toolGrid.innerHTML = toolCalls
+          .map(
+            (tool) => `
+              <article class="card ${tool.decision === "allow" ? "allowed" : "denied"}">
+                <div class="meta">
+                  <span class="tag ${tool.decision === "allow" ? "allow" : "deny"}">${tool.decision.toUpperCase()}</span>
+                  <span class="tag">MCP tool</span>
+                </div>
+                <h3>${tool.name}</h3>
+                <p>${tool.result}</p>
+                <p><strong>Required:</strong> ${tool.permission}</p>
+              </article>
+            `
+          )
+          .join("");
+      }
+
+      function renderApproval(proposal) {
+        const activeUser = users.find((user) => user.id === userSelect.value);
+
+        if (!proposal) {
+          approvalPanel.innerHTML = `<article class="card"><h3>No action proposed</h3><p>The request did not require a production-impacting action.</p></article>`;
+          return;
+        }
+
+        const canApprove = hasPermission(activeUser, "incident.remediation.approve");
+        const approveButton =
+          proposal.status === "pending_approval"
+            ? `<button class="secondary" id="approveButton">${canApprove ? "Approve As Current User" : "Approval Not Available"}</button>`
+            : "";
+
+        approvalPanel.innerHTML = `
+          <article class="card ${proposal.status === "denied" ? "denied" : "pending"}">
+            <div class="meta">
+              <span class="tag wait">${proposal.status}</span>
+              <span class="tag">human approval</span>
+            </div>
+            <h3>${proposal.title}</h3>
+            <p>${proposal.reason}</p>
+            <p><strong>Requested by:</strong> ${proposal.requestedBy || "n/a"}</p>
+            ${approveButton}
+          </article>
+        `;
+
+        const button = document.querySelector("#approveButton");
+        if (button && canApprove) {
+          button.addEventListener("click", approveCurrentProposal);
+        } else if (button) {
+          button.disabled = true;
+        }
+      }
+
+      function buildAudit(user, query, docsFound, toolCalls, proposal, answer) {
+        return {
+          timestamp: new Date().toISOString(),
+          actor: user.id,
+          query,
+          stages: {
+            retrieval: docsFound.map((doc) => ({
+              id: doc.id,
+              title: doc.title,
+              score: doc.score,
+              requiredPermission: doc.permission,
+              decision: doc.allowed ? "allow" : "deny",
+            })),
+            mcpTools: toolCalls.map((tool) => ({
+              name: tool.name,
+              requiredPermission: tool.permission,
+              fallbackPermission: tool.fallbackPermission,
+              decision: tool.decision,
+            })),
+            proposal,
+          },
+          contextSentToModel: {
+            documents: docsFound.filter((doc) => doc.allowed).map((doc) => doc.id),
+            toolResults: toolCalls.filter((tool) => tool.decision === "allow").map((tool) => tool.name),
+          },
+          answer,
+        };
+      }
+
+      function runCopilot() {
+        const user = users.find((candidate) => candidate.id === userSelect.value);
+        const query = queryInput.value.trim();
+        const docsFound = retrieveDocs(query, user);
+        const toolCalls = runTools(query, user);
+        const proposal = buildProposal(query, user, toolCalls);
+        const answer = buildAnswer(user, docsFound, toolCalls, proposal);
+        const audit = buildAudit(user, query, docsFound, toolCalls, proposal, answer);
+
+        state.lastRun = audit;
+        state.pendingProposal = proposal && proposal.status === "pending_approval" ? proposal : null;
+
+        answerBody.textContent = answer;
+        renderTags(docsFound, toolCalls, proposal);
+        renderDocs(docsFound);
+        renderTools(toolCalls);
+        renderApproval(proposal);
+        auditLog.textContent = JSON.stringify(audit, null, 2);
+      }
+
+      function approveCurrentProposal() {
+        const user = users.find((candidate) => candidate.id === userSelect.value);
+        if (!state.pendingProposal || !hasPermission(user, "incident.remediation.approve")) return;
+
+        const approvalEvent = {
+          timestamp: new Date().toISOString(),
+          actor: user.id,
+          decision: "approved",
+          proposal: state.pendingProposal.title,
+          note:
+            "Approval recorded. Demo stops before execution to avoid modeling unsafe automatic production mutation.",
+        };
+
+        const updatedAudit = {
+          ...state.lastRun,
+          approvalEvent,
+        };
+
+        state.pendingProposal = null;
+        answerBody.textContent =
+          "Approval recorded. In production, this would hand off to a controlled deployment workflow, not direct model execution.";
+        auditLog.textContent = JSON.stringify(updatedAudit, null, 2);
+        approvalPanel.innerHTML = `
+          <article class="card allowed">
+            <div class="meta">
+              <span class="tag allow">APPROVED</span>
+              <span class="tag">human approval</span>
+            </div>
+            <h3>Approval recorded</h3>
+            <p>Dana approved the rollback proposal. Execution is intentionally out of scope for this demo.</p>
+          </article>
+        `;
+      }
+
+      users.forEach((user) => {
+        const option = document.createElement("option");
+        option.value = user.id;
+        option.textContent = user.name;
+        userSelect.appendChild(option);
+      });
+
+      prompts.forEach((prompt) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = prompt;
+        button.addEventListener("click", () => {
+          queryInput.value = prompt;
+          runCopilot();
+        });
+        promptGrid.appendChild(button);
+      });
+
+      askButton.addEventListener("click", runCopilot);
+      userSelect.addEventListener("change", () => {
+        if (state.pendingProposal) {
+          renderApproval(state.pendingProposal);
+          return;
+        }
+        runCopilot();
+      });
+      queryInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") runCopilot();
+      });
+
+      queryInput.value = prompts[1];
+      runCopilot();
+    </script>
+  </body>
+</html>
