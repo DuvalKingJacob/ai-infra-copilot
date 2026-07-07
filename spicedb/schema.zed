@@ -1,0 +1,31 @@
+definition user {}
+
+definition document {
+  relation reader: user
+
+  permission read = reader
+}
+
+definition tool {
+  relation caller: user
+
+  permission call = caller
+}
+
+definition proposal {
+  relation requester: user
+  relation approver: user
+
+  permission create = requester
+  permission approve = approver
+}
+
+definition environment {
+  relation reader: user
+  relation planner: user
+  relation approver: user
+
+  permission read = reader
+  permission plan = planner
+  permission approve = approver
+}

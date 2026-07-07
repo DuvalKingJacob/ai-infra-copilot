@@ -1,0 +1,44 @@
+[
+  {
+    "id": "alice",
+    "name": "Alice - Platform Engineer",
+    "permissions": [
+      "doc.read.public",
+      "doc.read.platform",
+      "doc.read.prod",
+      "terraform.read.dev",
+      "terraform.read.prod",
+      "terraform.plan.rollback",
+      "kubernetes.read.prod"
+    ]
+  },
+  {
+    "id": "bob",
+    "name": "Bob - Support Engineer",
+    "permissions": [
+      "doc.read.public",
+      "doc.read.support",
+      "doc.read.customer",
+      "kubernetes.read.status"
+    ]
+  },
+  {
+    "id": "casey",
+    "name": "Casey - Contractor",
+    "permissions": ["doc.read.public"]
+  },
+  {
+    "id": "dana",
+    "name": "Dana - Platform Lead",
+    "permissions": [
+      "doc.read.public",
+      "doc.read.platform",
+      "doc.read.prod",
+      "terraform.read.dev",
+      "terraform.read.prod",
+      "terraform.plan.rollback",
+      "kubernetes.read.prod",
+      "incident.remediation.approve"
+    ]
+  }
+]

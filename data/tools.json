@@ -1,0 +1,21 @@
+[
+  {
+    "name": "terraform.get_recent_changes",
+    "permission": "terraform.read.prod",
+    "description": "Inspect recent production Terraform changes.",
+    "risk": "read"
+  },
+  {
+    "name": "terraform.create_rollback_plan",
+    "permission": "terraform.plan.rollback",
+    "description": "Create a non-destructive rollback proposal.",
+    "risk": "proposal"
+  },
+  {
+    "name": "kubernetes.get_service_status",
+    "permission": "kubernetes.read.prod",
+    "fallbackPermission": "kubernetes.read.status",
+    "description": "Inspect service status and recent events.",
+    "risk": "read"
+  }
+]

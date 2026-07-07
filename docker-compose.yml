@@ -1,0 +1,9 @@
+services:
+  spicedb:
+    image: authzed/spicedb:latest
+    command: serve --grpc-preshared-key dev-secret --http-enabled
+    ports:
+      - "50051:50051"
+      - "8443:8443"
+    environment:
+      SPICEDB_DATASTORE_ENGINE: memory

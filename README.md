@@ -12,6 +12,18 @@ Open the demo locally:
 
 No install step is required.
 
+## Optional CLI Experiments
+
+The static demo is the fastest walkthrough. The repo also includes optional Node.js scripts for testing permission-aware retrieval outside the browser.
+
+```bash
+npm run embeddings:build
+npm run rag:query -- alice "What do we know about the production outage?"
+npm run rag:query -- bob "What do we know about the production outage?"
+```
+
+If `OPENAI_API_KEY` is set, `embeddings:build` uses the OpenAI embeddings API. Without it, the script uses a deterministic local embedding fallback so the project remains runnable without secrets.
+
 ## Why This Exists
 
 Most AI demos stop at chat.
@@ -31,6 +43,23 @@ This demo explores one core idea:
 - A distinction between answering, proposing, and acting.
 - Human approval before production-impacting actions.
 - Audit logs across retrieval, tool use, proposal, and approval.
+
+## Implementation Tracks
+
+This repo now has two layers:
+
+1. A local browser demo in `demo/index.html`.
+2. Production-shaped integration scaffolding for the next real implementation pass.
+
+The integration scaffolding includes:
+
+- `data/`: source docs, users, and tool definitions.
+- `src/`: optional embedding and permission-aware retrieval scripts.
+- `spicedb/`: SpiceDB/AuthZed schema and relationship model.
+- `mcp/`: official Terraform MCP Server example config.
+- `docs/terraform-mcp-integration.md`: Terraform MCP integration plan.
+- `docs/oidc-authentication-plan.md`: real authentication plan.
+- `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
 
 ## Product Scenario
 
@@ -159,17 +188,21 @@ In production, I would add:
 - Red-team prompts and evals for prompt injection, data leakage, and unsafe tool use.
 - Memory with retention, deletion, and authorization controls.
 
+## What Is Intentionally Not Implemented
+
+The project does not directly mutate production infrastructure.
+
+That is intentional. The product stance is that an agent can inspect, explain, and propose, but production-impacting actions should hand off to a controlled workflow with explicit approval and auditability.
+
 ## Current Status
 
-This is an MVP portfolio demo. It is meant to support conversation, not production use.
+This is still a portfolio project, not a production service. But it now includes concrete paths for the gaps a reviewer would naturally ask about:
 
-The next engineering step would be to split the local demo into a small repo structure with:
-
-- `/app` for the UI.
-- `/data` for mock docs and infrastructure state.
-- `/tools` for MCP-style adapters.
-- `/authz` for permission policy.
-- `/docs` for architecture notes and demo scripts.
+- Real embeddings: `src/build-embeddings.mjs`
+- SpiceDB/AuthZed: `spicedb/schema.zed`
+- Terraform MCP: `mcp/terraform-mcp.example.json`
+- OIDC: `docs/oidc-authentication-plan.md`
+- Production roadmap: `docs/production-milestones.md`
 
 ## Core Takeaway
 

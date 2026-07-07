@@ -1,0 +1,37 @@
+[
+  {
+    "id": "runbook-public-001",
+    "title": "Incident Response Overview",
+    "permission": "doc.read.public",
+    "sensitivity": "public",
+    "body": "Start with triage, identify customer impact, assign an owner, and keep status updates factual."
+  },
+  {
+    "id": "postmortem-platform-204",
+    "title": "Platform Postmortem: Production Outage",
+    "permission": "doc.read.platform",
+    "sensitivity": "platform",
+    "body": "The outage was triggered by a Terraform security group change. Rollback restored the previous ingress rule."
+  },
+  {
+    "id": "terraform-prod-017",
+    "title": "Production Terraform Change Procedure",
+    "permission": "doc.read.prod",
+    "sensitivity": "production",
+    "body": "Production Terraform changes require a plan, peer review, approval, and an audit entry before apply."
+  },
+  {
+    "id": "customer-acme-042",
+    "title": "ACME Customer Impact Note",
+    "permission": "doc.read.customer",
+    "sensitivity": "customer",
+    "body": "ACME saw elevated payments API latency and delayed settlement reconciliation during the incident."
+  },
+  {
+    "id": "support-faq-088",
+    "title": "Support Outage FAQ",
+    "permission": "doc.read.support",
+    "sensitivity": "support",
+    "body": "Support should tell customers engineers identified elevated latency and are monitoring recovery."
+  }
+]

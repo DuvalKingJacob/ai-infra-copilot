@@ -1,0 +1,12 @@
+{
+  "name": "ai-infra-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio demo for permission-aware RAG, MCP-style infrastructure tools, and AI agent authorization.",
+  "scripts": {
+    "embeddings:build": "node src/build-embeddings.mjs",
+    "rag:query": "node src/query-rag.mjs",
+    "check": "node src/check-demo-script.mjs"
+  }
+}
