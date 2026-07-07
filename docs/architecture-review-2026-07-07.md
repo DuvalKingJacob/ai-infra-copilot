@@ -49,7 +49,7 @@ This is the first part of the repo that moves beyond a static demo.
 
 ### SpiceDB/AuthZed
 
-Status: schema and relationships exist, but the app does not call SpiceDB yet.
+Status: executable CLI path exists; browser demo still uses local checks.
 
 Files:
 
@@ -57,8 +57,11 @@ Files:
 - `spicedb/relationships.yaml`
 - `spicedb/README.md`
 - `docker-compose.yml`
+- `src/load-spicedb.mjs`
+- `src/authz-check.mjs`
+- `src/query-rag.mjs`
 
-This is the most important next gap because AuthZed is the target audience. The project should move at least one authorization path from local permission arrays to a real SpiceDB-backed check.
+This is now the strongest AuthZed-aligned implementation path. RAG filtering can use SpiceDB checks from the CLI.
 
 Recommended first check:
 
@@ -66,7 +69,7 @@ Recommended first check:
 Can actor X read document Y?
 ```
 
-Then extend to:
+Still to extend:
 
 ```text
 Can actor X call tool Y?
@@ -75,14 +78,15 @@ Can actor X approve proposal Y?
 
 ### Terraform MCP
 
-Status: integration plan and example config exist, but no live tool call path yet.
+Status: read-only gateway exists; official MCP handoff is configured but not fully connected.
 
 Files:
 
 - `mcp/terraform-mcp.example.json`
 - `docs/terraform-mcp-integration.md`
+- `src/tool-call.mjs`
 
-This is useful, but it should come after SpiceDB. Terraform MCP is more operationally interesting, but AuthZed will care more that authorization is actually enforced.
+The gateway authorizes MCP-style tools before returning read-only infrastructure data. The next step is replacing mock Terraform output with a real call to the official Terraform MCP Server.
 
 ### OIDC
 
@@ -117,17 +121,17 @@ That is a product and security decision, not a missing feature.
 | Area | Current credibility | Next improvement |
 | --- | --- | --- |
 | RAG | Medium | Use real embeddings or hybrid retrieval end-to-end |
-| MCP | Medium-low | Add a small real MCP server or client adapter |
+| MCP | Medium | Replace mock Terraform output with official Terraform MCP read-only call |
 | Agents | Medium | Make planner stages explicit in code |
-| Authorization | Medium | Wire SpiceDB into CLI checks |
-| AuthZed relevance | Medium-high | Show SpiceDB check output in demo/docs |
+| Authorization | Medium-high | Wire browser/backend path to SpiceDB |
+| AuthZed relevance | High | Extend schema to team/tenant relationships |
 | OIDC | Low | Keep as production plan for now |
 | Production mutation | Correctly absent | Keep absent |
 | Auditability | Medium-high | Persist audit events from CLI/demo |
 
 ## Highest-Leverage Next Step
 
-Build a real SpiceDB-backed authorization path for the CLI.
+Connect the browser demo to a tiny backend that calls the same SpiceDB-backed authorization path.
 
 Suggested command:
 
@@ -147,11 +151,11 @@ Expected output:
 }
 ```
 
-Then update `src/query-rag.mjs` so it can optionally use SpiceDB checks instead of local permission arrays.
+The CLI now supports this path. The next upgrade is to make the UI use it through a backend.
 
 ## Why This Step Matters
 
-This one change makes the project meaningfully more real for AuthZed:
+The SpiceDB CLI path already makes the project meaningfully more real for AuthZed:
 
 - It turns the authorization story from conceptual to executable.
 - It shows that RAG context filtering can be backed by relationship-based authorization.
@@ -159,10 +163,8 @@ This one change makes the project meaningfully more real for AuthZed:
 
 ## Recommended Next Order
 
-1. Wire SpiceDB document read checks into the CLI.
-2. Wire SpiceDB tool call checks into the CLI or demo adapter.
-3. Add a tiny custom MCP server for mock infra tools.
-4. Connect the official Terraform MCP Server in read-only mode.
-5. Add persistent audit output.
-6. Leave OIDC as a documented production extension until the backend exists.
-
+1. Wire the browser demo to a backend that uses SpiceDB.
+2. Extend SpiceDB relationships from direct users to teams and environments.
+3. Replace mock Terraform gateway output with an official Terraform MCP read-only call.
+4. Add persistent audit output.
+5. Leave OIDC as a documented production extension until the backend exists.

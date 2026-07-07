@@ -20,6 +20,8 @@ The static demo is the fastest walkthrough. The repo also includes optional Node
 npm run embeddings:build
 npm run rag:query -- alice "What do we know about the production outage?"
 npm run rag:query -- bob "What do we know about the production outage?"
+npm run authz:check -- alice document:postmortem-platform-204 read --provider=local
+npm run tool:call -- alice terraform.get_recent_changes --provider=local
 ```
 
 If `OPENAI_API_KEY` is set, `embeddings:build` uses the OpenAI embeddings API. Without it, the script uses a deterministic local embedding fallback so the project remains runnable without secrets.
@@ -60,6 +62,64 @@ The integration scaffolding includes:
 - `docs/terraform-mcp-integration.md`: Terraform MCP integration plan.
 - `docs/oidc-authentication-plan.md`: real authentication plan.
 - `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
+
+## SpiceDB / AuthZed Path
+
+The project includes an executable SpiceDB integration path for authorization checks.
+
+Start SpiceDB:
+
+```bash
+docker compose up -d spicedb
+```
+
+Load the schema and relationships:
+
+```bash
+npm run authz:load
+```
+
+Check document access:
+
+```bash
+npm run authz:check -- alice document:postmortem-platform-204 read --provider=spicedb
+npm run authz:check -- bob document:postmortem-platform-204 read --provider=spicedb
+```
+
+Use SpiceDB during RAG filtering:
+
+```bash
+npm run rag:query -- alice "What do we know about the production outage?" --provider=spicedb
+```
+
+This is the most important production-shaped part of the project: retrieved context can be filtered by relationship-based authorization before it reaches the model.
+
+## Terraform MCP Gateway Path
+
+The repo includes a read-only gateway command that authorizes MCP-style tool calls before returning infrastructure data:
+
+```bash
+npm run tool:call -- alice terraform.get_recent_changes --provider=local
+npm run tool:call -- bob terraform.get_recent_changes --provider=local
+```
+
+With SpiceDB running and loaded:
+
+```bash
+npm run tool:call -- alice terraform.get_recent_changes --provider=spicedb
+```
+
+The official Terraform MCP Server config lives at:
+
+`mcp/terraform-mcp.example.json`
+
+The intended production shape is:
+
+1. Actor asks for Terraform context.
+2. Gateway checks whether the actor can call the requested tool.
+3. Allowed read-only calls are routed to Terraform MCP.
+4. Plans remain proposal-only.
+5. Applies remain behind human approval and controlled workflow handoff.
 
 ## Product Scenario
 

@@ -5,4 +5,5 @@ build/
 .cache/
 .env
 .env.*
+!.env.example
 *.log

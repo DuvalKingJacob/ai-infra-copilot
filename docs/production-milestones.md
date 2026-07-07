@@ -22,7 +22,7 @@ Why this matters:
 
 ## Milestone 2: SpiceDB/AuthZed
 
-Status: schema and relationship model added. Not yet wired into runtime checks.
+Status: executable CLI path added.
 
 Files:
 
@@ -30,25 +30,38 @@ Files:
 - `spicedb/relationships.yaml`
 - `spicedb/README.md`
 - `docker-compose.yml`
+- `src/load-spicedb.mjs`
+- `src/authz-check.mjs`
+- `src/spicedb-client.mjs`
 
 Why this matters:
 
 - Replaces local role checks with relationship-based authorization.
 - Directly maps the project to AuthZed's domain.
 
+Run:
+
+```bash
+docker compose up -d spicedb
+npm run authz:load
+npm run authz:check -- alice document:postmortem-platform-204 read --provider=spicedb
+npm run rag:query -- alice "What do we know about the production outage?" --provider=spicedb
+```
+
 Next step:
 
-- Add a CLI command that checks `document#read`, `tool#call`, and `proposal#approve` through SpiceDB.
-- Update the RAG query path so document filtering can use SpiceDB instead of local permission arrays.
+- Wire the browser demo to a backend that calls SpiceDB instead of using an in-browser permission map.
+- Extend the schema from direct user relationships to team, tenant, customer, and environment relationships.
 
 ## Milestone 3: Official Terraform MCP Server
 
-Status: integration plan and config added.
+Status: read-only authorization gateway added, official server config added.
 
 Files:
 
 - `mcp/terraform-mcp.example.json`
 - `docs/terraform-mcp-integration.md`
+- `src/tool-call.mjs`
 
 Why this matters:
 
@@ -57,8 +70,7 @@ Why this matters:
 
 Next step:
 
-- Keep the first official Terraform MCP integration read-only.
-- Put it behind the same authorization gateway used for mock tools.
+- Replace the gateway's mock read-only Terraform result with an actual call to the official Terraform MCP Server.
 - Leave workspace mutation disabled.
 
 ## Milestone 4: OIDC Authentication

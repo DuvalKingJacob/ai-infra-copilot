@@ -7,6 +7,9 @@
   "scripts": {
     "embeddings:build": "node src/build-embeddings.mjs",
     "rag:query": "node src/query-rag.mjs",
+    "authz:load": "node src/load-spicedb.mjs",
+    "authz:check": "node src/authz-check.mjs",
+    "tool:call": "node src/tool-call.mjs",
     "check": "node src/check-demo-script.mjs"
   }
 }

@@ -1,8 +1,16 @@
 import { readFile } from "node:fs/promises";
-import { cosineSimilarity, hasPermission, localEmbedding, openAIEmbedding } from "./lib.mjs";
+import { cosineSimilarity, localEmbedding, openAIEmbedding } from "./lib.mjs";
+import { localCheck } from "./local-authz.mjs";
+import { SpiceDBClient } from "./spicedb-client.mjs";
 
 const actor = process.argv[2] || "alice";
-const query = process.argv.slice(3).join(" ") || "What do we know about the production outage?";
+const providerFlag = process.argv.find((arg) => arg.startsWith("--provider="));
+const authzProvider = providerFlag?.split("=")[1] || "local";
+const query =
+  process.argv
+    .slice(3)
+    .filter((arg) => !arg.startsWith("--provider="))
+    .join(" ") || "What do we know about the production outage?";
 
 const [docs, users] = await Promise.all([
   readFile(new URL("../data/docs.json", import.meta.url), "utf8").then(JSON.parse),
@@ -43,18 +51,31 @@ if (index.provider === "openai") {
 } else {
   queryEmbedding = localEmbedding(query, index.embeddings[0]?.embedding.length || 96);
 }
-const scored = docs
-  .map((doc) => {
+const spiceDB = authzProvider === "spicedb" ? new SpiceDBClient() : null;
+const scored = await Promise.all(
+  docs.map(async (doc) => {
     const indexed = index.embeddings.find((entry) => entry.docId === doc.id);
     const score = indexed ? cosineSimilarity(queryEmbedding, indexed.embedding) : 0;
+    const allowed = spiceDB
+      ? await spiceDB.checkPermission({
+          resourceType: "document",
+          resourceId: doc.id,
+          permission: "read",
+          subjectId: actor,
+        })
+      : await localCheck({ actor, resource: `document:${doc.id}`, permission: "read" });
+
     return {
       id: doc.id,
       title: doc.title,
       score: Number(score.toFixed(4)),
       requiredPermission: doc.permission,
-      decision: hasPermission(user, doc.permission) ? "allow" : "deny",
+      decision: allowed ? "allow" : "deny",
     };
   })
+);
+
+const ranked = scored
   .sort((a, b) => b.score - a.score)
   .slice(0, 5);
 
@@ -63,10 +84,11 @@ console.log(
     {
       actor,
       query,
+      authzProvider,
       embeddingProvider: index.provider || "local",
-      retrievalCandidates: scored,
-      contextSentToModel: scored.filter((doc) => doc.decision === "allow").map((doc) => doc.id),
-      withheldFromModel: scored.filter((doc) => doc.decision === "deny").map((doc) => doc.id),
+      retrievalCandidates: ranked,
+      contextSentToModel: ranked.filter((doc) => doc.decision === "allow").map((doc) => doc.id),
+      withheldFromModel: ranked.filter((doc) => doc.decision === "deny").map((doc) => doc.id),
     },
     null,
     2

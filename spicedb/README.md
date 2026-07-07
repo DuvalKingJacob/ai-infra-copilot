@@ -1,6 +1,6 @@
 # SpiceDB / AuthZed Integration
 
-The browser demo uses an in-memory permission map. This folder sketches how the same authorization model maps to SpiceDB/AuthZed.
+The browser demo uses an in-memory permission map. The CLI path can use SpiceDB/AuthZed for real authorization checks.
 
 ## Why Add SpiceDB/AuthZed
 
@@ -23,7 +23,34 @@ The schema models four protected resource types:
 
 The key design decision is that authorization wraps the objects the model depends on, not just the final answer.
 
-## Local Test Shape
+## Run Locally
+
+Start SpiceDB:
+
+```bash
+docker compose up -d spicedb
+```
+
+Load the schema and relationships:
+
+```bash
+npm run authz:load
+```
+
+Check document access:
+
+```bash
+npm run authz:check -- alice document:postmortem-platform-204 read --provider=spicedb
+npm run authz:check -- bob document:postmortem-platform-204 read --provider=spicedb
+```
+
+Use SpiceDB during RAG filtering:
+
+```bash
+npm run rag:query -- alice "What do we know about the production outage?" --provider=spicedb
+```
+
+## Expected Checks
 
 With SpiceDB running, the important checks would be:
 
@@ -46,3 +73,6 @@ In production, this should move from user-to-object relationships to richer team
 
 That is where SpiceDB/AuthZed becomes much more valuable than local RBAC.
 
+## Current Limitation
+
+The static browser demo is not yet wired to SpiceDB directly. That would require a backend service so the browser does not hold SpiceDB credentials. The CLI path exists first because it keeps credentials server-side and makes the authorization boundary explicit.
