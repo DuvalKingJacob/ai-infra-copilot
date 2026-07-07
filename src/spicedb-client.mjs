@@ -119,3 +119,7 @@ export function parseResource(resource) {
   }
   return { resourceType, resourceId };
 }
+
+export function toSpiceDBObjectId(id) {
+  return id.replace(/[^a-zA-Z0-9/_|\-=+]/g, "_");
+}

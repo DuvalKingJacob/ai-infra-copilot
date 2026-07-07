@@ -52,6 +52,7 @@ docker compose up -d spicedb
 Load schema and relationships:
 
 ```bash
+npm run authz:validate
 npm run authz:load
 ```
 
@@ -104,6 +105,7 @@ npm run tool:call -- bob terraform.get_recent_changes --provider=spicedb
 
 ```bash
 npm run check
+npm run authz:validate
 npm run embeddings:build
 npm run rag:query -- alice "What do we know about the production outage?"
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
@@ -131,5 +133,15 @@ If SpiceDB checks fail, rerun:
 
 ```bash
 docker compose up -d spicedb
+npm run authz:validate
+npm run authz:load
+```
+
+If `authz:load` failed partway through and checks still look wrong, reset the in-memory SpiceDB container:
+
+```bash
+docker compose down
+docker compose up -d spicedb
+npm run authz:validate
 npm run authz:load
 ```

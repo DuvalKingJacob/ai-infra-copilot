@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { localCheck } from "./local-authz.mjs";
-import { SpiceDBClient } from "./spicedb-client.mjs";
+import { SpiceDBClient, toSpiceDBObjectId } from "./spicedb-client.mjs";
 
 const [actor, toolName, ...args] = process.argv.slice(2);
 const provider = args.find((arg) => arg.startsWith("--provider="))?.split("=")[1] || "local";
@@ -48,7 +48,7 @@ try {
     const client = new SpiceDBClient();
     allowed = await client.checkPermission({
       resourceType: "tool",
-      resourceId: toolName,
+      resourceId: toSpiceDBObjectId(toolName),
       permission: "call",
       subjectId: actor,
     });

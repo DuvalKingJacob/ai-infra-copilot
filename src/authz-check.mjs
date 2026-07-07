@@ -1,5 +1,5 @@
 import { localCheck } from "./local-authz.mjs";
-import { parseResource, SpiceDBClient } from "./spicedb-client.mjs";
+import { parseResource, SpiceDBClient, toSpiceDBObjectId } from "./spicedb-client.mjs";
 
 const [actor, resource, permission, ...flags] = process.argv.slice(2);
 const provider = flags.find((flag) => flag.startsWith("--provider="))?.split("=")[1] || "spicedb";
@@ -18,7 +18,7 @@ try {
     const client = new SpiceDBClient();
     allowed = await client.checkPermission({
       resourceType,
-      resourceId,
+      resourceId: toSpiceDBObjectId(resourceId),
       permission,
       subjectId: actor,
     });

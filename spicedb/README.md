@@ -50,6 +50,15 @@ Use SpiceDB during RAG filtering:
 npm run rag:query -- alice "What do we know about the production outage?" --provider=spicedb
 ```
 
+If a load fails while using the in-memory datastore, reset the container before retrying:
+
+```bash
+docker compose down
+docker compose up -d spicedb
+npm run authz:validate
+npm run authz:load
+```
+
 ## Expected Checks
 
 With SpiceDB running, the important checks would be:
@@ -57,8 +66,8 @@ With SpiceDB running, the important checks would be:
 ```text
 document:postmortem-platform-204#read@user:alice -> true
 document:postmortem-platform-204#read@user:bob -> false
-tool:terraform.get_recent_changes#call@user:alice -> true
-tool:terraform.get_recent_changes#call@user:bob -> false
+tool:terraform_get_recent_changes#call@user:alice -> true
+tool:terraform_get_recent_changes#call@user:bob -> false
 proposal:prod-rollback#approve@user:dana -> true
 proposal:prod-rollback#approve@user:alice -> false
 ```
@@ -76,3 +85,5 @@ That is where SpiceDB/AuthZed becomes much more valuable than local RBAC.
 ## Current Limitation
 
 The static browser demo is not yet wired to SpiceDB directly. That would require a backend service so the browser does not hold SpiceDB credentials. The CLI path exists first because it keeps credentials server-side and makes the authorization boundary explicit.
+
+Tool names use MCP-style dotted names in the app, such as `terraform.get_recent_changes`. SpiceDB object IDs cannot contain dots, so the CLI maps them to safe IDs such as `terraform_get_recent_changes` before checking permissions.

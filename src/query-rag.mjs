@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { cosineSimilarity, localEmbedding, openAIEmbedding } from "./lib.mjs";
 import { localCheck } from "./local-authz.mjs";
-import { SpiceDBClient } from "./spicedb-client.mjs";
+import { SpiceDBClient, toSpiceDBObjectId } from "./spicedb-client.mjs";
 
 const actor = process.argv[2] || "alice";
 const providerFlag = process.argv.find((arg) => arg.startsWith("--provider="));
@@ -61,7 +61,7 @@ try {
     const allowed = spiceDB
       ? await spiceDB.checkPermission({
           resourceType: "document",
-          resourceId: doc.id,
+          resourceId: toSpiceDBObjectId(doc.id),
           permission: "read",
           subjectId: actor,
         })

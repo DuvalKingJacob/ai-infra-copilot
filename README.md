@@ -30,6 +30,7 @@ npm run rag:query -- alice "What do we know about the production outage?"
 npm run rag:query -- bob "What do we know about the production outage?"
 npm run authz:check -- alice document:postmortem-platform-204 read --provider=local
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
+npm run authz:validate
 ```
 
 If `OPENAI_API_KEY` is set, `embeddings:build` uses the OpenAI embeddings API. Without it, the script uses a deterministic local embedding fallback so the project remains runnable without secrets.
@@ -84,6 +85,7 @@ docker compose up -d spicedb
 Load the schema and relationships:
 
 ```bash
+npm run authz:validate
 npm run authz:load
 ```
 
