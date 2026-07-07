@@ -140,7 +140,11 @@ To tie the demo back to platform engineering work, the repo includes a small Ter
 npm run terraform:review
 ```
 
-It reviews `data/terraform-plan.prod-network.json` and flags:
+The real Terraform sample lives in:
+
+`terraform/prod-network`
+
+The reviewer inspects `data/terraform-plan.prod-network.json`, which represents a risky proposed change against that Terraform shape, and flags:
 
 - Public security group ingress.
 - Wildcard IAM permissions.
