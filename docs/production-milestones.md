@@ -22,7 +22,7 @@ Why this matters:
 
 ## Milestone 2: SpiceDB/AuthZed
 
-Status: schema and relationship model added.
+Status: schema and relationship model added. Not yet wired into runtime checks.
 
 Files:
 
@@ -35,6 +35,11 @@ Why this matters:
 
 - Replaces local role checks with relationship-based authorization.
 - Directly maps the project to AuthZed's domain.
+
+Next step:
+
+- Add a CLI command that checks `document#read`, `tool#call`, and `proposal#approve` through SpiceDB.
+- Update the RAG query path so document filtering can use SpiceDB instead of local permission arrays.
 
 ## Milestone 3: Official Terraform MCP Server
 
@@ -49,6 +54,12 @@ Why this matters:
 
 - Moves from MCP-shaped mock tools to a real infrastructure MCP server.
 - Creates a natural demo of tool authorization and sensitive Terraform data boundaries.
+
+Next step:
+
+- Keep the first official Terraform MCP integration read-only.
+- Put it behind the same authorization gateway used for mock tools.
+- Leave workspace mutation disabled.
 
 ## Milestone 4: OIDC Authentication
 
@@ -71,4 +82,3 @@ Why:
 
 - Applying production infrastructure changes from a demo agent would be the wrong signal.
 - The stronger product decision is to stop at proposal and approval, then hand off to CI/CD or Terraform Cloud run approval.
-
