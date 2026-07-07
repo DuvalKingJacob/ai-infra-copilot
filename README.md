@@ -16,6 +16,10 @@ No install step is required.
 
 The static demo is the fastest walkthrough. The repo also includes optional Node.js scripts for testing permission-aware retrieval outside the browser.
 
+If you are not a Node.js developer, start with:
+
+`docs/local-validation-runbook.md`
+
 ```bash
 npm run embeddings:build
 npm run rag:query -- alice "What do we know about the production outage?"
