@@ -15,6 +15,18 @@ npm --version
 docker --version
 ```
 
+Use either path locally:
+
+```bash
+cd /Users/jacobplicque/Documents/Codex/2026-06-21/context-i-am-a-senior-tpmm/work/authzed-ai-infra-copilot
+```
+
+The old path also works as a compatibility symlink:
+
+```bash
+cd /Users/jacobplicque/Documents/Codex/2026-06-21/context-i-am-a-senior-tpmm/work/ai-infra-copilot
+```
+
 ## What Is Actually Running
 
 ### Browser Demo
@@ -107,10 +119,17 @@ brew install node
 
 If Docker commands fail, open Docker Desktop and wait for it to finish starting.
 
+The common error is:
+
+```text
+Cannot connect to the Docker daemon
+```
+
+That means Docker Desktop is not running yet.
+
 If SpiceDB checks fail, rerun:
 
 ```bash
 docker compose up -d spicedb
 npm run authz:load
 ```
-

@@ -18,21 +18,6 @@ if (!tool) {
   process.exit(1);
 }
 
-let allowed;
-if (provider === "spicedb") {
-  const client = new SpiceDBClient();
-  allowed = await client.checkPermission({
-    resourceType: "tool",
-    resourceId: toolName,
-    permission: "call",
-    subjectId: actor,
-  });
-} else if (provider === "local") {
-  allowed = await localCheck({ actor, resource: `tool:${toolName}`, permission: "call" });
-} else {
-  throw new Error(`Unknown provider '${provider}'.`);
-}
-
 const readOnlyResults = {
   "terraform.get_recent_changes": {
     mode: "read-only",
@@ -57,19 +42,39 @@ const readOnlyResults = {
   },
 };
 
-console.log(
-  JSON.stringify(
-    {
-      actor,
-      tool: toolName,
-      provider,
-      requiredPermission: tool.permission,
-      fallbackPermission: tool.fallbackPermission || null,
-      decision: allowed ? "allow" : "deny",
-      output: allowed ? readOnlyResults[toolName] : null,
-      denialReason: allowed ? null : "Actor is not authorized to call this MCP-style tool.",
-    },
-    null,
-    2
-  )
-);
+try {
+  let allowed;
+  if (provider === "spicedb") {
+    const client = new SpiceDBClient();
+    allowed = await client.checkPermission({
+      resourceType: "tool",
+      resourceId: toolName,
+      permission: "call",
+      subjectId: actor,
+    });
+  } else if (provider === "local") {
+    allowed = await localCheck({ actor, resource: `tool:${toolName}`, permission: "call" });
+  } else {
+    throw new Error(`Unknown provider '${provider}'.`);
+  }
+
+  console.log(
+    JSON.stringify(
+      {
+        actor,
+        tool: toolName,
+        provider,
+        requiredPermission: tool.permission,
+        fallbackPermission: tool.fallbackPermission || null,
+        decision: allowed ? "allow" : "deny",
+        output: allowed ? readOnlyResults[toolName] : null,
+        denialReason: allowed ? null : "Actor is not authorized to call this MCP-style tool.",
+      },
+      null,
+      2
+    )
+  );
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}

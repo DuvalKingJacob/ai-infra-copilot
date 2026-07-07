@@ -20,6 +20,10 @@ If you are not a Node.js developer, start with:
 
 `docs/local-validation-runbook.md`
 
+The local repo folder is:
+
+`work/authzed-ai-infra-copilot`
+
 ```bash
 npm run embeddings:build
 npm run rag:query -- alice "What do we know about the production outage?"

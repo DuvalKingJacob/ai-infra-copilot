@@ -10,18 +10,23 @@ const schema = await loadSchema();
 const relationshipStrings = await loadRelationshipStrings();
 const relationships = relationshipStrings.map(parseRelationship);
 
-await client.writeSchema(schema);
-await client.writeRelationships(relationships);
+try {
+  await client.writeSchema(schema);
+  await client.writeRelationships(relationships);
 
-console.log(
-  JSON.stringify(
-    {
-      provider: "spicedb",
-      schema: "loaded",
-      relationships: relationships.length,
-      endpoint: client.endpoint,
-    },
-    null,
-    2
-  )
-);
+  console.log(
+    JSON.stringify(
+      {
+        provider: "spicedb",
+        schema: "loaded",
+        relationships: relationships.length,
+        endpoint: client.endpoint,
+      },
+      null,
+      2
+    )
+  );
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}

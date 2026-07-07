@@ -9,32 +9,37 @@ if (!actor || !resource || !permission) {
   process.exit(1);
 }
 
-let allowed;
-if (provider === "local") {
-  allowed = await localCheck({ actor, resource, permission });
-} else if (provider === "spicedb") {
-  const { resourceType, resourceId } = parseResource(resource);
-  const client = new SpiceDBClient();
-  allowed = await client.checkPermission({
-    resourceType,
-    resourceId,
-    permission,
-    subjectId: actor,
-  });
-} else {
-  throw new Error(`Unknown provider '${provider}'.`);
-}
-
-console.log(
-  JSON.stringify(
-    {
-      actor,
-      resource,
+try {
+  let allowed;
+  if (provider === "local") {
+    allowed = await localCheck({ actor, resource, permission });
+  } else if (provider === "spicedb") {
+    const { resourceType, resourceId } = parseResource(resource);
+    const client = new SpiceDBClient();
+    allowed = await client.checkPermission({
+      resourceType,
+      resourceId,
       permission,
-      decision: allowed ? "allow" : "deny",
-      provider,
-    },
-    null,
-    2
-  )
-);
+      subjectId: actor,
+    });
+  } else {
+    throw new Error(`Unknown provider '${provider}'.`);
+  }
+
+  console.log(
+    JSON.stringify(
+      {
+        actor,
+        resource,
+        permission,
+        decision: allowed ? "allow" : "deny",
+        provider,
+      },
+      null,
+      2
+    )
+  );
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}

@@ -52,8 +52,10 @@ if (index.provider === "openai") {
   queryEmbedding = localEmbedding(query, index.embeddings[0]?.embedding.length || 96);
 }
 const spiceDB = authzProvider === "spicedb" ? new SpiceDBClient() : null;
-const scored = await Promise.all(
-  docs.map(async (doc) => {
+let scored;
+try {
+  scored = await Promise.all(
+    docs.map(async (doc) => {
     const indexed = index.embeddings.find((entry) => entry.docId === doc.id);
     const score = indexed ? cosineSimilarity(queryEmbedding, indexed.embedding) : 0;
     const allowed = spiceDB
@@ -72,8 +74,12 @@ const scored = await Promise.all(
       requiredPermission: doc.permission,
       decision: allowed ? "allow" : "deny",
     };
-  })
-);
+    })
+  );
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
 
 const ranked = scored
   .sort((a, b) => b.score - a.score)

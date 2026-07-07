@@ -13,14 +13,22 @@ export class SpiceDBClient {
   }
 
   async request(path, body) {
-    const response = await fetch(`${this.endpoint}${path}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${this.presharedKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+    let response;
+    try {
+      response = await fetch(`${this.endpoint}${path}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.presharedKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+    } catch (error) {
+      throw new Error(
+        `Could not reach SpiceDB at ${this.endpoint}. Start Docker Desktop, then run: docker compose up -d spicedb`,
+        { cause: error }
+      );
+    }
 
     const text = await response.text();
     const payload = text ? JSON.parse(text) : {};
