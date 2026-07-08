@@ -21,6 +21,7 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
+private-notes/
 
 # Keep provider selections local for this demo repo.
 **/.terraform.lock.hcl

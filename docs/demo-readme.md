@@ -4,7 +4,7 @@ Open `ai-infra-copilot-demo.html` in a browser. No install step is required.
 
 ## What It Demonstrates
 
-This is a portfolio-oriented demo for AI-native infrastructure workflows. It shows how a platform assistant can combine:
+This is a local demo for AI-native infrastructure workflows. It shows how a platform assistant can combine:
 
 - Permission-aware RAG over infrastructure docs.
 - MCP-style Terraform and Kubernetes tools.
@@ -55,4 +55,3 @@ The assistant can inspect and propose. It cannot directly apply a production rol
 - Persist audit events.
 - Add OpenTelemetry tracing.
 - Add memory with retention, deletion, and authorization controls.
-

@@ -1,6 +1,6 @@
 # Architecture Review: 2026-07-07
 
-This review summarizes where the project is today and what would make it feel more real to an AuthZed, AI infrastructure, or DevRel hiring audience.
+This review summarizes where the project is today and what would make it feel more useful for AI infrastructure and platform engineering audiences.
 
 ## Current State
 
@@ -10,7 +10,7 @@ The project has three layers:
 2. Runnable CLI experiments.
 3. Production integration scaffolding.
 
-That is a good shape for a portfolio project, but not all layers are equally real yet.
+That is a good shape for a learning project, but not all layers are equally real yet.
 
 ## What Is Real Today
 
@@ -61,7 +61,7 @@ Files:
 - `src/authz-check.mjs`
 - `src/query-rag.mjs`
 
-This is now the strongest AuthZed-aligned implementation path. RAG filtering can use SpiceDB checks from the CLI.
+This is now the strongest authorization implementation path. RAG filtering can use SpiceDB checks from the CLI.
 
 Recommended first check:
 
@@ -124,7 +124,7 @@ That is a product and security decision, not a missing feature.
 | MCP | Medium | Replace mock Terraform output with official Terraform MCP read-only call |
 | Agents | Medium | Make planner stages explicit in code |
 | Authorization | Medium-high | Wire browser/backend path to SpiceDB |
-| AuthZed relevance | High | Extend schema to team/tenant relationships |
+| Relationship-based authorization | High | Extend schema to team/tenant relationships |
 | OIDC | Low | Keep as production plan for now |
 | Production mutation | Correctly absent | Keep absent |
 | Auditability | Medium-high | Persist audit events from CLI/demo |
@@ -155,7 +155,7 @@ The CLI now supports this path. The next upgrade is to make the UI use it throug
 
 ## Why This Step Matters
 
-The SpiceDB CLI path already makes the project meaningfully more real for AuthZed:
+The SpiceDB CLI path already makes the project meaningfully more real:
 
 - It turns the authorization story from conceptual to executable.
 - It shows that RAG context filtering can be backed by relationship-based authorization.

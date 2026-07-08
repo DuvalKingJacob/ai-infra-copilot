@@ -34,7 +34,7 @@ npm run terraform:review
 
 ## Why This Exists
 
-The point is not to deploy AWS resources from this portfolio repo. The point is to make the Terraform review scenario concrete enough for platform engineering audiences:
+The point is not to deploy AWS resources from this repo. The point is to make the Terraform review scenario concrete enough for platform engineering audiences:
 
 - plan
 - inspect blast radius

@@ -2,7 +2,7 @@
 
 An AI-native platform engineering assistant that answers infrastructure questions from authorized docs, inspects Terraform and Kubernetes context through MCP-style tools, proposes safe actions, and requires approval before production-impacting work.
 
-This project is a portfolio demo for AI infrastructure, DevRel, and TPMM conversations. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how I think about AI-native developer workflows as production systems with context boundaries, tool permissions, action gates, and auditability.
+This project is a hands-on exploration of AI-native infrastructure workflows. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how AI-assisted infrastructure workflows behave as production systems with context boundaries, tool permissions, action gates, and auditability.
 
 ## Demo
 
@@ -179,6 +179,14 @@ See:
 
 `docs/agent-workflow.md`
 
+## Terraform AI Learning Roadmap
+
+This repo is also a way to explore AI-assisted Terraform workflows without treating agents as production operators.
+
+See:
+
+`docs/terraform-ai-learning-roadmap.md`
+
 ## Product Scenario
 
 A platform engineer asks:
@@ -314,7 +322,7 @@ That is intentional. The product stance is that an agent can inspect, explain, a
 
 ## Current Status
 
-This is still a portfolio project, not a production service. But it now includes concrete paths for the gaps a reviewer would naturally ask about:
+This is still an exploration, not a production service. But it includes concrete paths for the gaps an infrastructure team would naturally ask about:
 
 - Real embeddings: `src/build-embeddings.mjs`
 - SpiceDB/AuthZed: `spicedb/schema.zed`

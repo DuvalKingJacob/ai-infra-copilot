@@ -37,7 +37,7 @@ Files:
 Why this matters:
 
 - Replaces local role checks with relationship-based authorization.
-- Directly maps the project to AuthZed's domain.
+- Directly maps the project to relationship-based authorization for AI workflows.
 
 Run:
 

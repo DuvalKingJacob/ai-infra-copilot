@@ -4,7 +4,7 @@ This project currently uses MCP-style mock tools in the browser demo. The next i
 
 ## Why This Matters
 
-Terraform is a natural fit for this portfolio project because it connects AI agents to infrastructure state, change history, modules, workspaces, and eventually plans.
+Terraform is a natural fit for this project because it connects AI agents to infrastructure state, change history, modules, workspaces, and eventually plans.
 
 It is also a strong authorization story:
 
@@ -53,4 +53,3 @@ See:
 ## Non-Goal
 
 The demo should not directly apply Terraform changes from an LLM response. Approved actions should hand off to a controlled workflow such as CI/CD, a change-management system, or Terraform Cloud run approval.
-
