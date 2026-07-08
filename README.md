@@ -31,6 +31,7 @@ npm run rag:query -- bob "What do we know about the production outage?"
 npm run authz:check -- alice document:postmortem-platform-204 read --provider=local
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
 npm run terraform:review
+npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
 npm run authz:validate
 ```
 
@@ -55,6 +56,7 @@ This demo explores one core idea:
 - A distinction between answering, proposing, and acting.
 - Human approval before production-impacting actions.
 - Audit logs across retrieval, tool use, proposal, and approval.
+- A deterministic agent workflow that plans, retrieves context, calls tools, proposes actions, and emits an audit trail.
 
 ## Implementation Tracks
 
@@ -155,6 +157,27 @@ The point is not to replace policy-as-code. The point is to show how an AI-nativ
 See:
 
 `docs/terraform-plan-review.md`
+
+## Agent Workflow
+
+The repo includes a small deterministic agent runner:
+
+```bash
+npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+```
+
+With SpiceDB running:
+
+```bash
+npm run agent:run -- alice "Should we apply the Terraform change?" --provider=spicedb
+npm run agent:run -- bob "Should we apply the Terraform change?" --provider=spicedb
+```
+
+It demonstrates planning, permission-aware retrieval, authorized tool calls, Terraform risk review, action proposal, approval boundary, and audit output.
+
+See:
+
+`docs/agent-workflow.md`
 
 ## Product Scenario
 

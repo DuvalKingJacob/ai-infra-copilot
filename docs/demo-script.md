@@ -74,3 +74,19 @@ Point out:
 - The output is a review and recommendation, not an apply.
 - This maps to familiar platform engineering workflows: plan, review, approve, audit.
 
+## 5. Agent Workflow
+
+Run:
+
+```bash
+npm run agent:run -- alice "Should we apply the Terraform change?" --provider=spicedb
+npm run agent:run -- bob "Should we apply the Terraform change?" --provider=spicedb
+```
+
+Point out:
+
+- The agent plans the workflow instead of answering in one step.
+- It retrieves docs and calls tools only through authorization checks.
+- Alice can get Terraform review output.
+- Bob is denied production Terraform tool output.
+- The workflow produces a proposal and audit trail, not a production mutation.

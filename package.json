@@ -6,6 +6,7 @@
   "description": "Portfolio demo for permission-aware RAG, MCP-style infrastructure tools, and AI agent authorization.",
   "scripts": {
     "embeddings:build": "node src/build-embeddings.mjs",
+    "agent:run": "node src/agent-workflow.mjs",
     "rag:query": "node src/query-rag.mjs",
     "authz:load": "node src/load-spicedb.mjs",
     "authz:check": "node src/authz-check.mjs",
