@@ -126,7 +126,7 @@ The product experience should make risk visible.
 
 ## What I Built
 
-I built a small local demo called the AI-Native Infrastructure Copilot.
+I built a small local demo around AI-assisted infrastructure operations.
 
 It includes:
 
@@ -189,4 +189,3 @@ The most important question is not:
 It is:
 
 > Can this assistant participate safely in the workflows engineers already trust?
-

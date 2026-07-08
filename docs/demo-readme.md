@@ -1,4 +1,4 @@
-# AI-Native Infrastructure Copilot Demo
+# AI-Assisted Infrastructure Operations Demo
 
 Open `ai-infra-copilot-demo.html` in a browser. No install step is required.
 

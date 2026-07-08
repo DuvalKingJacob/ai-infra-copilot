@@ -1,8 +1,8 @@
-# AI-Native Infrastructure Copilot
+# Reference Architecture For AI-Assisted Infrastructure Operations
 
-An AI-native platform engineering assistant that answers infrastructure questions from authorized docs, inspects Terraform and Kubernetes context through MCP-style tools, proposes safe actions, and requires approval before production-impacting work.
+Permission-aware RAG, MCP-style tool access, Terraform plan review, agent workflows, approval gates, and auditability for platform teams.
 
-This project is a hands-on exploration of AI-native infrastructure workflows. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how AI-assisted infrastructure workflows behave as production systems with context boundaries, tool permissions, action gates, and auditability.
+This project explores what trustworthy AI-assisted infrastructure operations could look like. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how AI-assisted infrastructure workflows behave as production systems with context boundaries, tool permissions, action gates, and auditability.
 
 ## Demo
 
@@ -46,6 +46,10 @@ Infrastructure teams need something different. A useful platform assistant needs
 This demo explores one core idea:
 
 > Once an AI assistant can retrieve internal context and call operational tools, authorization becomes part of the product architecture.
+
+For the broader positioning, see:
+
+`docs/reference-architecture-positioning.md`
 
 ## What It Demonstrates
 
@@ -193,7 +197,7 @@ A platform engineer asks:
 
 > Check whether the payments service is healthy and whether there were recent Terraform changes.
 
-The copilot:
+The workflow:
 
 1. Identifies the actor.
 2. Retrieves only documents the actor can access.
@@ -206,7 +210,7 @@ If the user asks:
 
 > Apply the rollback to production.
 
-The copilot does not execute directly. It creates a rollback proposal and requires approval from a user with the right permission.
+The workflow does not execute directly. It creates a rollback proposal and requires approval from a user with the right permission.
 
 ## Demo Personas
 
@@ -332,4 +336,4 @@ This is still an exploration, not a production service. But it includes concrete
 
 ## Core Takeaway
 
-AI-native developer workflows are not just model problems. They are also authorization, context, tool-use, governance, and operational trust problems.
+AI-assisted infrastructure workflows are not just model problems. They are also authorization, context, tool-use, governance, and operational trust problems.

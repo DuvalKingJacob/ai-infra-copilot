@@ -4,7 +4,7 @@ This roadmap keeps the project useful for Terraform and platform engineering lea
 
 ## Goal
 
-Explore AI-native infrastructure workflows through Terraform, MCP-style tools, RAG, authorization, approval, and auditability.
+Explore AI-assisted infrastructure workflows through Terraform, MCP-style tools, RAG, authorization, approval, and auditability.
 
 The focus is not autonomous infrastructure mutation. The focus is safe assistance:
 

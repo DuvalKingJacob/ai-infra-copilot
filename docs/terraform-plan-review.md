@@ -4,7 +4,7 @@ This repo includes a small Terraform plan review path to tie the AI infrastructu
 
 ## Goal
 
-Show that an AI-native infrastructure copilot should be able to inspect and explain Terraform risk, but not directly apply changes.
+Show that an AI-assisted infrastructure workflow should be able to inspect and explain Terraform risk, but not directly apply changes.
 
 ## Files
 
