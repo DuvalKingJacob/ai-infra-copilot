@@ -1,0 +1,116 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "workspace": "app-platform-prod",
+  "run_id": "run-app-platform-2026-07-08",
+  "resource_changes": [
+    {
+      "address": "aws_lb.api",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "api",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "internal": true,
+          "subnets": ["subnet-private-a", "subnet-private-b"],
+          "tags": {
+            "Service": "payments-api",
+            "Environment": "production",
+            "Owner": "platform",
+            "ManagedBy": "terraform"
+          }
+        },
+        "after": {
+          "internal": false,
+          "subnets": ["subnet-public-a", "subnet-public-b"],
+          "tags": {
+            "Service": "payments-api",
+            "ManagedBy": "terraform"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_db_instance.primary",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "name": "primary",
+      "change": {
+        "actions": ["delete", "create"],
+        "before": {
+          "identifier": "payments-primary",
+          "instance_class": "db.r6g.large",
+          "deletion_protection": true,
+          "backup_retention_period": 7,
+          "storage_encrypted": true,
+          "tags": {
+            "Service": "payments-api",
+            "Environment": "production",
+            "Owner": "platform",
+            "ManagedBy": "terraform"
+          }
+        },
+        "after": {
+          "identifier": "payments-primary",
+          "instance_class": "db.t4g.micro",
+          "deletion_protection": false,
+          "backup_retention_period": 1,
+          "storage_encrypted": true,
+          "tags": {
+            "Service": "payments-api",
+            "ManagedBy": "terraform"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_service.api",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "api",
+      "change": {
+        "actions": ["update"],
+        "before": {
+          "desired_count": 6,
+          "deployment_minimum_healthy_percent": 100,
+          "tags": {
+            "Service": "payments-api",
+            "Environment": "production",
+            "Owner": "platform",
+            "ManagedBy": "terraform"
+          }
+        },
+        "after": {
+          "desired_count": 1,
+          "deployment_minimum_healthy_percent": 50,
+          "tags": {
+            "Service": "payments-api",
+            "Environment": "production",
+            "ManagedBy": "terraform"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.api_latency",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "api_latency",
+      "change": {
+        "actions": ["delete"],
+        "before": {
+          "alarm_name": "payments-api-p95-latency",
+          "tags": {
+            "Service": "payments-api",
+            "Environment": "production",
+            "Owner": "platform",
+            "ManagedBy": "terraform"
+          }
+        },
+        "after": null
+      }
+    }
+  ]
+}
+

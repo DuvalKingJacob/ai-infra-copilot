@@ -1,8 +1,41 @@
-# Reference Architecture For AI-Assisted Infrastructure Operations
+# Reference Architecture For AI-Assisted Terraform Operations
 
-Permission-aware RAG, MCP-style tool access, Terraform plan review, agent workflows, approval gates, and auditability for platform teams.
+Terraform-native plan review, permission-aware RAG, MCP-style tool access, Sentinel-style policy checks, agent workflows, approval gates, and auditability for platform teams.
 
-This project explores what trustworthy AI-assisted infrastructure operations could look like. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how AI-assisted infrastructure workflows behave as production systems with context boundaries, tool permissions, action gates, and auditability.
+This project explores what trustworthy AI-assisted Terraform operations could look like. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how AI-assisted infrastructure workflows behave as production systems with Terraform plans, context boundaries, tool permissions, policy checks, action gates, and auditability.
+
+Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This project shows how an assistant can summarize infrastructure changes, identify risky modifications, and provide contextual recommendations while keeping humans in control of deployment decisions.
+
+## Terraform-Native Hero Workflow
+
+The primary workflow is:
+
+```bash
+terraform -chdir=terraform/prod-network plan -out=tfplan
+terraform -chdir=terraform/prod-network show -json tfplan > data/plan.json
+npm run terraform:review -- data/plan.json
+npm run terraform:report -- data/plan.json outputs/terraform-plan-review-report.md
+```
+
+For a local demo without cloud credentials, use the included sample plan:
+
+```bash
+npm run terraform:review
+npm run terraform:report
+```
+
+That produces:
+
+`outputs/terraform-plan-review-report.md`
+
+For a richer SRE-style application platform review:
+
+```bash
+npm run terraform:review -- data/terraform-plan.app-platform.json
+npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
+```
+
+The JavaScript is implementation detail. The practitioner story is Terraform plan -> risk review -> policy signal -> approval boundary -> controlled apply.
 
 ## Demo
 
@@ -31,6 +64,7 @@ npm run rag:query -- bob "What do we know about the production outage?"
 npm run authz:check -- alice document:postmortem-platform-204 read --provider=local
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
 npm run terraform:review
+npm run terraform:report
 npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
 npm run authz:validate
 ```
@@ -53,8 +87,10 @@ For the broader positioning, see:
 
 ## What It Demonstrates
 
+- Terraform-native plan review over plan JSON.
 - Permission-aware RAG over infrastructure documents.
 - MCP-style Terraform and Kubernetes tool calls.
+- Sentinel-style policy checks for risky infrastructure changes.
 - Authorization before document context reaches the model.
 - Authorization before tool results are exposed.
 - A distinction between answering, proposing, and acting.
@@ -140,15 +176,24 @@ The intended production shape is:
 
 ## Terraform Plan Review
 
-To tie the demo back to platform engineering work, the repo includes a small Terraform plan reviewer:
+To tie the demo directly to Terraform practitioner work, the repo includes a small Terraform plan reviewer:
 
 ```bash
 npm run terraform:review
+npm run terraform:report
 ```
 
 The real Terraform sample lives in:
 
 `terraform/prod-network`
+
+A richer application platform scenario lives in:
+
+`terraform/app-platform`
+
+A workspace-to-Stacks migration scenario lives in:
+
+`terraform/workspace-to-stacks`
 
 The reviewer inspects `data/terraform-plan.prod-network.json`, which represents a risky proposed change against that Terraform shape, and flags:
 
@@ -156,7 +201,32 @@ The reviewer inspects `data/terraform-plan.prod-network.json`, which represents 
 - Wildcard IAM permissions.
 - Monitoring deletion.
 
-The point is not to replace policy-as-code. The point is to show how an AI-native workflow can explain infrastructure risk, require authorization to inspect production plans, and keep apply behind human approval.
+The report is written to:
+
+`outputs/terraform-plan-review-report.md`
+
+The policy examples live in:
+
+`policies/sentinel`
+
+Sentinel local setup notes live in:
+
+`docs/sentinel-local-setup.md`
+
+HCP Terraform and Stacks planning notes live in:
+
+`docs/hcp-terraform-stacks-plan.md`
+
+The richer HashiBank Stacks companion scenario is documented at:
+
+`docs/hashibank-stacks-companion.md`
+
+The point is not to replace policy-as-code. The point is to show how an AI-native workflow can explain infrastructure risk, require authorization to inspect production plans, surface Sentinel-style policy signals, and keep apply behind human approval.
+
+SpiceDB/AuthZed and Sentinel-style policy sit at different layers:
+
+- SpiceDB/AuthZed: is this actor allowed to inspect this plan or call this tool?
+- Sentinel-style policy: is this Terraform change acceptable?
 
 See:
 

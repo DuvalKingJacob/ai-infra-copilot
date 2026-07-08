@@ -1,0 +1,10 @@
+import "tfplan/v2" as tfplan
+
+violations = filter tfplan.resource_changes as _, change {
+	change.change.actions contains "delete" and
+		change.change.actions contains "create"
+}
+
+main = rule {
+	length(violations) is 0
+}

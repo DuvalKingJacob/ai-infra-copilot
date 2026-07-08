@@ -1,0 +1,12 @@
+import "json"
+import "strings"
+import "tfplan/v2" as tfplan
+
+violations = filter tfplan.resource_changes as _, change {
+	strings.contains(change.type, "iam") and
+		strings.contains(json.marshal(change.change.after), "\"*\"")
+}
+
+main = rule {
+	length(violations) is 0
+}

@@ -1,0 +1,12 @@
+import "tfplan/v2" as tfplan
+
+violations = filter tfplan.resource_changes as _, change {
+	change.type is "aws_security_group" and
+		any change.change.after.ingress else [] as ingress {
+			ingress.cidr_blocks contains "0.0.0.0/0"
+		}
+}
+
+main = rule {
+	length(violations) is 0
+}

@@ -1,0 +1,18 @@
+import "tfplan/v2" as tfplan
+
+required_tags = [
+	"Environment",
+	"Owner",
+	"ManagedBy",
+]
+
+violations = filter tfplan.resource_changes as _, change {
+	change.change.after else null is not null and
+		any required_tags as tag {
+			tag not in keys(change.change.after.tags else {})
+		}
+}
+
+main = rule {
+	length(violations) is 0
+}

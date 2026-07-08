@@ -1,0 +1,11 @@
+import "tfplan/v2" as tfplan
+
+violations = filter tfplan.resource_changes as _, change {
+	change.type is "aws_lb" and
+		change.change.before.internal is true and
+		change.change.after.internal is false
+}
+
+main = rule {
+	length(violations) is 0
+}

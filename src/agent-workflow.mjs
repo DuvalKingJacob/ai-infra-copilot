@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { cosineSimilarity, localEmbedding } from "./lib.mjs";
 import { localCheck } from "./local-authz.mjs";
 import { SpiceDBClient, toSpiceDBObjectId } from "./spicedb-client.mjs";
+import { reviewTerraformPlan } from "./terraform-plan-reviewer.mjs";
 
 const actor = process.argv[2] || "alice";
 const providerFlag = process.argv.find((arg) => arg.startsWith("--provider="));
@@ -80,47 +81,13 @@ async function callTool(toolName) {
   };
 }
 
-function includesWildcard(value) {
-  if (Array.isArray(value)) return value.some(includesWildcard);
-  if (value && typeof value === "object") return Object.values(value).some(includesWildcard);
-  return value === "*" || value === "0.0.0.0/0";
-}
-
-function reviewTerraformPlan() {
-  const findings = plan.resource_changes.flatMap((change) => {
-    const risks = [];
-    const actions = change.change?.actions || [];
-    const after = change.change?.after || {};
-
-    if (change.type === "aws_security_group" && includesWildcard(after.ingress || [])) {
-      risks.push({ severity: "critical", reason: "Introduces public ingress." });
-    }
-
-    if (change.type.includes("iam") && includesWildcard(after.policy || after)) {
-      risks.push({ severity: "critical", reason: "Introduces wildcard IAM permissions." });
-    }
-
-    if (actions.includes("delete") && change.type.includes("alarm")) {
-      risks.push({ severity: "high", reason: "Deletes monitoring during a production change." });
-    }
-
-    return risks.map((risk) => ({ address: change.address, ...risk }));
-  });
-
-  return {
-    workspace: plan.workspace,
-    findings,
-    recommendation: findings.length > 0 ? "block_apply_pending_review" : "allow_plan_with_review",
-  };
-}
-
 function toolOutput(toolName) {
   if (toolName === "terraform.get_recent_changes") {
     return "prod-network changed aws_security_group.payments_ingress and deploy-bot IAM permissions.";
   }
 
   if (toolName === "terraform.review_plan") {
-    return reviewTerraformPlan();
+    return reviewTerraformPlan(plan);
   }
 
   if (toolName === "terraform.create_rollback_plan") {

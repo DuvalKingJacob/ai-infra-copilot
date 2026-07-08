@@ -1,0 +1,11 @@
+import "tfplan/v2" as tfplan
+
+violations = filter tfplan.resource_changes as _, change {
+	change.type is "aws_db_instance" and
+		change.change.before.deletion_protection is true and
+		change.change.after.deletion_protection is false
+}
+
+main = rule {
+	length(violations) is 0
+}

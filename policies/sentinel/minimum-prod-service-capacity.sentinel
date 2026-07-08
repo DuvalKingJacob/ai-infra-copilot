@@ -1,0 +1,11 @@
+import "tfplan/v2" as tfplan
+
+violations = filter tfplan.resource_changes as _, change {
+	change.type is "aws_ecs_service" and
+		change.change.before.desired_count >= 3 and
+		change.change.after.desired_count < 2
+}
+
+main = rule {
+	length(violations) is 0
+}
