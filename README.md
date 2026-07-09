@@ -10,9 +10,9 @@ The answer here is intentionally conservative: the assistant can summarize plans
 
 Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This repo shows how an assistant can summarize infrastructure changes, identify risky modifications, and produce a review artifact while keeping humans in control of deployment decisions.
 
-## 30-Second Demo Path
+## 30-Second Review Path
 
-If you only do one thing, run the local Terraform review path:
+If you only do one thing, run the local review path against the included Terraform plan JSON fixture:
 
 ```bash
 make validate
@@ -20,7 +20,7 @@ make report-app
 open outputs/app-platform-plan-review-report.md
 ```
 
-This validates the demo, reviews a realistic app-platform Terraform plan, and opens the generated report showing risk findings, blast radius, policy signals, and the human approval boundary.
+This validates the Terraform demo files, reviews a realistic app-platform plan produced in the same JSON shape as `terraform show -json`, and opens the generated report showing risk findings, blast radius, policy signals, and the human approval boundary.
 
 ## What This Is
 
@@ -40,7 +40,7 @@ The goal is not to show off every AI framework. The goal is to make the Terrafor
 
 ## Terraform-Native Hero Workflow
 
-The primary workflow is:
+The primary workflow starts with Terraform creating the plan, then passes the plan JSON into the reviewer:
 
 ```bash
 terraform -chdir=terraform/prod-network plan -out=tfplan
@@ -48,6 +48,8 @@ terraform -chdir=terraform/prod-network show -json tfplan > data/plan.json
 make review PLAN=data/plan.json
 make report PLAN=data/plan.json REPORT=outputs/terraform-plan-review-report.md
 ```
+
+`make` is only the local demo wrapper for the review/report steps. Terraform still owns the infrastructure workflow: configuration, plan creation, plan JSON, and controlled apply. In HCP Terraform or Terraform Enterprise, the equivalent integration point would be the run, plan output, policy checks, run tasks, approvals, and audit trail.
 
 For a local demo without cloud credentials, use the included sample plan:
 
