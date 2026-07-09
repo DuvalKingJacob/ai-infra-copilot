@@ -1,0 +1,4 @@
+# Keep GitHub language stats focused on the infrastructure reference architecture.
+# These files are local demo/reviewer scaffolding, not the Terraform surface area.
+src/** -linguist-detectable
+demo/** -linguist-detectable
