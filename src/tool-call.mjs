@@ -29,7 +29,7 @@ const readOnlyResults = {
   "terraform.review_plan": {
     mode: "read-only-review",
     result:
-      "Terraform plan review is available through npm run terraform:review. The gateway authorizes access before plan findings are returned.",
+      "Terraform plan review is available through make review. The gateway authorizes access before plan findings are returned.",
     officialMcpHandoff:
       "In production, Terraform MCP would provide plan/workspace context after this authorization check.",
   },

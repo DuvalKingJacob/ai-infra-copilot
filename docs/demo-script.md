@@ -65,7 +65,7 @@ This is the product lesson:
 Run:
 
 ```bash
-npm run terraform:review
+make review
 ```
 
 Point out:
@@ -79,8 +79,8 @@ Point out:
 Run:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=spicedb
-npm run agent:run -- bob "Should we apply the Terraform change?" --provider=spicedb
+node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=spicedb
+node src/agent-workflow.mjs bob "Should we apply the Terraform change?" --provider=spicedb
 ```
 
 Point out:

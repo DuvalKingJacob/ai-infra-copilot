@@ -1,17 +1,18 @@
 # Local Validation Runbook
 
-This repo uses small Node.js scripts, but you do not need to be a Node.js developer to run the demo. Treat the commands as project utilities.
+This repo uses small Node.js scripts internally, but the practitioner-facing demo uses `make` targets. Treat the Node scripts as implementation details.
 
 ## What You Need Installed
 
-- Node.js, which includes `npm`.
+- Node.js, used by the local helper scripts.
+- `make`, included with the macOS command line tools.
 - Docker Desktop, for running SpiceDB locally.
 
 Check:
 
 ```bash
 node --version
-npm --version
+make --version
 docker --version
 ```
 
@@ -52,8 +53,7 @@ docker compose up -d spicedb
 Load schema and relationships:
 
 ```bash
-npm run authz:validate
-npm run authz:load
+make authz-load
 ```
 
 Validate:
@@ -76,13 +76,12 @@ What exists today:
 
 - `mcp/terraform-mcp.example.json`: official Terraform MCP Server config.
 - `src/tool-call.mjs`: authorization gateway for MCP-style tool calls.
-- `npm run tool:call`: validates tool authorization before returning read-only Terraform-shaped output.
+- `make tool-check-local`: validates tool authorization before returning read-only Terraform-shaped output.
 
 Validate the gateway:
 
 ```bash
-npm run tool:call -- alice terraform.get_recent_changes --provider=local
-npm run tool:call -- bob terraform.get_recent_changes --provider=local
+make tool-check-local
 ```
 
 Expected:
@@ -104,13 +103,13 @@ npm run tool:call -- bob terraform.get_recent_changes --provider=spicedb
 ## Quick Full Check
 
 ```bash
-npm run check
+make validate
 npm run authz:validate
 npm run embeddings:build
 npm run rag:query -- alice "What do we know about the production outage?"
 npm run tool:call -- alice terraform.get_recent_changes --provider=local
-npm run terraform:review
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+make review
+make agent
 ```
 
 ## Troubleshooting

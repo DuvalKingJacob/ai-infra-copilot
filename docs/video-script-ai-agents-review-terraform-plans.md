@@ -72,7 +72,7 @@ Say:
 Run:
 
 ```bash
-npm run terraform:review
+make review
 ```
 
 Say:
@@ -105,7 +105,7 @@ Say:
 Run:
 
 ```bash
-npm run terraform:review -- data/terraform-plan.app-platform.json
+make review-app
 ```
 
 Call out expected findings:
@@ -130,7 +130,7 @@ Say:
 Run:
 
 ```bash
-npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
+make report-app
 ```
 
 Open:
@@ -184,7 +184,7 @@ Say:
 Optional command:
 
 ```bash
-PATH="/Users/jacobplicque/Documents/Codex/bin:$PATH" sentinel fmt -check policies/sentinel/*.sentinel
+make sentinel-check
 ```
 
 Say:
@@ -196,15 +196,13 @@ Say:
 If SpiceDB is running, run:
 
 ```bash
-npm run tool:call -- alice terraform.review_plan --provider=spicedb
-npm run tool:call -- bob terraform.review_plan --provider=spicedb
+make tool-check
 ```
 
 If SpiceDB is not running, run:
 
 ```bash
-npm run tool:call -- alice terraform.review_plan --provider=local
-npm run tool:call -- bob terraform.review_plan --provider=local
+make tool-check-local
 ```
 
 Say:
@@ -224,7 +222,7 @@ Connect to MCP:
 Run:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+make agent
 ```
 
 Say:
@@ -283,15 +281,14 @@ Say:
 ## Demo Commands
 
 ```bash
-npm run check
-npm run terraform:review
-npm run terraform:report
-npm run terraform:review -- data/terraform-plan.app-platform.json
-npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
-PATH="/Users/jacobplicque/Documents/Codex/bin:$PATH" sentinel fmt -check policies/sentinel/*.sentinel
-npm run tool:call -- alice terraform.review_plan --provider=local
-npm run tool:call -- bob terraform.review_plan --provider=local
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+make validate
+make review
+make report
+make review-app
+make report-app
+make sentinel-check
+make tool-check-local
+make agent
 ```
 
 ## Optional Live HCP Terraform Commands
@@ -312,4 +309,3 @@ tfctl api /runs/RUN_ID/policy-checks --jq '.data[] | {id: .id, status: .attribut
 - Avoid implying the assistant is making final approval decisions.
 - Avoid live HCP Terraform dependency unless auth and workspace names are confirmed before recording.
 - Use `app-platform` as the main demo because it feels like real SRE/platform work.
-

@@ -25,18 +25,18 @@ The demo should make four ideas obvious:
 From the repo root:
 
 ```bash
-npm run check
-npm run terraform:review
-npm run terraform:report
-npm run terraform:review -- data/terraform-plan.app-platform.json
-npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
+make validate
+make review
+make report
+make review-app
+make report-app
 ```
 
 Optional Sentinel check:
 
 ```bash
 sh scripts/use-local-sentinel.sh
-PATH="/Users/jacobplicque/Documents/Codex/bin:$PATH" sentinel fmt -check policies/sentinel/*.sentinel
+make sentinel-check
 ```
 
 Optional `tfctl` check:
@@ -53,10 +53,8 @@ Optional SpiceDB check:
 
 ```bash
 docker compose up -d spicedb
-npm run authz:validate
-npm run authz:load
-npm run tool:call -- alice terraform.review_plan --provider=spicedb
-npm run tool:call -- bob terraform.review_plan --provider=spicedb
+make authz-load
+make tool-check
 ```
 
 ## Demo Flow
@@ -70,7 +68,7 @@ Say:
 Show:
 
 ```bash
-npm run terraform:review
+make review
 ```
 
 Expected point:
@@ -89,7 +87,7 @@ Say:
 Run:
 
 ```bash
-npm run terraform:review -- data/terraform-plan.app-platform.json
+make review-app
 ```
 
 Expected point:
@@ -110,7 +108,7 @@ Say:
 Run:
 
 ```bash
-npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
+make report-app
 ```
 
 Open:
@@ -141,7 +139,7 @@ policies/sentinel
 Optional command:
 
 ```bash
-PATH="/Users/jacobplicque/Documents/Codex/bin:$PATH" sentinel fmt -check policies/sentinel/*.sentinel
+make sentinel-check
 ```
 
 Expected point:
@@ -155,8 +153,7 @@ Expected point:
 If SpiceDB is running:
 
 ```bash
-npm run tool:call -- alice terraform.review_plan --provider=spicedb
-npm run tool:call -- bob terraform.review_plan --provider=spicedb
+make tool-check
 ```
 
 Expected point:
@@ -167,8 +164,7 @@ Expected point:
 If SpiceDB is not running:
 
 ```bash
-npm run tool:call -- alice terraform.review_plan --provider=local
-npm run tool:call -- bob terraform.review_plan --provider=local
+make tool-check-local
 ```
 
 Say:
@@ -180,7 +176,7 @@ Say:
 Run:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+make agent
 ```
 
 Expected point:
@@ -242,7 +238,7 @@ If Sentinel is not on PATH:
 
 - Use the policy files as readable examples.
 - Show `docs/sentinel-local-setup.md`.
-- Keep the runnable demo on `npm run terraform:review` and `npm run terraform:report`.
+- Keep the runnable demo on `make review` and `make report`.
 
 If Terraform Stacks commands fail:
 

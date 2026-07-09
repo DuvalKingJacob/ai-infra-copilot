@@ -33,15 +33,15 @@ The primary workflow is:
 ```bash
 terraform -chdir=terraform/prod-network plan -out=tfplan
 terraform -chdir=terraform/prod-network show -json tfplan > data/plan.json
-npm run terraform:review -- data/plan.json
-npm run terraform:report -- data/plan.json outputs/terraform-plan-review-report.md
+make review PLAN=data/plan.json
+make report PLAN=data/plan.json REPORT=outputs/terraform-plan-review-report.md
 ```
 
 For a local demo without cloud credentials, use the included sample plan:
 
 ```bash
-npm run terraform:review
-npm run terraform:report
+make review
+make report
 ```
 
 That produces:
@@ -51,8 +51,8 @@ That produces:
 For a richer SRE-style application platform review:
 
 ```bash
-npm run terraform:review -- data/terraform-plan.app-platform.json
-npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
+make review-app
+make report-app
 ```
 
 The JavaScript is implementation detail. The practitioner story is Terraform plan -> risk review -> policy signal -> approval boundary -> controlled apply.
@@ -74,15 +74,12 @@ If you are not a Node.js developer, start with:
 `docs/local-validation-runbook.md`
 
 ```bash
-npm run embeddings:build
-npm run rag:query -- alice "What do we know about the production outage?"
-npm run rag:query -- bob "What do we know about the production outage?"
-npm run authz:check -- alice document:postmortem-platform-204 read --provider=local
-npm run tool:call -- alice terraform.get_recent_changes --provider=local
-npm run terraform:review
-npm run terraform:report
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
-npm run authz:validate
+make validate
+make review
+make report
+make review-app
+make report-app
+make agent
 ```
 
 If `OPENAI_API_KEY` is set, `embeddings:build` uses the OpenAI embeddings API. Without it, the script uses a deterministic local embedding fallback so the project remains runnable without secrets.
@@ -185,8 +182,8 @@ The intended production shape is:
 To tie the demo directly to Terraform practitioner work, the repo includes a small Terraform plan reviewer:
 
 ```bash
-npm run terraform:review
-npm run terraform:report
+make review
+make report
 ```
 
 The real Terraform sample lives in:
@@ -243,14 +240,14 @@ See:
 The repo includes a small deterministic agent runner:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+make agent
 ```
 
 With SpiceDB running:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=spicedb
-npm run agent:run -- bob "Should we apply the Terraform change?" --provider=spicedb
+node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=spicedb
+node src/agent-workflow.mjs bob "Should we apply the Terraform change?" --provider=spicedb
 ```
 
 It demonstrates planning, permission-aware retrieval, authorized tool calls, Terraform risk review, action proposal, approval boundary, and audit output.

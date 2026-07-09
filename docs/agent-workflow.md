@@ -9,14 +9,14 @@ The deterministic agent runner lives at:
 Run:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=local
+make agent
 ```
 
 With SpiceDB running:
 
 ```bash
-npm run agent:run -- alice "Should we apply the Terraform change?" --provider=spicedb
-npm run agent:run -- bob "Should we apply the Terraform change?" --provider=spicedb
+node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=spicedb
+node src/agent-workflow.mjs bob "Should we apply the Terraform change?" --provider=spicedb
 ```
 
 ## What It Demonstrates
@@ -53,4 +53,3 @@ That is the useful part for infrastructure teams.
 - It does not perform multi-agent handoffs.
 
 Those are future extensions, not requirements for the core authorization story.
-

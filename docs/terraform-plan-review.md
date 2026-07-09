@@ -11,8 +11,8 @@ The hero path should feel like a normal Terraform workflow:
 ```bash
 terraform plan -out=tfplan
 terraform show -json tfplan > plan.json
-npm run terraform:review -- plan.json
-npm run terraform:report -- plan.json outputs/terraform-plan-review-report.md
+make review PLAN=plan.json
+make report PLAN=plan.json REPORT=outputs/terraform-plan-review-report.md
 ```
 
 The JavaScript is the assistant layer. Terraform is the center of gravity.
@@ -37,18 +37,18 @@ There are two included scenarios:
 ## Run
 
 ```bash
-npm run terraform:review
-npm run terraform:report
+make review
+make report
 ```
 
 Run the richer app-platform scenario:
 
 ```bash
-npm run terraform:review -- data/terraform-plan.app-platform.json
-npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-platform-plan-review-report.md
+make review-app
+make report-app
 ```
 
-`terraform:review` prints structured JSON. `terraform:report` writes a practitioner-readable Markdown report:
+`make review` prints structured JSON. `make report` writes a practitioner-readable Markdown report:
 
 ```bash
 outputs/terraform-plan-review-report.md
@@ -119,15 +119,13 @@ docs/sentinel-local-setup.md
 The plan review is represented as an MCP-style tool:
 
 ```bash
-npm run tool:call -- alice terraform.review_plan --provider=local
-npm run tool:call -- bob terraform.review_plan --provider=local
+make tool-check-local
 ```
 
 With SpiceDB running:
 
 ```bash
-npm run tool:call -- alice terraform.review_plan --provider=spicedb
-npm run tool:call -- bob terraform.review_plan --provider=spicedb
+make tool-check
 ```
 
 Expected:
