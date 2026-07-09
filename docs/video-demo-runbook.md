@@ -34,6 +34,16 @@ sh scripts/use-local-sentinel.sh
 PATH="/Users/jacobplicque/Documents/Codex/bin:$PATH" sentinel fmt -check policies/sentinel/*.sentinel
 ```
 
+Optional `tfctl` check:
+
+```bash
+tfctl --version
+tfctl auth status
+tfctl harness context
+```
+
+If auth is inactive, keep `tfctl` as a talk-track item and use the local plan files for the live demo.
+
 Optional SpiceDB check:
 
 ```bash
@@ -194,6 +204,27 @@ Say:
 > The next version of this story is not just one plan. It is understanding component relationships: VPC to EKS to app, workspace sprawl to Stack deployments, and policy/approval at the platform boundary.
 
 Keep this short in the first video. It is a bridge to the next deep dive, not the main demo.
+
+## Optional HCP Terraform / tfctl Bridge
+
+Show:
+
+```text
+docs/tfctl-hcp-terraform-bridge.md
+```
+
+Say:
+
+> The local demo uses sample Terraform plan JSON so the workflow is easy to inspect. In production, HCP Terraform run data, policy checks, workspace variables, and Stack deployment context can become the source of truth. `tfctl` is the operator CLI bridge into that world.
+
+If authenticated:
+
+```bash
+tfctl run status WORKSPACE_NAME
+tfctl api /workspaces/{workspace}/runs -p workspace=WORKSPACE_NAME --jq '.data[] | {id, status: .attributes.status}'
+```
+
+Keep this optional in the first video. It is a bridge to the HCP Terraform control-plane deep dive.
 
 ## Fallbacks
 

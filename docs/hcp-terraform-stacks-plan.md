@@ -36,6 +36,7 @@ Future additions could include:
 - Variable set examples for cloud credentials and environment defaults.
 - Policy set mapping for the Sentinel examples.
 - Run task positioning for cost/security checks.
+- `tfctl` commands for run status, policy checks, variables, and workspace context.
 - Terraform MCP Server configuration for workspace, registry, and run context.
 - Stack deployment group examples for dev and prod promotion.
 
@@ -51,6 +52,12 @@ It should be used as the advanced practitioner scenario once the local AI review
 
 ```text
 docs/hashibank-stacks-companion.md
+```
+
+For the CLI bridge from local demo to HCP Terraform, see:
+
+```text
+docs/tfctl-hcp-terraform-bridge.md
 ```
 
 ## Talk Track
