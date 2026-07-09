@@ -28,6 +28,12 @@ variable "public_subnet_ids" {
   default     = ["subnet-public-a", "subnet-public-b"]
 }
 
+variable "public_load_balancer" {
+  description = "Whether the application load balancer is internet-facing."
+  type        = bool
+  default     = false
+}
+
 variable "desired_count" {
   description = "Desired ECS task count for the API service."
   type        = number
@@ -56,4 +62,3 @@ variable "common_tags" {
     ManagedBy   = "terraform"
   }
 }
-

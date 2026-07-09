@@ -1,0 +1,7 @@
+public_load_balancer = true
+desired_count        = 1
+
+common_tags = {
+  Service   = "payments-api"
+  ManagedBy = "terraform"
+}

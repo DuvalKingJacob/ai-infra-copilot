@@ -36,6 +36,14 @@ export function findRisks(change) {
     });
   }
 
+  if (change.type === "aws_lb" && actions.includes("create") && after.internal === false) {
+    risks.push({
+      severity: "critical",
+      policy: "no-internet-facing-lb",
+      reason: "Creates an internet-facing production load balancer.",
+    });
+  }
+
   if (change.type === "aws_security_group" && includesWildcard(after.ingress || [])) {
     risks.push({
       severity: "critical",
@@ -71,6 +79,14 @@ export function findRisks(change) {
       severity: "high",
       policy: "minimum-prod-service-capacity",
       reason: `Reduces service desired count from ${before.desired_count} to ${after.desired_count}.`,
+    });
+  }
+
+  if (change.type === "aws_ecs_service" && actions.includes("create") && after.desired_count < 2) {
+    risks.push({
+      severity: "high",
+      policy: "minimum-prod-service-capacity",
+      reason: `Creates a production service with desired count ${after.desired_count}.`,
     });
   }
 

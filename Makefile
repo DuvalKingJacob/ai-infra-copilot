@@ -8,9 +8,13 @@ LIVE_TERRAFORM_DIR ?= terraform/app-platform
 LIVE_PLAN_OUT ?= $(CURDIR)/outputs/live-app-platform.tfplan
 LIVE_PLAN_JSON ?= outputs/live-app-platform-plan.json
 LIVE_REPORT ?= outputs/live-app-platform-plan-review-report.md
+LIVE_RISKY_TFVARS ?= risky.tfvars.example
+LIVE_RISKY_PLAN_OUT ?= $(CURDIR)/outputs/live-risky-app-platform.tfplan
+LIVE_RISKY_PLAN_JSON ?= outputs/live-risky-app-platform-plan.json
+LIVE_RISKY_REPORT ?= outputs/live-risky-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review demo ci agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
+.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -30,6 +34,7 @@ help:
 	@printf '%s\n' '  make terraform-live-export  Export the live plan to JSON'
 	@printf '%s\n' '  make terraform-live-report  Review the exported live plan JSON'
 	@printf '%s\n' '  make terraform-live-review  Plan, export, and write the review report'
+	@printf '%s\n' '  make terraform-live-risky-review  Run a risky plan-only demo and write the report'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Authorization and policy:'
 	@printf '%s\n' '  make sentinel-check  Check Sentinel policy formatting'
@@ -74,6 +79,18 @@ terraform-live-report:
 	$(MAKE) report PLAN=$(LIVE_PLAN_JSON) REPORT=$(LIVE_REPORT)
 
 terraform-live-review: terraform-live-plan terraform-live-export terraform-live-report
+
+terraform-live-risky-plan:
+	mkdir -p outputs
+	terraform -chdir=$(LIVE_TERRAFORM_DIR) plan -var-file=$(LIVE_RISKY_TFVARS) -out=$(LIVE_RISKY_PLAN_OUT)
+
+terraform-live-risky-export:
+	terraform -chdir=$(LIVE_TERRAFORM_DIR) show -json $(LIVE_RISKY_PLAN_OUT) > $(LIVE_RISKY_PLAN_JSON)
+
+terraform-live-risky-report:
+	$(MAKE) report PLAN=$(LIVE_RISKY_PLAN_JSON) REPORT=$(LIVE_RISKY_REPORT)
+
+terraform-live-risky-review: terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report
 
 demo: validate review report review-app report-app agent
 

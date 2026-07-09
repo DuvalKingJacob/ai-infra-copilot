@@ -14,7 +14,7 @@ Engineers should not have to manually inspect hundreds of lines of Terraform pla
 
 ## Fastest Real Terraform Path
 
-If you have AWS credentials and provider access, start with a real Terraform plan:
+If you have AWS credentials and provider access, start with a real Terraform plan using the safe defaults:
 
 ```bash
 make validate
@@ -23,7 +23,16 @@ make terraform-live-review
 open outputs/live-app-platform-plan-review-report.md
 ```
 
-This runs Terraform against the app-platform scenario, exports the plan with `terraform show -json`, reviews the generated plan JSON, and opens the report showing risk findings, blast radius, policy signals, and the human approval boundary.
+This runs Terraform against the app-platform scenario, exports the plan with `terraform show -json`, reviews the generated plan JSON, and opens the report. With safe defaults, the expected recommendation is `allow_plan_with_review`.
+
+To demonstrate a risky real Terraform plan without applying anything:
+
+```bash
+make terraform-live-risky-review
+open outputs/live-risky-app-platform-plan-review-report.md
+```
+
+The risky plan-only path uses `terraform/app-platform/risky.tfvars.example` to propose internet-facing load balancing, reduced service capacity, and missing ownership tags. The expected recommendation is `block_apply_pending_review`.
 
 Live plan artifacts are written under `outputs/live-*` and ignored by Git because Terraform plan JSON can include account, resource, or sensitive metadata.
 
@@ -87,6 +96,12 @@ make terraform-live-init
 make terraform-live-plan
 make terraform-live-export
 make terraform-live-report
+```
+
+For the risky plan-only version:
+
+```bash
+make terraform-live-risky-review
 ```
 
 For a local demo without cloud credentials, use the included sample plan:

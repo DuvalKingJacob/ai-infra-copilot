@@ -4,9 +4,9 @@ provider "aws" {
 
 resource "aws_lb" "api" {
   name               = "payments-api"
-  internal           = true
+  internal           = !var.public_load_balancer
   load_balancer_type = "application"
-  subnets            = var.private_subnet_ids
+  subnets            = var.public_load_balancer ? var.public_subnet_ids : var.private_subnet_ids
 
   tags = var.common_tags
 }
@@ -65,4 +65,3 @@ resource "aws_cloudwatch_metric_alarm" "api_latency" {
 
   tags = var.common_tags
 }
-

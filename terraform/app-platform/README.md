@@ -20,13 +20,22 @@ The sample plan JSON in `data/terraform-plan.app-platform.json` represents a ris
 - latency alarm deletion
 - missing required tags
 
-If you have AWS credentials and provider access, generate and review a live plan:
+If you have AWS credentials and provider access, generate and review a safe live plan:
 
 ```bash
 make terraform-live-init
 make terraform-live-review
 open outputs/live-app-platform-plan-review-report.md
 ```
+
+To generate a risky plan-only demo without applying anything:
+
+```bash
+make terraform-live-risky-review
+open outputs/live-risky-app-platform-plan-review-report.md
+```
+
+The risky path uses `risky.tfvars.example` to propose internet-facing load balancing, reduced capacity, and missing ownership tags.
 
 For a credential-free fixture review:
 
