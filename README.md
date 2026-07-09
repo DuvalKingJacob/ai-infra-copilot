@@ -1,5 +1,7 @@
 # AI-Assisted Terraform Operations
 
+[![CI](https://github.com/DuvalKingJacob/ai-infra-copilot/actions/workflows/ci.yml/badge.svg)](https://github.com/DuvalKingJacob/ai-infra-copilot/actions/workflows/ci.yml)
+
 Terraform-native plan review with policy signals, authorization boundaries, agent workflows, approval gates, and auditability for platform teams adopting HCP Terraform or Terraform Enterprise.
 
 This project explores a practical question for platform engineers:
@@ -38,6 +40,16 @@ open outputs/app-platform-plan-review-report.md
 ```
 
 The fixture uses the same JSON shape as `terraform show -json`, so the review behavior is inspectable without AWS, provider downloads, or HCP Terraform access.
+
+## CI Checks
+
+GitHub Actions runs the non-cloud validation path on pushes and pull requests:
+
+```bash
+make ci
+```
+
+CI validates the demo browser script, Terraform formatting, fixture-based plan review/report generation, local authorization checks, agent workflow, and Sentinel policy formatting. It does not run live cloud plans and it never runs `terraform apply`.
 
 ## What This Is
 

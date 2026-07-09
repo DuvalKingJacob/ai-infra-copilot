@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate demo workflows
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.5"
+
+      - name: Install Sentinel
+        env:
+          SENTINEL_VERSION: "0.41.0"
+        run: |
+          curl -fsSLO "https://releases.hashicorp.com/sentinel/${SENTINEL_VERSION}/sentinel_${SENTINEL_VERSION}_linux_amd64.zip"
+          unzip -q "sentinel_${SENTINEL_VERSION}_linux_amd64.zip"
+          sudo mv sentinel /usr/local/bin/sentinel
+          sentinel version
+
+      - name: Run CI checks
+        run: make ci SENTINEL_BIN=sentinel

@@ -10,7 +10,7 @@ LIVE_PLAN_JSON ?= outputs/live-app-platform-plan.json
 LIVE_REPORT ?= outputs/live-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review demo agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
+.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review demo ci agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -22,6 +22,7 @@ help:
 	@printf '%s\n' '  make review-app    Review the SRE-style app-platform plan'
 	@printf '%s\n' '  make report-app    Write the app-platform Markdown review report'
 	@printf '%s\n' '  make demo          Run the main local demo path'
+	@printf '%s\n' '  make ci            Run the non-cloud CI checks'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Live Terraform plan targets:'
 	@printf '%s\n' '  make terraform-live-init    Initialize the live Terraform scenario'
@@ -75,6 +76,8 @@ terraform-live-report:
 terraform-live-review: terraform-live-plan terraform-live-export terraform-live-report
 
 demo: validate review report review-app report-app agent
+
+ci: validate review report review-app report-app agent tool-check-local sentinel-check
 
 agent:
 	node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=local
