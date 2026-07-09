@@ -10,9 +10,26 @@ The answer here is intentionally conservative: the assistant can summarize plans
 
 Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This repo shows how an assistant can summarize infrastructure changes, identify risky modifications, and produce a review artifact while keeping humans in control of deployment decisions.
 
-## 30-Second Review Path
+## Fastest Real Terraform Path
 
-If you only do one thing, run the local review path against the included Terraform plan JSON fixture:
+If you have AWS credentials and provider access, start with a real Terraform plan:
+
+```bash
+make validate
+make terraform-live-init
+make terraform-live-review
+open outputs/live-app-platform-plan-review-report.md
+```
+
+This runs Terraform against the app-platform scenario, exports the plan with `terraform show -json`, reviews the generated plan JSON, and opens the report showing risk findings, blast radius, policy signals, and the human approval boundary.
+
+Live plan artifacts are written under `outputs/live-*` and ignored by Git because Terraform plan JSON can include account, resource, or sensitive metadata.
+
+No target runs `terraform apply`.
+
+## 30-Second Fixture Path
+
+If you do not have cloud credentials, run the same review flow against the included Terraform plan JSON fixture:
 
 ```bash
 make validate
@@ -20,7 +37,7 @@ make report-app
 open outputs/app-platform-plan-review-report.md
 ```
 
-This validates the Terraform demo files, reviews a realistic app-platform plan produced in the same JSON shape as `terraform show -json`, and opens the generated report showing risk findings, blast radius, policy signals, and the human approval boundary.
+The fixture uses the same JSON shape as `terraform show -json`, so the review behavior is inspectable without AWS, provider downloads, or HCP Terraform access.
 
 ## What This Is
 
@@ -50,6 +67,15 @@ make report PLAN=data/plan.json REPORT=outputs/terraform-plan-review-report.md
 ```
 
 `make` is only the local demo wrapper for the review/report steps. Terraform still owns the infrastructure workflow: configuration, plan creation, plan JSON, and controlled apply. In HCP Terraform or Terraform Enterprise, the equivalent integration point would be the run, plan output, policy checks, run tasks, approvals, and audit trail.
+
+The Makefile version of the same live workflow is:
+
+```bash
+make terraform-live-init
+make terraform-live-plan
+make terraform-live-export
+make terraform-live-report
+```
 
 For a local demo without cloud credentials, use the included sample plan:
 

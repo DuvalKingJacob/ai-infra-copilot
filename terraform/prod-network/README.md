@@ -29,7 +29,8 @@ The demo plan JSON in `data/terraform-plan.prod-network.json` represents a risky
 Those are the exact findings produced by:
 
 ```bash
-npm run terraform:review
+make review
+make report
 ```
 
 ## Why This Exists

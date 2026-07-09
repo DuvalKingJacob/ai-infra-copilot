@@ -4,9 +4,13 @@ PLAN ?= data/terraform-plan.prod-network.json
 REPORT ?= outputs/terraform-plan-review-report.md
 APP_PLAN := data/terraform-plan.app-platform.json
 APP_REPORT := outputs/app-platform-plan-review-report.md
+LIVE_TERRAFORM_DIR ?= terraform/app-platform
+LIVE_PLAN_OUT ?= $(CURDIR)/outputs/live-app-platform.tfplan
+LIVE_PLAN_JSON ?= outputs/live-app-platform-plan.json
+LIVE_REPORT ?= outputs/live-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app demo agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
+.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review demo agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -18,6 +22,13 @@ help:
 	@printf '%s\n' '  make review-app    Review the SRE-style app-platform plan'
 	@printf '%s\n' '  make report-app    Write the app-platform Markdown review report'
 	@printf '%s\n' '  make demo          Run the main local demo path'
+	@printf '%s\n' ''
+	@printf '%s\n' 'Live Terraform plan targets:'
+	@printf '%s\n' '  make terraform-live-init    Initialize the live Terraform scenario'
+	@printf '%s\n' '  make terraform-live-plan    Run terraform plan and write a local .tfplan'
+	@printf '%s\n' '  make terraform-live-export  Export the live plan to JSON'
+	@printf '%s\n' '  make terraform-live-report  Review the exported live plan JSON'
+	@printf '%s\n' '  make terraform-live-review  Plan, export, and write the review report'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Authorization and policy:'
 	@printf '%s\n' '  make sentinel-check  Check Sentinel policy formatting'
@@ -48,6 +59,21 @@ review-app:
 report-app:
 	$(MAKE) report PLAN=$(APP_PLAN) REPORT=$(APP_REPORT)
 
+terraform-live-init:
+	terraform -chdir=$(LIVE_TERRAFORM_DIR) init
+
+terraform-live-plan:
+	mkdir -p outputs
+	terraform -chdir=$(LIVE_TERRAFORM_DIR) plan -out=$(LIVE_PLAN_OUT)
+
+terraform-live-export:
+	terraform -chdir=$(LIVE_TERRAFORM_DIR) show -json $(LIVE_PLAN_OUT) > $(LIVE_PLAN_JSON)
+
+terraform-live-report:
+	$(MAKE) report PLAN=$(LIVE_PLAN_JSON) REPORT=$(LIVE_REPORT)
+
+terraform-live-review: terraform-live-plan terraform-live-export terraform-live-report
+
 demo: validate review report review-app report-app agent
 
 agent:
@@ -76,4 +102,4 @@ tool-check-local:
 	node src/tool-call.mjs bob terraform.review_plan --provider=local
 
 clean-reports:
-	rm -f outputs/terraform-plan-review-report.md outputs/app-platform-plan-review-report.md
+	rm -f outputs/terraform-plan-review-report.md outputs/app-platform-plan-review-report.md outputs/live-*

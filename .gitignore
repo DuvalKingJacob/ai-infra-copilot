@@ -23,5 +23,8 @@ override.tf.json
 terraform.rc
 private-notes/
 
+# Live Terraform plan artifacts can include account/resource details.
+outputs/live-*
+
 # Keep provider selections local for this demo repo.
 **/.terraform.lock.hcl
