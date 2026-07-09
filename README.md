@@ -10,6 +10,18 @@ The answer here is intentionally conservative: the assistant can summarize plans
 
 Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This repo shows how an assistant can summarize infrastructure changes, identify risky modifications, and produce a review artifact while keeping humans in control of deployment decisions.
 
+## 30-Second Demo Path
+
+If you only do one thing, run the local Terraform review path:
+
+```bash
+make validate
+make report-app
+open outputs/app-platform-plan-review-report.md
+```
+
+This validates the demo, reviews a realistic app-platform Terraform plan, and opens the generated report showing risk findings, blast radius, policy signals, and the human approval boundary.
+
 ## What This Is
 
 This is a local, inspectable reference implementation for AI-assisted Terraform workflows. The local demo keeps every moving part visible, while the production pattern maps to HCP Terraform/TFE runs, plans, policy checks, run tasks, approvals, variables, state, and audit logs.
