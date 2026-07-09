@@ -7,44 +7,45 @@ Use this diagram for:
 - README excerpt
 - conference/demo slide
 
-## AI-Assisted Terraform Review Workflow
+## AI-Assisted Terraform Run Review Workflow
 
 ```mermaid
 flowchart LR
-  Actor["Actor"] --> Authz["Authorization check\nSpiceDB/AuthZed"]
-  Actor --> Request["Prompt / review request"]
+  Actor["Practitioner"] --> Run["HCP Terraform / TFE run"]
+  Run --> Plan["Terraform plan"]
+  Run --> Context["Workspace / Stack context\nvariables + state metadata"]
+  Run --> Policy["Policy checks\nSentinel / OPA"]
 
-  Request --> Plan["Terraform plan JSON"]
-  Plan --> Reviewer["AI-assisted plan reviewer"]
+  Actor --> Request["AI review request"]
+  Request --> Authz["Authorization check\nactor + workspace + tool"]
+  Authz -->|allow| Reviewer["AI-assisted run reviewer"]
+  Authz -->|deny| Withheld["Withhold context/tool output"]
 
-  Authz --> ToolGate["Tool access decision"]
-  ToolGate -->|allow| Reviewer
-  ToolGate -->|deny| Withheld["Withhold context/tool output"]
+  Plan --> Reviewer
+  Context --> Reviewer
+  Policy --> Reviewer
 
-  Reviewer --> Policy["Policy signals\nSentinel-style checks"]
-  Policy --> Report["Review report\nfindings + blast radius"]
-  Report --> Proposal["Proposal\napprove / block / investigate"]
-  Proposal --> Approval["Human approval gate"]
-  Approval --> Handoff["Controlled Terraform workflow\nHCP Terraform / CI/CD"]
+  Reviewer --> Report["Review report\nfindings + blast radius"]
+  Report --> Approval["Human approval gate"]
+  Approval --> Apply["Controlled Terraform apply\ninside HCP Terraform / TFE"]
 
-  Reviewer --> Audit["Audit trail"]
+  Run --> Audit["Audit logs"]
   Authz --> Audit
-  Policy --> Audit
+  Reviewer --> Audit
   Approval --> Audit
 ```
 
 ## Talk Track
 
-Terraform remains the source of proposed infrastructure change. The assistant reviews the plan and explains risk, but it does not apply. Authorization controls who can inspect context or call tools. Policy controls whether the change is acceptable. Human approval controls whether anything proceeds to a controlled Terraform workflow.
+HCP Terraform or Terraform Enterprise remains the production control plane for runs, plans, policy checks, approvals, variables, state, and audit logs. The assistant reviews run context and explains risk, but it does not apply. Authorization controls who can inspect context or call tools. Policy controls whether the Terraform change is acceptable. Human approval controls whether anything proceeds.
 
 ## Short Version
 
 ```text
-Terraform plan
+HCP Terraform / TFE run
+  -> plan + policy + context
   -> authorized AI review
-  -> policy findings
   -> blast-radius report
   -> human approval
-  -> controlled apply
+  -> controlled apply in Terraform
 ```
-

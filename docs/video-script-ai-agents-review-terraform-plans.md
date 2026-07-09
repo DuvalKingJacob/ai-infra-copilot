@@ -1,8 +1,12 @@
-# Video Script: AI Agents Should Review Terraform Plans, Not Apply Them
+# Video Script: AI Should Review Terraform Plans, Not Apply Them
 
 ## Working Title
 
-AI Agents Should Review Terraform Plans, Not Apply Them
+AI Should Review Terraform Plans, Not Apply Them
+
+Alternate HashiCorp-aligned title:
+
+How AI Should Fit Into Terraform Runs
 
 ## Target Length
 
@@ -14,48 +18,51 @@ AI Agents Should Review Terraform Plans, Not Apply Them
 - Platform engineers
 - SREs
 - DevOps engineers
-- Infrastructure architects evaluating AI-assisted workflows
+- Infrastructure architects evaluating HCP Terraform or Terraform Enterprise
 
 ## Core Thesis
 
-AI can help practitioners understand Terraform risk, but production apply should stay behind policy, authorization, approval, and audit.
+AI agents should improve Terraform plan review inside the governance model teams already use in HCP Terraform and Terraform Enterprise. The agent can inspect context, explain risk, surface policy signals, and propose next steps, but production apply should remain controlled by Terraform runs, policy checks, approvals, audit logs, and human operators.
 
 ## Opening Hook
 
 Say:
 
-> AI can write Terraform now. That is not the interesting part.
+> AI can write Terraform now. That is useful, but it is not the adoption story I care about most.
 >
-> The interesting question is what happens when an AI assistant can inspect a Terraform plan, read infrastructure context, and call operational tools.
+> The bigger question is: how should AI fit into a real Terraform run?
 >
-> Do we let it apply?
+> If your team already depends on HCP Terraform or Terraform Enterprise for plans, policy checks, approvals, variables, state, and audit logs, you probably do not want an agent bypassing that control plane.
 >
-> I do not think that is the right first pattern. The safer and more useful pattern is: let the assistant review the plan, explain the risk, surface policy signals, and stop at human approval.
+> The safer pattern is this: AI reviews the plan. HCP Terraform or Terraform Enterprise remains the system of record.
 
 Visual:
 
 ```text
-Terraform plan
-  -> AI review
-  -> policy signal
-  -> authorization boundary
+HCP Terraform / TFE run
+  -> Terraform plan
+  -> policy checks
+  -> AI-assisted review
   -> human approval
   -> controlled apply
+  -> audit trail
 ```
 
 Transition:
 
-> So in this demo, the agent does not get root access to production. It gets a job that platform teams already do every day: review the plan before anything changes.
+> So this video is not about giving an agent production credentials and hoping for the best. It is about using AI to make the existing Terraform run workflow easier to understand, easier to review, and safer to approve.
 
 ## 0:45 - 2:00 | The Practitioner Problem
 
 Say:
 
-> Terraform plans are the right control point. They show what is going to change before it changes.
+> Terraform plans are the right control point because they show what will change before it changes.
 >
-> But in real environments, plans can be noisy. You might have hundreds of lines of output, multiple resources, hidden blast radius, and a reviewer trying to answer a very human question: should we approve this?
+> But in real environments, plans are hard to review. A single run might touch networking, IAM, compute, databases, monitoring, tags, and downstream dependencies.
 >
-> This is where I think AI can be useful. Not as an operator with unchecked authority, but as a reviewer that helps humans see risk faster.
+> HCP Terraform and Terraform Enterprise already give teams the governance foundation: remote runs, state, variables, policy checks, run tasks, approvals, notifications, audit logs, workspaces, and now Stacks for larger orchestration problems.
+>
+> AI should plug into that model. It should not replace it.
 
 Show the repo title and README:
 
@@ -65,9 +72,44 @@ AI-Assisted Terraform Operations
 
 Say:
 
-> This project explores a conservative workflow. Terraform produces the plan. The assistant reviews it. Policy findings identify unsafe changes. Authorization decides who can see the context. Human approval controls whether anything proceeds.
+> This repo is a simplified reference implementation of that workflow. The demo runs locally so we can inspect every piece, but the production pattern maps directly back to HCP Terraform and Terraform Enterprise.
 
-## 2:00 - 3:30 | Small Plan Review Example
+## 2:00 - 3:30 | Production Mental Model
+
+Say:
+
+> In production, I would expect the control plane to look like this.
+
+Show:
+
+```text
+HCP Terraform / TFE
+  - workspace or Stack context
+  - run and plan output
+  - variables and state metadata
+  - Sentinel or OPA policy checks
+  - run tasks and notifications
+  - approval gates
+  - audit logs
+
+AI review service
+  - reads authorized run context
+  - summarizes plan risk
+  - explains policy findings
+  - proposes next steps
+  - never applies directly
+
+Authorization layer
+  - controls who can ask the agent
+  - controls which tools the agent may call
+  - controls which run, workspace, or Stack context is visible
+```
+
+Say:
+
+> That distinction matters. Terraform is still doing Terraform. HCP Terraform or TFE still owns the run lifecycle. The agent is using Terraform context to help a human make a better decision.
+
+## 3:30 - 4:45 | Small Plan Review Example
 
 Run:
 
@@ -77,9 +119,9 @@ make review
 
 Say:
 
-> The first example is intentionally small: production networking, IAM, and monitoring.
+> The first local example is intentionally small: production networking, IAM, and monitoring.
 >
-> The reviewer catches three things a Terraform practitioner would immediately care about.
+> Think of this as the kind of signal an AI review step could add to an HCP Terraform run page, pull request, Slack notification, or run task integration.
 
 Call out expected findings:
 
@@ -92,15 +134,15 @@ Say:
 
 > The important thing is not that this is magic. It is not. These are deterministic checks over Terraform plan JSON.
 >
-> The useful part is the product shape: the assistant turns plan data into an explainable review artifact and a recommendation.
+> The useful product shape is that the assistant turns raw plan data into an explainable review artifact before approval.
 
-## 3:30 - 5:30 | SRE-Style App Platform Review
+## 4:45 - 6:30 | SRE-Style App Platform Review
 
 Say:
 
 > The smaller example proves the pattern, but it does not feel like a full SRE review. So here is a more realistic app-platform scenario.
 >
-> This plan touches a load balancer, an ECS service, a database, monitoring, and tags.
+> This plan touches a load balancer, an ECS service, a database, monitoring, and tags. This is the kind of change where practitioners need context, not just a green or red result.
 
 Run:
 
@@ -119,13 +161,15 @@ Call out expected findings:
 
 Say:
 
-> That is the kind of review where AI can help. Not because the model is smarter than the platform team, but because it can summarize risk across different operational dimensions: network exposure, data-plane risk, availability, observability, and governance.
+> This is where AI can help HCP Terraform and TFE adoption. Not by replacing policy. Not by replacing approval. By making the review experience better for the operator.
+>
+> The agent can explain the blast radius across security, data durability, availability, observability, and governance.
 
-## 5:30 - 6:45 | Generate A Review Artifact
+## 6:30 - 7:30 | Generate A Review Artifact
 
 Say:
 
-> CLI output is useful for automation. But humans need something they can attach to a pull request, paste into an incident timeline, or use in a run review.
+> CLI output is useful for automation. But teams also need artifacts they can attach to a pull request, run review, incident timeline, or change record.
 
 Run:
 
@@ -143,7 +187,7 @@ Say:
 
 > The report gives us a summary, resource counts, findings mapped to policy names, a recommendation, and a blast-radius section written in operational language.
 >
-> This is the shape I want from an AI-assisted Terraform workflow: not a hidden decision, but a review artifact.
+> In an HCP Terraform or TFE workflow, this could become a run task comment, a PR comment, a Slack approval summary, or a companion view next to the plan.
 
 Point to:
 
@@ -154,19 +198,17 @@ Point to:
 
 Say:
 
-> This section matters. The agent did not run `terraform apply`. It did not mutate infrastructure. It produced an explainable artifact for a human-controlled workflow.
+> This section matters. The agent did not run `terraform apply`. It did not mutate infrastructure. It produced an explainable artifact for a human-controlled Terraform workflow.
 
-## 6:45 - 8:00 | Policy Is Not The Same As Authorization
+## 7:30 - 8:45 | Policy Is Not The Same As Authorization
 
 Say:
 
-> Now there is a subtle distinction here that matters a lot for AI systems.
+> Now there is a subtle distinction here that matters a lot once AI enters the platform.
 >
-> There are two different questions:
+> Policy answers: is this Terraform change acceptable?
 >
-> One: is this actor allowed to inspect this plan or call this tool?
->
-> Two: is this Terraform change acceptable under policy?
+> Authorization answers: is this actor allowed to inspect this run, retrieve this context, or call this tool?
 
 Show:
 
@@ -177,9 +219,9 @@ spicedb/schema.zed
 
 Say:
 
-> Sentinel-style policy answers the second question: no public load balancers, no production database replacement, no dangerous capacity reduction, no missing required tags.
+> Sentinel or OPA belongs close to the Terraform run. That is where you evaluate rules like no public load balancers, no production database replacement, no dangerous capacity reduction, and no missing required tags.
 >
-> SpiceDB/AuthZed answers the first question: can Alice call the production plan review tool? Can Bob? Can this actor see this context?
+> SpiceDB or AuthZed is a separate example of relationship-based authorization around AI tool access. It answers questions like: can Alice ask the agent to inspect this production run? Can Bob retrieve this workspace context? Can this agent call a Terraform tool for this environment?
 
 Optional command:
 
@@ -189,9 +231,9 @@ make sentinel-check
 
 Say:
 
-> That distinction becomes more important once AI enters the workflow. You do not only need policy on the infrastructure. You need authorization around the assistant's access to context and tools.
+> For the HashiCorp story, Sentinel, policy checks, run tasks, approvals, and audit logs are the primary governance model. Authorization around the agent is additive. It protects the AI interface so the model only sees and does what the actor is allowed to access.
 
-## 8:00 - 9:15 | Authorization Before Tool Use
+## 8:45 - 9:45 | Authorization Before Tool Use
 
 If SpiceDB is running, run:
 
@@ -209,15 +251,17 @@ Say:
 
 > The tool call is deliberately boring. That is the point.
 >
-> Before the assistant gets plan review output, we check whether the actor is allowed to call that capability.
+> Before the assistant receives plan review output, we check whether the actor is allowed to call that capability.
 >
-> Alice can inspect production Terraform context. Bob cannot. The model never receives the denied tool output.
+> Alice can inspect production Terraform context. Bob cannot. The denied output never becomes model context.
 
 Connect to MCP:
 
-> This is also how I think about MCP. MCP makes capabilities available to agents. Authorization decides which capabilities are safe for a particular actor, resource, and workflow.
+> This is also how I think about MCP. MCP can expose Terraform capabilities to agents. That might be the Terraform MCP Server, `tfctl`, a custom run-task integration, or an internal platform tool.
+>
+> But MCP does not remove the need for authorization. It makes the tool boundary explicit. Platform teams still need to decide which actor can call which tool against which workspace, Stack, run, or environment.
 
-## 9:15 - 10:30 | Agent Boundary
+## 9:45 - 10:45 | Agent Boundary
 
 Run:
 
@@ -240,15 +284,15 @@ mutationExecuted = false
 
 Say:
 
-> That is the design choice. The agent can answer, review, and propose. It does not apply.
+> That is the design choice. The agent can answer, review, and propose. Terraform runs, policy checks, approvals, and audit remain the operational control points.
 
-## 10:30 - 11:30 | Bridge To HCP Terraform, Stacks, And tfctl
+## 10:45 - 11:45 | Bridge To HCP Terraform, TFE, Stacks, And tfctl
 
 Say:
 
-> This demo uses local plan JSON so the workflow is easy to inspect. In production, the source of truth would be HCP Terraform: workspaces, runs, policy checks, variables, state versions, and Stack deployments.
+> The demo uses local plan JSON so the workflow is easy to inspect. In production, I would expect HCP Terraform or Terraform Enterprise to provide the real source of truth: runs, plans, policy checks, variables, state versions, workspace metadata, audit logs, and Stack deployments.
 >
-> That is where tools like `tfctl`, the Terraform MCP Server, and HCP Terraform become the real control-plane bridge.
+> `tfctl` and the Terraform MCP Server are interesting because they can become bridges between an AI assistant and that Terraform control plane.
 
 Show:
 
@@ -260,23 +304,23 @@ docs/hashibank-stacks-companion.md
 
 Say:
 
-> The next version of this workflow is not just reviewing one local plan. It is understanding relationships: VPC to EKS to application, workspace sprawl to Stack components, and policy or approval at the deployment boundary.
+> The next version of this workflow is not just reviewing one local plan. It is understanding relationships: VPC to EKS to application, workspace sprawl to Stack components, policy checks at deployment boundaries, and approvals where the organization already expects them.
 
 Keep this short:
 
-> That is the next deep dive. For this video, the core pattern is plan review first, action later.
+> That is the next deep dive. For this video, the key adoption message is simple: AI should make Terraform runs easier to review without bypassing HCP Terraform or TFE governance.
 
-## 11:30 - Close
+## 11:45 - Close
 
 Say:
 
 > The goal is not to hand production to an agent.
 >
-> The goal is to make the agent a better reviewer inside the same governance model the platform already trusts.
+> The goal is to make the agent a better reviewer inside the same Terraform governance model the platform already trusts.
 >
-> Terraform plans remain the control point. Sentinel-style policy evaluates the change. SpiceDB/AuthZed controls access to context and tools. HCP Terraform remains the system of record for runs, approvals, and audit.
+> Terraform plans remain the control point. HCP Terraform and Terraform Enterprise remain the system of record for runs, policy checks, approvals, variables, state, and audit. Sentinel or OPA evaluates the change. Authorization controls what context and tools the agent can access.
 >
-> That is the pattern I want from AI-assisted infrastructure operations: helpful, explainable, authorized, and still human-controlled where it matters.
+> That is the pattern I want from AI-assisted Terraform operations: helpful, explainable, policy-aware, authorized, and still human-controlled where it matters.
 
 ## Demo Commands
 
@@ -293,7 +337,7 @@ make agent
 
 ## Optional Live HCP Terraform Commands
 
-Only use these if `tfctl auth status` is active:
+Only use these if `tfctl auth status` is active and the workspace/run names are confirmed:
 
 ```bash
 tfctl auth status
@@ -302,10 +346,20 @@ tfctl api /workspaces/{workspace}/runs -p workspace=WORKSPACE_NAME --jq '.data[]
 tfctl api /runs/RUN_ID/policy-checks --jq '.data[] | {id: .id, status: .attributes.status, enforced: .attributes.enforcement-level}'
 ```
 
+Use these as talk track if live auth is not ready:
+
+- HCP Terraform/TFE runs are the production source of truth.
+- Sentinel or OPA policy checks are the production policy layer.
+- Run tasks can attach external review and security signals.
+- Approvals and audit logs keep the final decision in the governed Terraform workflow.
+- Workspace and Stack context make the agent more useful than a generic chatbot.
+
 ## Notes For Recording
 
-- Keep the first video focused on Terraform plan review.
-- Mention MCP, RAG, Stacks, and tfctl as supporting architecture, not the main subject.
+- Keep the first video focused on how AI should fit into Terraform runs.
+- Treat the local repo as a reference implementation, not the product being promoted.
+- Make HCP Terraform/TFE the center of gravity.
+- Mention MCP, RAG, Stacks, and `tfctl` as supporting architecture.
 - Avoid implying the assistant is making final approval decisions.
 - Avoid live HCP Terraform dependency unless auth and workspace names are confirmed before recording.
 - Use `app-platform` as the main demo because it feels like real SRE/platform work.

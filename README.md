@@ -1,30 +1,30 @@
 # AI-Assisted Terraform Operations
 
-Terraform-native plan review with policy signals, authorization boundaries, agent workflows, approval gates, and auditability for platform teams.
+Terraform-native plan review with policy signals, authorization boundaries, agent workflows, approval gates, and auditability for platform teams adopting HCP Terraform or Terraform Enterprise.
 
 This project explores a practical question for platform engineers:
 
-> If an AI assistant can inspect Terraform context and call operational tools, where do policy, authorization, approval, and audit fit?
+> If an AI assistant can inspect Terraform run context and call operational tools, how should it fit into the governance model teams already use for policy, approval, state, and audit?
 
-The answer here is intentionally conservative: the assistant can summarize plans, identify risky changes, retrieve authorized context, and propose next steps. It does not apply Terraform.
+The answer here is intentionally conservative: the assistant can summarize plans, identify risky changes, retrieve authorized context, and propose next steps. It does not apply Terraform or bypass the HCP Terraform/TFE run lifecycle.
 
 Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This repo shows how an assistant can summarize infrastructure changes, identify risky modifications, and produce a review artifact while keeping humans in control of deployment decisions.
 
 ## What This Is
 
-This is a local, inspectable reference implementation for AI-assisted Terraform workflows.
+This is a local, inspectable reference implementation for AI-assisted Terraform workflows. The local demo keeps every moving part visible, while the production pattern maps to HCP Terraform/TFE runs, plans, policy checks, run tasks, approvals, variables, state, and audit logs.
 
 It demonstrates:
 
 - Terraform plan review over plan JSON.
-- Markdown reports that could be attached to a pull request or run review.
+- Markdown reports that could be attached to a pull request, run review, run task, or approval workflow.
 - Sentinel-style policy findings for unsafe changes.
 - SpiceDB/AuthZed authorization checks before context or tool output is exposed.
 - MCP-style Terraform and Kubernetes tool access.
 - A deterministic agent workflow that stops at proposal and approval.
 - A workspace-to-Stacks migration scenario for VPC, EKS, and app components.
 
-The goal is not to show off every AI framework. The goal is to make the operational control points visible.
+The goal is not to show off every AI framework. The goal is to make the Terraform operational control points visible.
 
 ## Terraform-Native Hero Workflow
 
@@ -55,7 +55,7 @@ make review-app
 make report-app
 ```
 
-The JavaScript is implementation detail. The practitioner story is Terraform plan -> risk review -> policy signal -> approval boundary -> controlled apply.
+The JavaScript is implementation detail. The practitioner story is Terraform run -> plan review -> policy signal -> approval boundary -> controlled apply.
 
 ## Browser Demo
 

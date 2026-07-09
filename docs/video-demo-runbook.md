@@ -2,7 +2,7 @@
 
 Working title:
 
-> AI Agents Should Review Terraform Plans, Not Apply Them
+> AI Should Review Terraform Plans, Not Apply Them
 
 Related artifacts:
 
@@ -11,14 +11,14 @@ Related artifacts:
 
 ## Demo Goal
 
-Show a Terraform-native AI workflow that helps practitioners review infrastructure risk without giving an agent permission to apply changes.
+Show how AI can improve Terraform plan review without bypassing the governance model teams already use in HCP Terraform and Terraform Enterprise.
 
 The demo should make four ideas obvious:
 
-1. Terraform produces the plan.
-2. The assistant reviews and explains the plan.
-3. Policy signals identify unsafe changes.
-4. Authorization and human approval decide who can inspect or act.
+1. HCP Terraform/TFE remains the production control plane for runs, plans, policy checks, approvals, state, variables, and audit.
+2. The local repo is a simplified reference implementation of that production workflow.
+3. The assistant reviews and explains Terraform risk before approval.
+4. Policy, authorization, and human approval remain separate control points.
 
 ## Setup Checks
 
@@ -63,7 +63,9 @@ make tool-check
 
 Say:
 
-> Terraform plans are the right control point, but large plans are hard to review by eye. The question is not whether an AI agent can apply Terraform. The question is whether it can help humans understand risk before anything applies.
+> Terraform plans are the right control point, but large plans are hard to review by eye. The question is not whether an AI agent can apply Terraform. The question is how AI should fit into the Terraform run workflow teams already trust.
+>
+> In production, that means HCP Terraform or Terraform Enterprise remains the system of record for runs, plans, policy checks, approvals, variables, state, and audit logs. This local demo is a small, inspectable version of that pattern.
 
 Show:
 
@@ -103,7 +105,7 @@ Expected point:
 
 Say:
 
-> The CLI output is useful for automation, but practitioners need something they can attach to a PR, run review, or incident timeline.
+> The CLI output is useful for automation, but practitioners need something they can attach to a PR, run review, Slack approval, run task result, or incident timeline.
 
 Run:
 
@@ -124,11 +126,15 @@ Expected point:
 - Blast radius is written in operational language.
 - The report explicitly says the agent did not apply.
 
+HashiCorp adoption talk track:
+
+> In HCP Terraform or TFE, this type of artifact could sit next to the run, policy checks, and approval workflow. The agent is improving review quality, not becoming a parallel deployment system.
+
 ### 4. Explain Sentinel Versus SpiceDB
 
 Say:
 
-> There are two different questions here. SpiceDB answers who can inspect this plan or call this capability. Sentinel-style policy answers whether the Terraform change is acceptable.
+> There are two different questions here. Sentinel or OPA answers whether the Terraform change is acceptable. Authorization answers who can inspect a run, retrieve context, or call an AI-accessible Terraform capability.
 
 Show:
 
@@ -145,8 +151,9 @@ make sentinel-check
 Expected point:
 
 - Policy examples correspond to the report findings.
-- Sentinel is policy evaluation.
-- SpiceDB/AuthZed is capability authorization.
+- Sentinel or OPA is Terraform policy evaluation.
+- HCP Terraform/TFE policy checks and approvals are the primary HashiCorp governance story.
+- SpiceDB/AuthZed is an example authorization layer around AI tool and context access.
 
 ### 5. Show Authorization Before Tool Use
 
@@ -169,7 +176,7 @@ make tool-check-local
 
 Say:
 
-> The local provider keeps the demo runnable. The SpiceDB path shows the production-shaped authorization boundary.
+> The local provider keeps the demo runnable. The SpiceDB path shows the production-shaped authorization boundary around the AI interface.
 
 ### 6. Show The Agent Boundary
 
@@ -189,7 +196,7 @@ Expected point:
 
 Say:
 
-> This is the line I care about: the agent can explain, recommend, and propose. It does not apply.
+> This is the line I care about: the agent can explain, recommend, and propose. Terraform runs, policy checks, approvals, and audit remain the operational control points.
 
 ## Optional Stacks Bridge
 
@@ -202,7 +209,7 @@ docs/hashibank-stacks-companion.md
 
 Say:
 
-> The next version of this story is not just one plan. It is understanding component relationships: VPC to EKS to app, workspace sprawl to Stack deployments, and policy/approval at the platform boundary.
+> The next version of this story is not just one plan. It is understanding component relationships: VPC to EKS to app, workspace sprawl to Stack deployments, and policy or approval at the platform boundary.
 
 Keep this short in the first video. It is a bridge to the next deep dive, not the main demo.
 
@@ -216,7 +223,7 @@ docs/tfctl-hcp-terraform-bridge.md
 
 Say:
 
-> The local demo uses sample Terraform plan JSON so the workflow is easy to inspect. In production, HCP Terraform run data, policy checks, workspace variables, and Stack deployment context can become the source of truth. `tfctl` is the operator CLI bridge into that world.
+> The local demo uses sample Terraform plan JSON so the workflow is easy to inspect. In production, HCP Terraform or TFE run data, policy checks, workspace variables, state metadata, audit logs, and Stack deployment context become the source of truth. `tfctl` is one operator CLI bridge into that world.
 
 If authenticated:
 
@@ -225,7 +232,7 @@ tfctl run status WORKSPACE_NAME
 tfctl api /workspaces/{workspace}/runs -p workspace=WORKSPACE_NAME --jq '.data[] | {id, status: .attributes.status}'
 ```
 
-Keep this optional in the first video. It is a bridge to the HCP Terraform control-plane deep dive.
+Keep this optional in the first video. It is a bridge to the HCP Terraform/TFE control-plane deep dive.
 
 ## Fallbacks
 
@@ -250,4 +257,4 @@ If Terraform Stacks commands fail:
 
 Say:
 
-> The goal is not to hand production to an agent. The goal is to make the agent a better reviewer inside the same governance model the platform already trusts.
+> The goal is not to hand production to an agent. The goal is to make the agent a better reviewer inside the same Terraform governance model the platform already trusts.
