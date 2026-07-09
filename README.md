@@ -1,10 +1,30 @@
-# Reference Architecture For AI-Assisted Terraform Operations
+# AI-Assisted Terraform Operations
 
-Terraform-native plan review, permission-aware RAG, MCP-style tool access, Sentinel-style policy checks, agent workflows, approval gates, and auditability for platform teams.
+Terraform-native plan review with policy signals, authorization boundaries, agent workflows, approval gates, and auditability for platform teams.
 
-This project explores what trustworthy AI-assisted Terraform operations could look like. It is intentionally small, local, and easy to inspect. The goal is not to show off every AI framework. The goal is to show how AI-assisted infrastructure workflows behave as production systems with Terraform plans, context boundaries, tool permissions, policy checks, action gates, and auditability.
+This project explores a practical question for platform engineers:
 
-Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This project shows how an assistant can summarize infrastructure changes, identify risky modifications, and provide contextual recommendations while keeping humans in control of deployment decisions.
+> If an AI assistant can inspect Terraform context and call operational tools, where do policy, authorization, approval, and audit fit?
+
+The answer here is intentionally conservative: the assistant can summarize plans, identify risky changes, retrieve authorized context, and propose next steps. It does not apply Terraform.
+
+Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This repo shows how an assistant can summarize infrastructure changes, identify risky modifications, and produce a review artifact while keeping humans in control of deployment decisions.
+
+## What This Is
+
+This is a local, inspectable reference implementation for AI-assisted Terraform workflows.
+
+It demonstrates:
+
+- Terraform plan review over plan JSON.
+- Markdown reports that could be attached to a pull request or run review.
+- Sentinel-style policy findings for unsafe changes.
+- SpiceDB/AuthZed authorization checks before context or tool output is exposed.
+- MCP-style Terraform and Kubernetes tool access.
+- A deterministic agent workflow that stops at proposal and approval.
+- A workspace-to-Stacks migration scenario for VPC, EKS, and app components.
+
+The goal is not to show off every AI framework. The goal is to make the operational control points visible.
 
 ## Terraform-Native Hero Workflow
 
@@ -37,7 +57,7 @@ npm run terraform:report -- data/terraform-plan.app-platform.json outputs/app-pl
 
 The JavaScript is implementation detail. The practitioner story is Terraform plan -> risk review -> policy signal -> approval boundary -> controlled apply.
 
-## Demo
+## Browser Demo
 
 Open the demo locally:
 
@@ -45,17 +65,13 @@ Open the demo locally:
 
 No install step is required.
 
-## Optional CLI Experiments
+## CLI Experiments
 
-The static demo is the fastest walkthrough. The repo also includes optional Node.js scripts for testing permission-aware retrieval outside the browser.
+The static browser demo is the fastest walkthrough. The Terraform-native CLI path is the main practitioner demo.
 
 If you are not a Node.js developer, start with:
 
 `docs/local-validation-runbook.md`
-
-The local repo folder is:
-
-`work/authzed-ai-infra-copilot`
 
 ```bash
 npm run embeddings:build
@@ -85,25 +101,13 @@ For the broader positioning, see:
 
 `docs/reference-architecture-positioning.md`
 
-## What It Demonstrates
-
-- Terraform-native plan review over plan JSON.
-- Permission-aware RAG over infrastructure documents.
-- MCP-style Terraform and Kubernetes tool calls.
-- Sentinel-style policy checks for risky infrastructure changes.
-- Authorization before document context reaches the model.
-- Authorization before tool results are exposed.
-- A distinction between answering, proposing, and acting.
-- Human approval before production-impacting actions.
-- Audit logs across retrieval, tool use, proposal, and approval.
-- A deterministic agent workflow that plans, retrieves context, calls tools, proposes actions, and emits an audit trail.
-
 ## Implementation Tracks
 
-This repo now has two layers:
+This repo has three layers:
 
 1. A local browser demo in `demo/index.html`.
-2. Production-shaped integration scaffolding for the next real implementation pass.
+2. Terraform-native CLI workflows for plan review, reports, policy examples, and agent execution.
+3. Production-shaped integration scaffolding for authorization, MCP, OIDC, HCP Terraform, and Stacks.
 
 The integration scaffolding includes:
 
@@ -111,6 +115,8 @@ The integration scaffolding includes:
 - `src/`: optional embedding and permission-aware retrieval scripts.
 - `spicedb/`: SpiceDB/AuthZed schema and relationship model.
 - `mcp/`: official Terraform MCP Server example config.
+- `terraform/`: Terraform scenarios for plan review, app-platform risk, and workspace-to-Stacks migration.
+- `policies/sentinel/`: Sentinel-style policy examples.
 - `docs/terraform-mcp-integration.md`: Terraform MCP integration plan.
 - `docs/oidc-authentication-plan.md`: real authentication plan.
 - `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
