@@ -4,6 +4,11 @@ Working title:
 
 > AI Agents Should Review Terraform Plans, Not Apply Them
 
+Related artifacts:
+
+- `docs/video-script-ai-agents-review-terraform-plans.md`
+- `docs/video-architecture-diagram.md`
+
 ## Demo Goal
 
 Show a Terraform-native AI workflow that helps practitioners review infrastructure risk without giving an agent permission to apply changes.
