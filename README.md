@@ -38,6 +38,10 @@ Live plan artifacts are written under `outputs/live-*` and ignored by Git becaus
 
 No target runs `terraform apply`.
 
+For a short guided version of the demo, see:
+
+`docs/demo-walkthrough.md`
+
 ## 30-Second Fixture Path
 
 If you do not have cloud credentials, run the same review flow against the included Terraform plan JSON fixture:
