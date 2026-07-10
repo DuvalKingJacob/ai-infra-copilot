@@ -4,6 +4,12 @@ This scenario shows how a platform team might move from loosely coordinated HCP 
 
 It is intentionally local and lightweight. The Terraform modules use the built-in `terraform_data` resource so the example can be formatted and inspected without cloud credentials or provider downloads.
 
+For HashiCorp's current beta migration flow using `tf-migrate`, see:
+
+```text
+docs/workspace-to-stacks-beta-migration.md
+```
+
 ## Old Shape: Separate Workspaces
 
 The old workflow is represented by root modules that would often become separate workspaces:

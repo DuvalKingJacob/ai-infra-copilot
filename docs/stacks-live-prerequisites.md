@@ -10,6 +10,7 @@ Observed locally:
 | --- | --- |
 | Terraform | installed: `1.15.5` |
 | `tfctl` | installed: `0.3.0` |
+| `tf-migrate` | not found |
 | AWS CLI | installed: `2.27.28` |
 | `kubectl` | installed: `1.35.3` |
 | Helm | installed: `4.1.3` |
@@ -31,6 +32,7 @@ It uses `terraform_data` resources so it can be formatted, inspected, and valida
 
 The richer companion path needs:
 
+- `tf-migrate` 2.0+ for the beta workspace-to-Stacks migration flow.
 - Terraform with Stacks support.
 - HCP Terraform / Terraform Enterprise access.
 - `tfctl` authenticated to the right HCP Terraform host.
@@ -48,6 +50,7 @@ https://github.com/DuvalKingJacob/tfstacks-vpc-eks-hashibank
 
 ```bash
 terraform version
+tf-migrate version
 tfctl --version
 tfctl auth status
 aws sts get-caller-identity
@@ -81,3 +84,9 @@ Do not commit:
 ## Recommended Next Step
 
 Use this repo for the educational local story first. Use the HashiBank companion repo when the video needs a real HCP Terraform / AWS / Kubernetes implementation.
+
+For the beta migration-specific path, see:
+
+```text
+docs/workspace-to-stacks-beta-migration.md
+```

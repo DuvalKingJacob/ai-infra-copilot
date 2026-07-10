@@ -83,6 +83,7 @@ Start here:
 - `terraform/workspace-to-stacks/README.md`: local migration scenario.
 - `terraform/workspace-to-stacks/component-graph.md`: component dependency graph.
 - `docs/stacks-live-prerequisites.md`: tools and access needed before recording a live HCP Terraform / HashiBank demo.
+- `docs/workspace-to-stacks-beta-migration.md`: current `tf-migrate` beta migration path.
 - `docs/stacks-video-validation-checklist.md`: product, narrative, and demo readiness checklist.
 - `docs/hashibank-stacks-companion.md`: how the companion repo should relate to this reference architecture.
 
