@@ -156,8 +156,8 @@ export function reviewTerraformPlan(plan) {
   );
 
   return {
-    workspace: plan.workspace,
-    runId: plan.run_id,
+    workspace: plan.workspace || "local-terraform-plan",
+    runId: plan.run_id || plan.run?.id || "local-plan-json",
     terraformVersion: plan.terraform_version,
     resourcesChanged: plan.resource_changes.length,
     changedActions,
