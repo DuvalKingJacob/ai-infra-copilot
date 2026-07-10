@@ -20,6 +20,8 @@ The Stacks follow-up should prove the dependency-context pattern:
 workspace sprawl -> Stack components -> deployment groups -> AI blast-radius explanation -> approval boundary
 ```
 
+Use `docs/stacks-video-validation-checklist.md` to validate product accuracy, series fit, demo readiness, and recording safety before publishing.
+
 ## Source Of Inspiration
 
 Use the companion repo as the real practitioner reference:
