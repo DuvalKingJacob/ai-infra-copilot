@@ -60,6 +60,12 @@ For the CLI bridge from local demo to HCP Terraform, see:
 docs/tfctl-hcp-terraform-bridge.md
 ```
 
+For the next Stacks deep-dive build plan, see:
+
+```text
+docs/stacks-prep-roadmap.md
+```
+
 ## Talk Track
 
 > The first version runs locally so the workflow is easy to inspect. In production, HCP Terraform becomes the control plane: workspaces and Stacks hold state and run history, Sentinel enforces policy, deployment groups manage approval behavior, and MCP provides authorized context to agents.
