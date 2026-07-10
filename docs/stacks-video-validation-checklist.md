@@ -48,6 +48,8 @@ The new deep dive should build on that baseline instead of re-explaining it. The
 
 > Once Stacks make dependency context explicit, AI-assisted review can explain component blast radius while HCP Terraform / TFE remains the run, policy, approval, and audit control plane.
 
+For the broader companion walkthrough plan, see `docs/terraform-video-companion-roadmap.md`.
+
 ## Narrative Validation
 
 | Claim | Validation Question | Proof |

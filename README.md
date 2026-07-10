@@ -77,6 +77,8 @@ The local version stays provider-light so the architecture can be reviewed witho
 Start here:
 
 - `docs/stacks-prep-roadmap.md`: what the Stacks deep dive is building toward.
+- `docs/terraform-video-companion-roadmap.md`: companion walkthrough plan for the Terraform video series.
+- `docs/terraform-practitioner-backlog.md`: working backlog for practitioner education topics.
 - `terraform/workspace-to-stacks/README.md`: local migration scenario.
 - `terraform/workspace-to-stacks/component-graph.md`: component dependency graph.
 - `docs/stacks-live-prerequisites.md`: tools and access needed before recording a live HCP Terraform / HashiBank demo.
@@ -140,6 +142,8 @@ The integration scaffolding includes:
 - `docs/demo-paths.md`: runnable demo commands.
 - `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
 - `docs/stacks-prep-roadmap.md`: Stacks deep-dive roadmap.
+- `docs/terraform-video-companion-roadmap.md`: Terraform series companion roadmap.
+- `docs/terraform-practitioner-backlog.md`: working content backlog.
 - `docs/stacks-live-prerequisites.md`: live HashiBank / HCP Terraform prerequisites.
 
 ## Architecture Overview
