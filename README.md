@@ -64,6 +64,24 @@ make ci
 
 CI validates the demo browser script, Terraform formatting, fixture-based plan review/report generation, local authorization checks, agent workflow, and Sentinel policy formatting. It does not run live cloud plans and it never runs `terraform apply`.
 
+## Stacks / HashiBank Path
+
+The repo now includes a workspace-to-Stacks migration scenario shaped like a real platform stack:
+
+```text
+vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app
+```
+
+The local version stays provider-light so the architecture can be reviewed without cloud credentials. The advanced path maps the same story to a HashiBank-style HCP Terraform / AWS / Kubernetes implementation.
+
+Start here:
+
+- `docs/stacks-prep-roadmap.md`: what the Stacks deep dive is building toward.
+- `terraform/workspace-to-stacks/README.md`: local migration scenario.
+- `terraform/workspace-to-stacks/component-graph.md`: component dependency graph.
+- `docs/stacks-live-prerequisites.md`: tools and access needed before recording a live HCP Terraform / HashiBank demo.
+- `docs/hashibank-stacks-companion.md`: how the companion repo should relate to this reference architecture.
+
 ## What This Is
 
 This is a local, inspectable reference implementation for AI-assisted Terraform workflows. The local demo keeps every moving part visible, while the production pattern maps to HCP Terraform/TFE runs, plans, policy checks, run tasks, approvals, variables, state, and audit logs.
@@ -188,6 +206,8 @@ The integration scaffolding includes:
 - `docs/terraform-mcp-integration.md`: Terraform MCP integration plan.
 - `docs/oidc-authentication-plan.md`: real authentication plan.
 - `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
+- `docs/stacks-prep-roadmap.md`: Stacks deep-dive roadmap.
+- `docs/stacks-live-prerequisites.md`: live HashiBank / HCP Terraform prerequisites.
 
 ## SpiceDB / AuthZed Path
 
@@ -290,6 +310,14 @@ Sentinel local setup notes live in:
 HCP Terraform and Stacks planning notes live in:
 
 `docs/hcp-terraform-stacks-plan.md`
+
+The Stacks deep-dive roadmap lives in:
+
+`docs/stacks-prep-roadmap.md`
+
+Live HashiBank / HCP Terraform prerequisites live in:
+
+`docs/stacks-live-prerequisites.md`
 
 The richer HashiBank Stacks companion scenario is documented at:
 
