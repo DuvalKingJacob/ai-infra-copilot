@@ -77,6 +77,12 @@ Why:
 - It uses the repo's workspace-to-Stacks scenario.
 - It creates the foundation for deployment groups, drift, AI review, and the final orchestration story.
 
+Detailed walkthrough:
+
+```text
+docs/building-your-first-terraform-stack-walkthrough.md
+```
+
 ## One-Page Outline: Building Your First Terraform Stack
 
 ### Objective
