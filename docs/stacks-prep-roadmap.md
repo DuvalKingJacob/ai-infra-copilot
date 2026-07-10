@@ -44,13 +44,13 @@ The local scenario should mirror the shape of HashiBank:
 network -> cluster -> platform services -> application
 ```
 
-Current local shape:
+Previous local shape:
 
 ```text
 vpc -> eks_cluster -> app
 ```
 
-Recommended next local shape:
+Current local shape:
 
 ```text
 vpc
@@ -85,18 +85,25 @@ Use questions like:
 - Who is allowed to inspect this Stack context?
 - Should this proceed automatically, require approval, or be blocked pending review?
 
-## Local Artifacts To Add Next
+## Local Artifacts Added
 
-Add these when we are ready to build the Stacks deep dive:
+These are now present in the local scenario:
 
 1. `terraform/workspace-to-stacks/modules/platform-addons`
 2. `terraform/workspace-to-stacks/modules/app-namespace`
 3. `terraform/workspace-to-stacks/modules/hashibank-app`
 4. expanded `stack/components.tfcomponent.hcl`
 5. expanded `stack/deployments.tfdeploy.hcl`
-6. a Stack dependency diagram in `docs/video-architecture-diagram.md`
-7. a Stacks-specific review fixture under `data/`
-8. a reviewer mode that summarizes component blast radius
+6. `terraform/workspace-to-stacks/component-graph.md`
+
+## Local Artifacts To Add Next
+
+Next additions:
+
+1. a Stacks-specific review fixture under `data/`
+2. a reviewer mode that summarizes component blast radius
+3. a Stacks video teleprompter
+4. optional HCP Terraform / `tfctl` command examples after auth is confirmed
 
 ## Production Mapping
 

@@ -66,6 +66,12 @@ For the next Stacks deep-dive build plan, see:
 docs/stacks-prep-roadmap.md
 ```
 
+For live HashiBank / HCP Terraform prerequisites, see:
+
+```text
+docs/stacks-live-prerequisites.md
+```
+
 ## Talk Track
 
 > The first version runs locally so the workflow is easy to inspect. In production, HCP Terraform becomes the control plane: workspaces and Stacks hold state and run history, Sentinel enforces policy, deployment groups manage approval behavior, and MCP provides authorized context to agents.
