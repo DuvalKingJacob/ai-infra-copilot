@@ -10,9 +10,17 @@ platform-prod-eks workspace
   inputs: vpc_id, private_subnet_ids
   outputs: cluster_name, cluster_endpoint
 
-payments-prod-app workspace
-  inputs: vpc_id, cluster_name
-  outputs: service_name, app_url
+platform-prod-addons workspace
+  inputs: cluster_name
+  outputs: addon_set_name, enabled_addons
+
+hashibank-prod-namespace workspace
+  inputs: cluster_name, addon_set_name
+  outputs: namespace, service_account
+
+hashibank-prod-app workspace
+  inputs: cluster_name, namespace, service_account
+  outputs: service_name, app_url, release_summary
 ```
 
 ## Pain
@@ -28,7 +36,9 @@ payments-prod-app workspace
 deployment "prod"
   component "vpc"
     -> component "eks_cluster"
-      -> component "app"
+      -> component "platform_addons"
+        -> component "app_namespace"
+          -> component "hashibank_app"
 ```
 
 ## Migration Steps
@@ -45,7 +55,6 @@ deployment "prod"
 
 This is the question the assistant should help answer:
 
-> This app plan changes replicas and depends on EKS and VPC outputs. What is the blast radius, and should this be approved?
+> This HashiBank app plan changes replicas and depends on namespace, add-ons, EKS, and VPC outputs. What is the blast radius, and should this be approved?
 
 The assistant can explain dependencies and risk. It should not apply the Stack.
-

@@ -22,6 +22,7 @@ deployment "dev" {
     az_count    = 2
     node_count  = 3
     replicas    = 2
+    image_tag   = "dev"
   }
 
   deployment_group = deployment_group.development
@@ -34,8 +35,8 @@ deployment "prod" {
     az_count    = 3
     node_count  = 6
     replicas    = 6
+    image_tag   = "stable"
   }
 
   deployment_group = deployment_group.production
 }
-

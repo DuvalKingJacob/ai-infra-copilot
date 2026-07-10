@@ -62,7 +62,9 @@ It also uses Stacks concepts that matter for the AI/governance story:
 | --- | --- |
 | `terraform/workspace-to-stacks/modules/vpc` | `aws-vpc` |
 | `terraform/workspace-to-stacks/modules/eks` | `aws-eks-fargate` |
-| `terraform/workspace-to-stacks/modules/app` | `hashibank-deploy` |
+| `terraform/workspace-to-stacks/modules/platform-addons` | `eks-addons` |
+| `terraform/workspace-to-stacks/modules/app-namespace` | Kubernetes namespace / RBAC boundary |
+| `terraform/workspace-to-stacks/modules/hashibank-app` | `hashibank-deploy` |
 | `stack/components.tfcomponent.hcl` | `components.tfcomponent.hcl` |
 | `stack/deployments.tfdeploy.hcl` | `deployments.tfdeploy.hcl` |
 | local plan review report | future HCP Terraform / Stack run context |
@@ -106,4 +108,3 @@ Use the HashiBank companion second:
 ## Caution
 
 Do not blindly copy the companion repo into this project. It contains real-environment configuration such as account IDs, ARNs, organization names, and local Terraform artifacts. Keep the AI demo repo small and sanitized, and link to the companion as the advanced implementation.
-
