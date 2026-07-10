@@ -7,6 +7,7 @@ Working title:
 Related artifacts:
 
 - `docs/video-script-ai-agents-review-terraform-plans.md`
+- `docs/video-teleprompter-ai-should-review-terraform-plans.md`
 - `docs/video-architecture-diagram.md`
 
 ## Demo Goal
