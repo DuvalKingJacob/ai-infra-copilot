@@ -24,9 +24,29 @@ This should be the practitioner deep dive that follows the higher-level Stacks o
 | Steve's `Terraform Enterprise Video Series - Overview` | Series-level fit and episode sequencing | reviewed |
 | HashiCorp Stacks docs | Product truth for components, deployments, deployment groups, and HCP Terraform workflow | needs final reread before recording |
 | Terraform MCP Server docs | Product truth for MCP capabilities, HCP Terraform/TFE access, and security caveats | needs final reread before recording |
-| Existing HashiConf / HashiCorp YouTube Stacks walkthrough | Continuity check against previous public explanation | needs human review |
+| Existing HashiConf / HashiCorp YouTube Stacks walkthrough | Continuity check against previous public explanation | deck inspected |
+| `HashiCorp_PresentationKit_JacobPlicqueFinal.key` | Local copy of the HashiConf talk deck and embedded demo source | inspected |
 | `tfstacks-vpc-eks-hashibank` companion repo | Advanced real implementation reference | needs human review |
 | This repo's local Stacks scenario | Safe demo and teaching scaffold | ready for local validation |
+
+## HashiConf Continuity Baseline
+
+The local HashiConf deck confirms that the previous public Stacks talk already covered:
+
+- modern applications as interdependent components: networking, databases, compute, and security
+- separate workspaces creating drift, manual effort, and slower delivery
+- "Taming Complexity with Terraform Stacks"
+- organizing infrastructure into logical components
+- deploying components as cohesive environments
+- coordinated deployments with deployment group orchestration
+- advanced dependency management, deferred changes, and Linked Stacks
+- VCS-driven Stack architecture
+- Terraform Search as an estate discovery and import story
+- a live HCP Terraform / HashiBank Stacks demo
+
+The new deep dive should build on that baseline instead of re-explaining it. The added angle is:
+
+> Once Stacks make dependency context explicit, AI-assisted review can explain component blast radius while HCP Terraform / TFE remains the run, policy, approval, and audit control plane.
 
 ## Narrative Validation
 
@@ -36,6 +56,7 @@ This should be the practitioner deep dive that follows the higher-level Stacks o
 | Stacks coordinate modules; they do not replace modules | Does the demo show existing modules under Stack components? | `terraform/workspace-to-stacks/modules/*` and `stack/components.tfcomponent.hcl` |
 | Components make dependencies visible | Does the graph show `vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app`? | `terraform/workspace-to-stacks/component-graph.md` |
 | Deployments model repeatable environments | Does the script distinguish component shape from deployment targets? | `stack/deployments.tfdeploy.hcl` |
+| This talk extends the HashiConf talk | Does it reuse the Stacks foundation but add AI-assisted blast-radius review? | `HashiCorp_PresentationKit_JacobPlicqueFinal.key` continuity baseline |
 | HCP Terraform/TFE remains the control plane | Does the script map local files to HCP Terraform/TFE runs, policy, approvals, state, and audit? | `docs/hcp-terraform-stacks-plan.md` |
 | AI is a reviewer, not an operator | Does the script stop at blast-radius explanation and approval recommendation? | `docs/stacks-prep-roadmap.md` |
 | MCP provides context/tool access, not governance by itself | Does the script explain where MCP ends and policy/authorization begin? | `docs/terraform-mcp-integration.md` and `mcp/README.md` |
