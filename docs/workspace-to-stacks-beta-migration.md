@@ -35,7 +35,7 @@ Observed locally:
 | Tool | Status |
 | --- | --- |
 | Terraform | installed |
-| `tf-migrate` | not installed |
+| `tf-migrate` | installed: `2.0.0-rc1` |
 
 The provider-light workspace roots validate locally:
 
@@ -52,14 +52,16 @@ terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app validate
 
 ## Real Migration Flow
 
-The documented beta flow is:
+The observed `tf-migrate 2.0.0-rc1` beta flow is:
 
 1. Modularize any root module resources into child modules.
-2. Run `tf-migrate stacks prepare`.
-3. Configure cloud credentials for Stacks if needed.
-4. Run `tf-migrate stacks execute`.
-5. Review the generated Stack in HCP Terraform.
-6. Remove or set `import = false` when ready to make changes with the migrated Stack.
+2. Run `tf-migrate stacks init` to generate `stack-migrate-config.hcl`.
+3. Customize `stack-migrate-config.hcl`.
+4. Run `tf-migrate stacks prepare`.
+5. Configure cloud credentials for Stacks if needed.
+6. Run `tf-migrate stacks execute`.
+7. Review the generated Stack in HCP Terraform.
+8. Remove or set `import = false` when ready to make changes with the migrated Stack.
 
 ## Commands To Test Once `tf-migrate` Is Installed
 
@@ -74,8 +76,9 @@ From a real HCP Terraform-backed workspace configuration:
 
 ```bash
 tf-migrate modules create
-cd modularized_config
+cd modularized-configs
 terraform init
+tf-migrate stacks init
 tf-migrate stacks prepare
 tf-migrate stacks execute
 ```
@@ -85,6 +88,30 @@ The `prepare` command should generate:
 ```text
 _stacks_generated/
 stacks_migration_infra/
+```
+
+## Current Evaluation
+
+`tf-migrate` should not be part of the first Stacks walkthrough.
+
+Reasons:
+
+- the Stacks and modules subcommands are explicitly beta
+- the migration path depends on existing HCP Terraform workspaces and state
+- `stacks prepare` requires the configuration to be fully modularized
+- a real run may generate local migration files that should be reviewed before recording or committing
+- troubleshooting migration would distract from the first walkthrough's goal: teaching the Stacks mental model
+
+Recommendation:
+
+```text
+Use tf-migrate in a dedicated migration-focused episode after the first Stacks walkthrough.
+```
+
+Working title:
+
+```text
+Migrating HCP Terraform Workspaces To Stacks With tf-migrate
 ```
 
 ## Demo Positioning
