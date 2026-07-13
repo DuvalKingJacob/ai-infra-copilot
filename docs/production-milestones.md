@@ -121,3 +121,25 @@ Why:
 
 - Applying production infrastructure changes from a demo agent would be the wrong signal.
 - The stronger product decision is to stop at proposal and approval, then hand off to CI/CD or Terraform Cloud run approval.
+
+## Future Scenario: AI-Assisted Drift Triage
+
+Status: roadmap item.
+
+Why this matters:
+
+- Large Terraform estates can produce more drift events than a platform team can manually triage.
+- The same architecture used for plan review can extend to drift review: collect authorized context, classify risk, recommend next steps, and stop before mutation.
+- Drift triage is a strong practitioner scenario because it starts with a real operational problem rather than a generic chatbot prompt.
+
+Production-shaped workflow:
+
+1. HCP Terraform or Terraform Enterprise detects drift.
+2. An authorized agent gathers read-only workspace, project, ownership, policy, run, and dependency context.
+3. The agent groups drift by severity and recommended handling path.
+4. Humans review the recommendation.
+5. Terraform remains the system of record for remediation runs, approvals, state, and audit.
+
+Non-goal:
+
+- Do not build an autonomous drift fixer that applies changes outside the Terraform run lifecycle.

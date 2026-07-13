@@ -19,6 +19,7 @@ The goal is to reinforce a clear practitioner lane over time:
 | Run Tasks And Cost Gates | walkthrough | Makes cost governance concrete inside HCP Terraform/TFE | planned |
 | Drift Detection | walkthrough | Turns Episode 3 into an operational workflow | planned |
 | Drift Remediation | walkthrough | Shows review/approval boundaries for fixing drift | planned |
+| AI-Assisted Drift Triage | future demo | Shows how agents could classify, prioritize, and recommend drift remediation at estate scale without bypassing Terraform governance | future |
 | `tfctl` For HCP Terraform | short demo | Gives practitioners a CLI path into HCP Terraform workflows | planned |
 | Terraform MCP Server | explainer / demo | Connects AI assistants to Terraform context and Registry knowledge | planned |
 | AI Reviews Terraform Plans | walkthrough | Shows AI as reviewer inside governance, not autonomous operator | in progress |
@@ -69,9 +70,35 @@ Use the companion roadmap to decide the next walkthrough based on team needs:
 
 - policy and cost gates
 - drift detection/remediation
+- AI-assisted drift triage at scale
 - deployment groups
 - `tfctl`
 - MCP
+
+## Future Demo: AI-Assisted Drift Triage
+
+This is a future extension of the same reference architecture, not a replacement for the current plan-review demo.
+
+Scenario:
+
+- An enterprise estate has hundreds or thousands of workspaces.
+- Drift detection surfaces a large set of drift events.
+- Platform teams need to know which events are cosmetic, which are risky, which teams own them, and which remediation path is appropriate.
+
+Workflow:
+
+1. HCP Terraform or Terraform Enterprise detects drift.
+2. An authorized agent gathers read-only context such as workspace, project, Stack/component, owner, environment, resource type, previous runs, policy history, and available run metadata.
+3. The agent classifies drift into buckets such as cosmetic, configuration drift, security drift, critical production drift, and requires investigation.
+4. The agent recommends a next step: ignore, investigate, import, plan remediation, or escalate to platform/security.
+5. Humans approve any remediation path.
+6. Terraform remains the execution and audit control point.
+
+Why it matters:
+
+- It turns drift from a notification problem into a prioritization workflow.
+- It gives practitioners a concrete reason to care about Terraform context, workspace ownership, policy history, and approval boundaries.
+- It reinforces the core AI operating model: agents can collect context, classify risk, and propose action, but governed Terraform workflows should execute infrastructure change.
 
 ## Operating Principle
 

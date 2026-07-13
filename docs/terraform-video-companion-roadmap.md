@@ -49,6 +49,7 @@ These are TPMM/SME notes to consider when reviewing the scripts. They are not re
 - Keep expectations precise: drift detection is scheduled/refresh-based, not real-time streaming.
 - Companion walkthrough should show drift as a reviewed remediation workflow, not auto-apply.
 - Connect drift to Stack/component health if the product supports the exact view being shown in the demo.
+- A future AI companion could show estate-scale drift triage: classify drift, prioritize risk, recommend remediation paths, and hand off any change to Terraform approvals instead of letting an agent fix drift directly.
 
 ### Episode 8: AI Estate
 
