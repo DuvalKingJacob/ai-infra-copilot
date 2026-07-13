@@ -14,7 +14,7 @@ LIVE_RISKY_PLAN_JSON ?= outputs/live-risky-app-platform-plan.json
 LIVE_RISKY_REPORT ?= outputs/live-risky-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local clean-reports
+.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -42,6 +42,8 @@ help:
 	@printf '%s\n' '  make authz-load      Validate and load SpiceDB fixtures'
 	@printf '%s\n' '  make tool-check      Show Alice/Bob plan-review tool decisions'
 	@printf '%s\n' '  make tool-check-local Show Alice/Bob decisions with local fixtures'
+	@printf '%s\n' '  make tool-check-tfctl Show authorized read-only tfctl context path'
+	@printf '%s\n' '  make agent-tfctl     Run the agent with optional tfctl context'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Override examples:'
 	@printf '%s\n' '  make review PLAN=data/terraform-plan.app-platform.json'
@@ -99,6 +101,9 @@ ci: validate review report review-app report-app agent tool-check-local sentinel
 agent:
 	node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=local
 
+agent-tfctl:
+	node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=local --terraform-context=tfctl
+
 sentinel-check:
 	PATH="$$(dirname $(SENTINEL_BIN)):$$PATH" sentinel fmt -check policies/sentinel/*.sentinel
 
@@ -120,6 +125,9 @@ tool-check:
 tool-check-local:
 	node src/tool-call.mjs alice terraform.review_plan --provider=local
 	node src/tool-call.mjs bob terraform.review_plan --provider=local
+
+tool-check-tfctl:
+	node src/tool-call.mjs alice terraform.review_plan --provider=local --terraform-context=tfctl
 
 clean-reports:
 	rm -f outputs/terraform-plan-review-report.md outputs/app-platform-plan-review-report.md outputs/live-*

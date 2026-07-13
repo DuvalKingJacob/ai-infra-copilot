@@ -240,6 +240,13 @@ The repo includes a small deterministic agent runner:
 make agent
 ```
 
+With optional read-only `tfctl` context:
+
+```bash
+make agent-tfctl
+TFCTL_WORKSPACE=WORKSPACE_NAME make agent-tfctl
+```
+
 With SpiceDB running:
 
 ```bash

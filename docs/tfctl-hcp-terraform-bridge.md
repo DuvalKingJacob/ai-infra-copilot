@@ -97,6 +97,40 @@ List workspace variables without exposing values:
 tfctl api /workspaces/{workspace}/vars -p workspace=WORKSPACE_NAME --jq '.data[] | {key: .attributes.key, category: .attributes.category, sensitive: .attributes.sensitive}'
 ```
 
+## Agent Integration
+
+The agent can optionally request read-only HCP Terraform/TFE context through `tfctl` after authorization.
+
+Without a workspace configured, the command degrades safely and explains what is missing:
+
+```bash
+make agent-tfctl
+make tool-check-tfctl
+```
+
+With a workspace:
+
+```bash
+TFCTL_WORKSPACE=WORKSPACE_NAME make agent-tfctl
+TFCTL_WORKSPACE=WORKSPACE_NAME make tool-check-tfctl
+```
+
+Equivalent direct command:
+
+```bash
+node src/agent-workflow.mjs alice "Should we apply the Terraform change?" \
+  --provider=local \
+  --terraform-context=tfctl \
+  --workspace=WORKSPACE_NAME
+```
+
+This path currently reads:
+
+- current run status through `tfctl run status`
+- workspace variable metadata through `tfctl api /workspaces/{workspace}/vars`
+
+It does not start runs, approve runs, apply Terraform, delete resources, or expose sensitive variable values.
+
 ## Demo Safety Rules
 
 Use `tfctl` as a read-only inspection layer first.
@@ -132,4 +166,3 @@ That is the natural bridge to:
 - Stack deployments
 - Terraform MCP context
 - agent safety boundaries
-

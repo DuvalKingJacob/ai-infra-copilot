@@ -1,9 +1,16 @@
 import { readFile } from "node:fs/promises";
 import { localCheck } from "./local-authz.mjs";
 import { SpiceDBClient, toSpiceDBObjectId } from "./spicedb-client.mjs";
+import {
+  getTerraformContextProvider,
+  getTfctlReadOnlyContext,
+  getTfctlWorkspace,
+} from "./tfctl-context.mjs";
 
 const [actor, toolName, ...args] = process.argv.slice(2);
 const provider = args.find((arg) => arg.startsWith("--provider="))?.split("=")[1] || "local";
+const terraformContextProvider = getTerraformContextProvider(args);
+const tfctlWorkspace = getTfctlWorkspace(args);
 
 if (!actor || !toolName) {
   console.error("Usage: node src/tool-call.mjs <actor> <tool-name> [--provider=local|spicedb]");
@@ -74,7 +81,9 @@ try {
         requiredPermission: tool.permission,
         fallbackPermission: tool.fallbackPermission || null,
         decision: allowed ? "allow" : "deny",
-        output: allowed ? readOnlyResults[toolName] : null,
+        output: allowed
+          ? await resolveToolOutput({ toolName, terraformContextProvider, tfctlWorkspace })
+          : null,
         denialReason: allowed ? null : "Actor is not authorized to call this MCP-style tool.",
       },
       null,
@@ -84,4 +93,26 @@ try {
 } catch (error) {
   console.error(error.message);
   process.exit(1);
+}
+
+async function resolveToolOutput({ toolName, terraformContextProvider, tfctlWorkspace }) {
+  const fixture = readOnlyResults[toolName] || null;
+
+  if (terraformContextProvider !== "tfctl") {
+    return fixture;
+  }
+
+  if (!["terraform.get_recent_changes", "terraform.review_plan"].includes(toolName)) {
+    return fixture;
+  }
+
+  return {
+    mode: "read-only-tfctl-context",
+    result:
+      "Read-only HCP Terraform/TFE context was requested through tfctl after authorization.",
+    tfctlContext: await getTfctlReadOnlyContext({ workspace: tfctlWorkspace }),
+    fallbackFixture: fixture,
+    safety:
+      "This path only reads run/workspace context. It does not start, approve, apply, or delete Terraform runs.",
+  };
 }

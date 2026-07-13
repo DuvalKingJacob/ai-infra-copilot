@@ -3,12 +3,20 @@ import { cosineSimilarity, localEmbedding } from "./lib.mjs";
 import { localCheck } from "./local-authz.mjs";
 import { SpiceDBClient, toSpiceDBObjectId } from "./spicedb-client.mjs";
 import { reviewTerraformPlan } from "./terraform-plan-reviewer.mjs";
+import {
+  getTerraformContextProvider,
+  getTfctlReadOnlyContext,
+  getTfctlWorkspace,
+  stripTerraformContextArgs,
+} from "./tfctl-context.mjs";
 
 const actor = process.argv[2] || "alice";
 const providerFlag = process.argv.find((arg) => arg.startsWith("--provider="));
 const provider = providerFlag?.split("=")[1] || "local";
+const terraformContextProvider = getTerraformContextProvider();
+const tfctlWorkspace = getTfctlWorkspace();
 const prompt =
-  process.argv
+  stripTerraformContextArgs(process.argv)
     .slice(3)
     .filter((arg) => !arg.startsWith("--provider="))
     .join(" ") || "Should we apply the Terraform change?";
@@ -77,17 +85,35 @@ async function callTool(toolName) {
     tool: toolName,
     decision: allowed ? "allow" : "deny",
     requiredPermission: tool.permission,
-    output: allowed ? toolOutput(toolName) : null,
+    output: allowed ? await toolOutput(toolName) : null,
   };
 }
 
-function toolOutput(toolName) {
+async function toolOutput(toolName) {
   if (toolName === "terraform.get_recent_changes") {
+    if (terraformContextProvider === "tfctl") {
+      return {
+        source: "tfctl",
+        summary:
+          "The agent requested read-only HCP Terraform/TFE context through tfctl after authorization.",
+        context: await getTfctlReadOnlyContext({ workspace: tfctlWorkspace }),
+        fallback:
+          "Fixture summary: prod-network changed aws_security_group.payments_ingress and deploy-bot IAM permissions.",
+      };
+    }
+
     return "prod-network changed aws_security_group.payments_ingress and deploy-bot IAM permissions.";
   }
 
   if (toolName === "terraform.review_plan") {
-    return reviewTerraformPlan(plan);
+    const review = reviewTerraformPlan(plan);
+    if (terraformContextProvider === "tfctl") {
+      return {
+        ...review,
+        hcpTerraformContext: await getTfctlReadOnlyContext({ workspace: tfctlWorkspace }),
+      };
+    }
+    return review;
   }
 
   if (toolName === "terraform.create_rollback_plan") {
@@ -161,6 +187,8 @@ async function main() {
         actor,
         prompt,
         provider,
+        terraformContextProvider,
+        tfctlWorkspace,
         stages: {
           plan: intent,
           retrieve: context,

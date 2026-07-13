@@ -19,6 +19,15 @@ node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --prov
 node src/agent-workflow.mjs bob "Should we apply the Terraform change?" --provider=spicedb
 ```
 
+With optional read-only `tfctl` context:
+
+```bash
+make agent-tfctl
+TFCTL_WORKSPACE=WORKSPACE_NAME make agent-tfctl
+```
+
+The `tfctl` path is explicit and read-only. It can inspect HCP Terraform/TFE run status and workspace variable metadata after the actor is authorized to call the Terraform tool. It does not start, approve, apply, or delete runs.
+
 ## What It Demonstrates
 
 The workflow has explicit stages:
@@ -42,6 +51,7 @@ The project does not claim to be a fully autonomous agent. Instead, it demonstra
 - delegated authority
 - approval gates
 - auditability
+- optional read-only HCP Terraform/TFE context through `tfctl`
 
 That is the useful part for infrastructure teams.
 
