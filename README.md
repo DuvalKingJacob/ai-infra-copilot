@@ -8,7 +8,7 @@ This project explores a practical question for platform engineers:
 
 > If an AI assistant can inspect Terraform run context and call operational tools, how should it fit into the governance model teams already use for policy, approval, state, and audit?
 
-The answer here is intentionally conservative: the assistant can summarize plans, identify risky changes, retrieve authorized context, and propose next steps. It does not apply Terraform or bypass the HCP Terraform/TFE run lifecycle.
+The answer here is intentionally conservative: Terraform remains the infrastructure control point. HCP Terraform or Terraform Enterprise remains the system of record for runs, plans, policy checks, approvals, variables, state, and audit. The assistant can summarize plans, identify risky changes, retrieve authorized context, and propose next steps. It does not apply Terraform or bypass the HCP Terraform/TFE run lifecycle.
 
 Engineers should not have to manually inspect hundreds of lines of Terraform plan output without help. This repo shows how an assistant can summarize infrastructure changes, identify risky modifications, and produce a review artifact while keeping humans in control of deployment decisions.
 
@@ -103,6 +103,8 @@ It demonstrates:
 
 The goal is not to show off every AI framework. The goal is to make the Terraform operational control points visible.
 
+AI augments the Terraform workflow here; it does not replace the workflow. Plans remain the primary review surface, policy remains the change-evaluation layer, authorization controls who can access context or tools, and human approval remains the production boundary.
+
 ## Demo Paths
 
 Detailed commands for the Terraform-native workflow, browser demo, SpiceDB/AuthZed path, MCP gateway, plan reviewer, and agent workflow live in:
@@ -140,6 +142,7 @@ The integration scaffolding includes:
 - `terraform/`: Terraform scenarios for plan review, app-platform risk, and workspace-to-Stacks migration.
 - `policies/sentinel/`: Sentinel-style policy examples.
 - `docs/terraform-mcp-integration.md`: Terraform MCP integration plan.
+- `docs/tfctl-hcp-terraform-bridge.md`: `tfctl` bridge into HCP Terraform/TFE workflows.
 - `docs/oidc-authentication-plan.md`: real authentication plan.
 - `docs/demo-paths.md`: runnable demo commands.
 - `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
@@ -156,4 +159,4 @@ For the product scenario, demo personas, architecture diagram, RAG/MCP rationale
 
 ## Core Takeaway
 
-AI-assisted infrastructure workflows are not just model problems. They are also authorization, context, tool-use, governance, and operational trust problems.
+AI-assisted infrastructure workflows are not just model problems. They are also authorization, context, tool-use, governance, and operational trust problems. Terraform remains the control point for infrastructure change.

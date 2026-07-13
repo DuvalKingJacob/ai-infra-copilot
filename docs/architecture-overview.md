@@ -2,6 +2,10 @@
 
 This document keeps the deeper architecture explanation out of the README while preserving the full product story.
 
+The core production pattern is:
+
+> Terraform remains the infrastructure control point. AI can help explain, review, and propose, but HCP Terraform or Terraform Enterprise should remain the system of record for runs, plans, policy checks, approvals, variables, state, and audit.
+
 ## Product Scenario
 
 A platform engineer asks:
@@ -22,6 +26,8 @@ If the user asks:
 > Apply the rollback to production.
 
 The workflow does not execute directly. It creates a rollback proposal and requires approval from a user with the right permission.
+
+In production, that proposal would hand off to a controlled Terraform workflow rather than becoming a parallel apply path.
 
 ## Demo Personas
 
@@ -82,6 +88,8 @@ MCP is useful because AI assistants increasingly need access to external systems
 
 The important design point is that MCP makes tool access explicit, but it does not make tool access automatically safe. The application still needs domain-level authorization around which actor can call which tool, against which resource, under which conditions.
 
+For Terraform specifically, the public Terraform MCP Server is an example of a structured interface between AI assistants and Terraform Registry or HCP Terraform/TFE data. That interface still needs trust boundaries because Terraform data exposed to an MCP client may become visible to the model.
+
 ## Why RAG
 
 Infrastructure answers depend on local, changing, organization-specific knowledge: runbooks, postmortems, Terraform procedures, customer impact notes, and service ownership data.
@@ -94,7 +102,7 @@ This demo treats retrieved documents as protected resources.
 
 Production infrastructure workflows often need plans, reviews, approvals, and audit trails. The assistant can inspect and propose, but it should not directly mutate production just because a prompt asked it to.
 
-The demo intentionally stops at approval recording. In a production version, approval would hand off to a controlled deployment or incident remediation workflow.
+The demo intentionally stops at approval recording. In a production version, approval would hand off to a controlled deployment or incident remediation workflow inside the Terraform control plane.
 
 ## Security Model
 
@@ -105,6 +113,7 @@ Protected resources:
 - Kubernetes service status.
 - Rollback proposals.
 - Approval authority.
+- HCP Terraform/TFE run, workspace, and Stack context.
 
 Policy principles:
 
@@ -113,6 +122,7 @@ Policy principles:
 - Log denied docs and tools without exposing their contents.
 - Require human approval for production-impacting actions.
 - Make the final answer explain what was used and what was withheld.
+- Keep Terraform plans as the primary review surface for infrastructure change.
 
 ## What Would Change In Production
 
@@ -123,6 +133,7 @@ In production, I would add:
 - Real authentication through OIDC.
 - SpiceDB/AuthZed for relationship-based authorization.
 - Real MCP servers, starting with read-only Terraform and Kubernetes integrations.
+- `tfctl` for controlled HCP Terraform/TFE API workflows where a CLI interface is more appropriate than MCP.
 - Vector or hybrid retrieval with chunk-level permissions.
 - Persistent audit storage.
 - OpenTelemetry traces for retrieval, tool calls, authorization decisions, and approvals.
@@ -147,4 +158,4 @@ This is still an exploration, not a production service. But it includes concrete
 
 ## Core Takeaway
 
-AI-assisted infrastructure workflows are not just model problems. They are also authorization, context, tool-use, governance, and operational trust problems.
+AI-assisted infrastructure workflows are not just model problems. They are also authorization, context, tool-use, governance, and operational trust problems. Terraform remains the control point for infrastructure change.

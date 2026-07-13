@@ -2,6 +2,12 @@
 
 This file turns the remaining gaps into concrete, honest milestones.
 
+The milestones follow one product principle:
+
+> AI should augment Terraform workflows without creating a parallel infrastructure control plane.
+
+HCP Terraform or Terraform Enterprise remains the system of record for runs, plans, policy checks, approvals, variables, state, and audit. Interfaces such as `tfctl` and the Terraform MCP Server should be treated as controlled access paths into that system, not replacements for it.
+
 ## Milestone 1: Real Embeddings
 
 Status: scaffolded.
@@ -72,6 +78,27 @@ Next step:
 
 - Replace the gateway's mock read-only Terraform result with an actual call to the official Terraform MCP Server.
 - Leave workspace mutation disabled.
+- Document which Terraform data is safe to expose to the MCP client and which data should require additional authorization or redaction.
+
+## Milestone 3.5: HCP Terraform / TFE Control Plane Interface
+
+Status: bridge notes added.
+
+Files:
+
+- `docs/tfctl-hcp-terraform-bridge.md`
+- `docs/video-demo-runbook.md`
+
+Why this matters:
+
+- `tfctl` gives humans, scripts, and coding agents a CLI-shaped way to interact with HCP Terraform/TFE workflows.
+- The demo should show that AI-assisted review improves the existing Terraform run model rather than replacing it.
+- Runs, plans, policy checks, approvals, variables, state, and audit logs remain the production control points.
+
+Next step:
+
+- Add an authenticated, read-only `tfctl` walkthrough once a safe HCP Terraform/TFE environment is available.
+- Keep `terraform apply` out of the local agent path.
 
 ## Milestone 4: OIDC Authentication
 

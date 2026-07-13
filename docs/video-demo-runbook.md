@@ -20,6 +20,7 @@ The demo should make four ideas obvious:
 2. The local repo is a simplified reference implementation of that production workflow.
 3. The assistant reviews and explains Terraform risk before approval.
 4. Policy, authorization, and human approval remain separate control points.
+5. `tfctl` and the Terraform MCP Server are examples of controlled interfaces into Terraform workflows; they do not remove the need for policy, approval, and audit.
 
 ## Setup Checks
 
@@ -67,6 +68,8 @@ Say:
 > Terraform plans are the right control point, but large plans are hard to review by eye. The question is not whether an AI agent can apply Terraform. The question is how AI should fit into the Terraform run workflow teams already trust.
 >
 > In production, that means HCP Terraform or Terraform Enterprise remains the system of record for runs, plans, policy checks, approvals, variables, state, and audit logs. This local demo is a small, inspectable version of that pattern.
+>
+> Put another way: AI can make the Terraform review loop easier to understand, but Terraform remains the infrastructure control point.
 
 Show:
 
@@ -225,6 +228,8 @@ docs/tfctl-hcp-terraform-bridge.md
 Say:
 
 > The local demo uses sample Terraform plan JSON so the workflow is easy to inspect. In production, HCP Terraform or TFE run data, policy checks, workspace variables, state metadata, audit logs, and Stack deployment context become the source of truth. `tfctl` is one operator CLI bridge into that world.
+>
+> The Terraform MCP Server is another public interface pattern: it can expose Terraform Registry and HCP Terraform/TFE context to compatible assistants. That makes authorization and review boundaries more important, because context exposed to an assistant may become model-visible.
 
 If authenticated:
 
