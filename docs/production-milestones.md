@@ -8,6 +8,8 @@ The milestones follow one product principle:
 
 HCP Terraform or Terraform Enterprise remains the system of record for runs, plans, policy checks, approvals, variables, state, and audit. Interfaces such as `tfctl` and the Terraform MCP Server should be treated as controlled access paths into that system, not replacements for it.
 
+Future issue candidates that are not yet milestones live in `docs/ai-repo-backlog.md`.
+
 ## Milestone 1: Real Embeddings
 
 Status: scaffolded.

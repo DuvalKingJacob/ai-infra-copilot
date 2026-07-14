@@ -16,6 +16,12 @@ The focus is not autonomous infrastructure mutation. The focus is safe assistanc
 - require approval
 - audit
 
+Future ideas that should not derail the current demo live in:
+
+```text
+docs/ai-repo-backlog.md
+```
+
 ## Track 1: Terraform Plan Review
 
 Current state:

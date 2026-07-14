@@ -121,7 +121,7 @@ This deep dive should complement the planned Terraform Enterprise series:
 | --- | --- |
 | Episode 1: Stacks overview | This video becomes the hands-on practitioner companion |
 | Episode 2: Policy | Mention as the next governance layer, but do not deep dive Sentinel/OPA here |
-| Episode 3: Drift | Mention dependency context as useful for drift investigation, but keep scope on Stacks |
+| Episode 3: Drift | Treat Drift Detection as an adjacent workspace-based lifecycle topic; do not imply it works with Stacks |
 | Episode 8: AI Estate | Reuse the AI/MCP framing, but keep this video centered on Terraform Stacks adoption |
 | Episode 9: Grand Orchestration | This demo can become one component of the final end-to-end story |
 

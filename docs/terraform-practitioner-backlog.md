@@ -17,8 +17,8 @@ The goal is to reinforce a clear practitioner lane over time:
 | Linked Stacks | deep dive | Useful for larger platform architectures and cross-stack dependencies | planned |
 | Policy As Code For Stacks | walkthrough | Bridges Episode 2 to actionable Sentinel/OPA usage | planned |
 | Run Tasks And Cost Gates | walkthrough | Makes cost governance concrete inside HCP Terraform/TFE | planned |
-| Drift Detection | walkthrough | Turns Episode 3 into an operational workflow | planned |
-| Drift Remediation | walkthrough | Shows review/approval boundaries for fixing drift | planned |
+| Drift Detection | walkthrough | Turns Episode 3 into an operational workflow | drafted |
+| Drift Remediation | walkthrough | Shows review/approval boundaries for fixing drift | drafted |
 | AI-Assisted Drift Triage | future demo | Shows how agents could classify, prioritize, and recommend drift remediation at estate scale without bypassing Terraform governance | future |
 | `tfctl` For HCP Terraform | short demo | Gives practitioners a CLI path into HCP Terraform workflows | planned |
 | Terraform MCP Server | explainer / demo | Connects AI assistants to Terraform context and Registry knowledge | planned |
@@ -64,6 +64,22 @@ Deliverables:
 - HCP Terraform/TFE mapping
 - authorization and approval explanation
 
+### Also Drafted
+
+The Drift companion walkthrough now has a recording runbook:
+
+```text
+docs/detecting-and-remediating-drift-walkthrough.md
+```
+
+Use it next to the Stacks foundation to show another Infrastructure Lifecycle Management workflow before going deeper on AI.
+
+Scope note:
+
+```text
+This is a workspace-based Drift Detection walkthrough, not a Stacks drift demo.
+```
+
 ### Later
 
 Use the companion roadmap to decide the next walkthrough based on team needs:
@@ -88,7 +104,7 @@ Scenario:
 Workflow:
 
 1. HCP Terraform or Terraform Enterprise detects drift.
-2. An authorized agent gathers read-only context such as workspace, project, Stack/component, owner, environment, resource type, previous runs, policy history, and available run metadata.
+2. An authorized agent gathers read-only context such as workspace, project, owner, environment, resource type, previous runs, policy history, and available run metadata.
 3. The agent classifies drift into buckets such as cosmetic, configuration drift, security drift, critical production drift, and requires investigation.
 4. The agent recommends a next step: ignore, investigate, import, plan remediation, or escalate to platform/security.
 5. Humans approve any remediation path.

@@ -487,11 +487,11 @@ That video can focus on:
 
 Tie the demo back to adoption:
 
-> Stacks are not just a new file format. They are a way to make the operating model visible. Once the component graph is explicit, HCP Terraform and Terraform Enterprise can give teams a stronger control plane for runs, plans, policy, approvals, state, audit, drift, and eventually AI-assisted review.
+> Stacks are not just a new file format. They are a way to make the operating model visible. Once the component graph is explicit, HCP Terraform and Terraform Enterprise can give teams a stronger control plane for orchestration, plans, policy, approvals, state, audit, and eventually AI-assisted review.
 
 ## Close
 
-> Stacks make the relationships explicit. Once the relationships are explicit, platform teams can reason about deployment order, blast radius, policy, approvals, drift, and eventually AI-assisted review.
+> Stacks make the relationships explicit. Once the relationships are explicit, platform teams can reason about deployment order, blast radius, policy, approvals, and eventually AI-assisted review. Drift Detection is an adjacent workspace-based lifecycle topic, not part of this Stacks walkthrough.
 
 ## Next Walkthroughs
 

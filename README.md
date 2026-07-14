@@ -79,6 +79,7 @@ Start here:
 - `docs/stacks-prep-roadmap.md`: what the Stacks deep dive is building toward.
 - `docs/terraform-video-companion-roadmap.md`: companion walkthrough plan for the Terraform video series.
 - `docs/building-your-first-terraform-stack-walkthrough.md`: first Stacks companion walkthrough.
+- `docs/detecting-and-remediating-drift-walkthrough.md`: Drift Detection companion walkthrough.
 - `docs/terraform-practitioner-backlog.md`: working backlog for practitioner education topics.
 - `terraform/workspace-to-stacks/README.md`: local migration scenario.
 - `terraform/workspace-to-stacks/component-graph.md`: component dependency graph.

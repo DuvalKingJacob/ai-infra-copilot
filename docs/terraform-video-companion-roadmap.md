@@ -21,7 +21,7 @@ The companion videos should be tactical, demo-first, and grounded in Terraform p
 | --- | --- | --- | --- |
 | Episode 1: Beyond the Workspace | Stacks move teams from workspace sprawl to dependency-aware orchestration | Building Your First Terraform Stack | recommended |
 | Episode 2: Identity, Policy, and Cost | Governance should scale with the estate, not become a bottleneck | Adding Policy and Cost Gates to a Stack | recommended |
-| Episode 3: Drift Detection and Remediation | Drift turns declared infrastructure into fiction unless it is detected and reviewed | Detecting and Remediating Drift in HCP Terraform | recommended |
+| Episode 3: Drift Detection and Remediation | Drift turns declared infrastructure into fiction unless it is detected and reviewed | Detecting and Remediating Drift in HCP Terraform | walkthrough drafted |
 | Episode 8: The AI Estate | AI agents need Terraform context, domain knowledge, identity, policy, and audit boundaries | AI Reviews Terraform Plans, Not Applies Them | already started in this repo |
 | Episode 9: Grand Orchestration | The platform story is strongest when all lifecycle layers work together | From Commit to Governed Terraform Run | recommended after earlier walkthroughs |
 
@@ -48,8 +48,9 @@ These are TPMM/SME notes to consider when reviewing the scripts. They are not re
 - Good practitioner follow-up because drift has obvious operational stakes.
 - Keep expectations precise: drift detection is scheduled/refresh-based, not real-time streaming.
 - Companion walkthrough should show drift as a reviewed remediation workflow, not auto-apply.
-- Connect drift to Stack/component health if the product supports the exact view being shown in the demo.
+- Keep this walkthrough workspace-based. Do not imply Drift Detection works with Stacks unless the exact product capability exists and has been validated.
 - A future AI companion could show estate-scale drift triage: classify drift, prioritize risk, recommend remediation paths, and hand off any change to Terraform approvals instead of letting an agent fix drift directly.
+- Draft walkthrough: `docs/detecting-and-remediating-drift-walkthrough.md`
 
 ### Episode 8: AI Estate
 
@@ -150,4 +151,4 @@ Stack
 
 ### Wrap-Up
 
-Stacks make relationships explicit. Once those relationships are explicit, teams can reason about deployment order, blast radius, policy, approvals, drift, and eventually AI-assisted review.
+Stacks make relationships explicit. Once those relationships are explicit, teams can reason about deployment order, blast radius, policy, approvals, and eventually AI-assisted review. Drift Detection should be handled as a separate workspace-based companion walkthrough.
