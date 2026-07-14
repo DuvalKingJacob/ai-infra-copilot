@@ -35,6 +35,12 @@ It should not replace Terraform MCP. They are different layers:
 - SpiceDB/AuthZed: authorization boundary before context or tool output is exposed.
 - Sentinel: policy boundary for whether the infrastructure change is acceptable.
 
+For the broader run-control model, see:
+
+```text
+docs/hcp-terraform-run-control.md
+```
+
 ## Current Local Status
 
 `tfctl` is installed, but live HCP Terraform auth was not active when checked:

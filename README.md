@@ -98,6 +98,7 @@ Start here:
 - `docs/workspace-to-stacks-beta-migration.md`: current `tf-migrate` beta migration path.
 - `docs/stacks-video-validation-checklist.md`: product, narrative, and demo readiness checklist.
 - `docs/hashibank-stacks-companion.md`: how the companion repo should relate to this reference architecture.
+- `docs/hcp-terraform-run-control.md`: when to use UI, CI, `tfctl`, and HCP Terraform approvals.
 
 ## What This Is
 
