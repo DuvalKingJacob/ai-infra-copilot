@@ -3,6 +3,8 @@ provider "aws" {
 }
 
 resource "aws_lb" "api" {
+  count = var.create_runtime_resources ? 1 : 0
+
   name               = "payments-api"
   internal           = !var.public_load_balancer
   load_balancer_type = "application"
@@ -23,9 +25,11 @@ resource "aws_ecs_cluster" "main" {
 }
 
 resource "aws_ecs_service" "api" {
+  count = var.create_runtime_resources ? 1 : 0
+
   name            = "payments-api"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = "payments-api:42"
+  task_definition = var.ecs_task_definition
   desired_count   = var.desired_count
 
   deployment_minimum_healthy_percent = 100
@@ -35,16 +39,20 @@ resource "aws_ecs_service" "api" {
 }
 
 resource "aws_db_instance" "primary" {
-  identifier              = "payments-primary"
-  engine                  = "postgres"
-  engine_version          = "15.5"
-  instance_class          = var.db_instance_class
-  allocated_storage       = 100
-  storage_encrypted       = true
-  db_subnet_group_name    = "payments-private"
-  skip_final_snapshot     = false
-  deletion_protection     = true
-  backup_retention_period = 7
+  count = var.create_runtime_resources ? 1 : 0
+
+  identifier                  = "payments-primary"
+  engine                      = "postgres"
+  engine_version              = "15.5"
+  instance_class              = var.db_instance_class
+  allocated_storage           = 100
+  storage_encrypted           = true
+  username                    = var.db_username
+  manage_master_user_password = true
+  db_subnet_group_name        = "payments-private"
+  skip_final_snapshot         = false
+  deletion_protection         = true
+  backup_retention_period     = 7
 
   tags = var.common_tags
 }

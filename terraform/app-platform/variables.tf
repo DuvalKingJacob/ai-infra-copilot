@@ -28,6 +28,12 @@ variable "public_subnet_ids" {
   default     = ["subnet-public-a", "subnet-public-b"]
 }
 
+variable "create_runtime_resources" {
+  description = "Whether to create apply-sensitive runtime resources such as the ALB, ECS service, and RDS instance. Keep false for safe demo applies."
+  type        = bool
+  default     = false
+}
+
 variable "public_load_balancer" {
   description = "Whether the application load balancer is internet-facing."
   type        = bool
@@ -40,10 +46,22 @@ variable "desired_count" {
   default     = 6
 }
 
+variable "ecs_task_definition" {
+  description = "Existing ECS task definition family:revision used when create_runtime_resources is true."
+  type        = string
+  default     = "payments-api:42"
+}
+
 variable "db_instance_class" {
   description = "RDS instance class for the application database."
   type        = string
   default     = "db.r6g.large"
+}
+
+variable "db_username" {
+  description = "Database admin username used when create_runtime_resources is true."
+  type        = string
+  default     = "demo_admin"
 }
 
 variable "enable_latency_alarm" {

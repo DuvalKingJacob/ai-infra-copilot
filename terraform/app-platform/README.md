@@ -10,6 +10,8 @@ It models a production application platform with:
 - a latency alarm
 - required production tags
 
+The default live path is intentionally conservative for HCP Terraform demos. It creates only resources that can succeed without environment-specific IDs, such as the ECS cluster and latency alarm. Apply-sensitive runtime resources such as the load balancer, ECS service, and RDS instance are disabled unless `create_runtime_resources = true`.
+
 ## Risky Review Scenario
 
 The sample plan JSON in `data/terraform-plan.app-platform.json` represents a risky proposed change:
@@ -36,6 +38,8 @@ open outputs/live-risky-app-platform-plan-review-report.md
 ```
 
 The risky path uses `risky.tfvars.example` to propose internet-facing load balancing, reduced capacity, and missing ownership tags.
+
+Do not apply the risky path unless the workspace has real subnet IDs, an existing ECS task definition, and database/network prerequisites configured. It exists to generate a reviewable plan, not to prove autonomous apply.
 
 For a credential-free fixture review:
 
