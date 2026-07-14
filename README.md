@@ -54,6 +54,17 @@ open outputs/app-platform-plan-review-report.md
 
 The fixture uses the same JSON shape as `terraform show -json`, so the review behavior is inspectable without AWS, provider downloads, or HCP Terraform access.
 
+## AI-Assisted Drift Triage Path
+
+To show the next workflow after plan review, generate a prioritized drift triage report from sample HCP Terraform-style drift events:
+
+```bash
+make drift-report
+open outputs/drift-triage-report.md
+```
+
+This does not remediate drift or apply Terraform. It classifies sample drift events by severity, owner, workspace, and recommended handling path so a human can decide whether to ignore, investigate, import, update code, plan remediation, or escalate.
+
 ## CI Checks
 
 GitHub Actions runs the non-cloud validation path on pushes and pull requests:

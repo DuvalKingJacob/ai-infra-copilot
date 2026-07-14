@@ -1,0 +1,181 @@
+{
+  "generated_at": "2026-07-14T13:00:00Z",
+  "source": "sample-hcp-terraform-drift-detection",
+  "events": [
+    {
+      "id": "drift-001",
+      "workspace": "payments-network-prod",
+      "project": "payments",
+      "environment": "prod",
+      "owner": "network-platform",
+      "resource": "aws_security_group.payments_ingress",
+      "resource_type": "aws_security_group",
+      "detected_at": "2026-07-14T12:06:00Z",
+      "summary": "Manual console change added public ingress to the payments service security group.",
+      "change": {
+        "kind": "security_exposure",
+        "before": {
+          "cidr_blocks": ["10.20.0.0/16"]
+        },
+        "after": {
+          "cidr_blocks": ["0.0.0.0/0"]
+        }
+      },
+      "context": {
+        "last_run_status": "applied",
+        "last_policy_result": "passed",
+        "tags": {
+          "ManagedBy": "Terraform",
+          "Environment": "prod",
+          "Owner": "network-platform"
+        }
+      }
+    },
+    {
+      "id": "drift-002",
+      "workspace": "app-platform-prod",
+      "project": "platform",
+      "environment": "prod",
+      "owner": "app-platform",
+      "resource": "aws_ecs_service.api",
+      "resource_type": "aws_ecs_service",
+      "detected_at": "2026-07-14T12:12:00Z",
+      "summary": "Desired task count was reduced during an incident and has not been reconciled.",
+      "change": {
+        "kind": "capacity_change",
+        "before": {
+          "desired_count": 4
+        },
+        "after": {
+          "desired_count": 1
+        }
+      },
+      "context": {
+        "last_run_status": "applied",
+        "last_policy_result": "passed",
+        "incident_reference": "INC-204",
+        "tags": {
+          "ManagedBy": "Terraform",
+          "Environment": "prod",
+          "Owner": "app-platform"
+        }
+      }
+    },
+    {
+      "id": "drift-003",
+      "workspace": "shared-data-prod",
+      "project": "data-platform",
+      "environment": "prod",
+      "owner": "data-platform",
+      "resource": "aws_db_instance.primary",
+      "resource_type": "aws_db_instance",
+      "detected_at": "2026-07-14T12:18:00Z",
+      "summary": "Deletion protection was disabled outside Terraform.",
+      "change": {
+        "kind": "data_safety",
+        "before": {
+          "deletion_protection": true
+        },
+        "after": {
+          "deletion_protection": false
+        }
+      },
+      "context": {
+        "last_run_status": "applied",
+        "last_policy_result": "passed",
+        "tags": {
+          "ManagedBy": "Terraform",
+          "Environment": "prod",
+          "Owner": "data-platform"
+        }
+      }
+    },
+    {
+      "id": "drift-004",
+      "workspace": "observability-prod",
+      "project": "platform",
+      "environment": "prod",
+      "owner": "sre",
+      "resource": "aws_cloudwatch_metric_alarm.api_latency",
+      "resource_type": "aws_cloudwatch_metric_alarm",
+      "detected_at": "2026-07-14T12:22:00Z",
+      "summary": "Latency alarm threshold was changed manually during tuning.",
+      "change": {
+        "kind": "monitoring_change",
+        "before": {
+          "threshold": 500
+        },
+        "after": {
+          "threshold": 1200
+        }
+      },
+      "context": {
+        "last_run_status": "applied",
+        "last_policy_result": "passed",
+        "tags": {
+          "ManagedBy": "Terraform",
+          "Environment": "prod",
+          "Owner": "sre"
+        }
+      }
+    },
+    {
+      "id": "drift-005",
+      "workspace": "billing-dev",
+      "project": "billing",
+      "environment": "dev",
+      "owner": "billing-team",
+      "resource": "aws_s3_bucket.logs",
+      "resource_type": "aws_s3_bucket",
+      "detected_at": "2026-07-14T12:30:00Z",
+      "summary": "Cost allocation tag was changed outside Terraform.",
+      "change": {
+        "kind": "tag_change",
+        "before": {
+          "CostCenter": "platform"
+        },
+        "after": {
+          "CostCenter": "billing"
+        }
+      },
+      "context": {
+        "last_run_status": "applied",
+        "last_policy_result": "passed",
+        "tags": {
+          "ManagedBy": "Terraform",
+          "Environment": "dev",
+          "Owner": "billing-team"
+        }
+      }
+    },
+    {
+      "id": "drift-006",
+      "workspace": "identity-prod",
+      "project": "security",
+      "environment": "prod",
+      "owner": "security-platform",
+      "resource": "aws_iam_policy.deploy_bot",
+      "resource_type": "aws_iam_policy",
+      "detected_at": "2026-07-14T12:33:00Z",
+      "summary": "IAM policy now includes wildcard actions outside Terraform.",
+      "change": {
+        "kind": "identity_expansion",
+        "before": {
+          "actions": ["ecs:DescribeServices", "ecs:UpdateService"]
+        },
+        "after": {
+          "actions": ["*"]
+        }
+      },
+      "context": {
+        "last_run_status": "applied",
+        "last_policy_result": "passed",
+        "tags": {
+          "ManagedBy": "Terraform",
+          "Environment": "prod",
+          "Owner": "security-platform"
+        }
+      }
+    }
+  ]
+}

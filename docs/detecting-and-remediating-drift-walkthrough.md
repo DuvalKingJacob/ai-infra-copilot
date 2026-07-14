@@ -74,6 +74,7 @@ Useful commands:
 
 ```bash
 make validate
+make drift-report
 make terraform-live-review
 make terraform-live-risky-review
 make report-app
@@ -82,6 +83,7 @@ make report-app
 Relevant outputs:
 
 ```text
+outputs/drift-triage-report.md
 outputs/live-app-platform-plan-review-report.md
 outputs/live-risky-app-platform-plan-review-report.md
 outputs/app-platform-plan-review-report.md
@@ -208,7 +210,29 @@ Talk track:
 
 > A clean plan review is useful because it creates the comparison point. Before we talk about remediation, we need to know what normal review looks like.
 
-### 4. Show A Risky Change As A Stand-In For Drift Review
+### 4. Show Drift Triage At Estate Scale
+
+Command:
+
+```bash
+make drift-report
+open outputs/drift-triage-report.md
+```
+
+Expected output:
+
+```text
+AI-Assisted Drift Triage Report
+critical and high events appear first
+recommendations stop at human review
+the report states that no remediation or apply occurred
+```
+
+Talk track:
+
+> This is the scale problem. A single drift event can be reviewed manually. Hundreds of drift events need prioritization. The assistant's job is to classify risk, identify owners, recommend handling paths, and leave remediation inside Terraform governance.
+
+### 5. Show A Risky Change As A Stand-In For Drift Remediation Review
 
 Command:
 
@@ -242,7 +266,7 @@ Talk track:
 
 > Drift review and plan review have the same operating shape: inspect the difference, classify the risk, decide the remediation path, and keep execution inside Terraform.
 
-### 5. Show HCP Terraform / TFE As The Control Plane
+### 6. Show HCP Terraform / TFE As The Control Plane
 
 Screen order:
 
@@ -274,7 +298,7 @@ Talk track:
 
 > The important point is that the assistant is not becoming the control plane. HCP Terraform or TFE owns the run, variables, policy checks, approvals, state, and audit history.
 
-### 6. Classify Drift Response Options
+### 7. Classify Drift Response Options
 
 Show a simple table on screen or in notes:
 
@@ -290,7 +314,7 @@ Talk track:
 
 > Remediation is not always "run apply." Sometimes the correct answer is import. Sometimes it is update the Terraform code. Sometimes it is leave the emergency change in place until the incident is understood.
 
-### 7. Bridge To AI-Assisted Drift Triage
+### 8. Bridge To AI-Assisted Drift Triage
 
 Show:
 
@@ -310,7 +334,7 @@ Emphasize:
 - humans approve
 - Terraform executes
 
-### 8. Close With The Practitioner Takeaway
+### 9. Close With The Practitioner Takeaway
 
 Closing message:
 
@@ -332,6 +356,13 @@ Fixture report:
 ```bash
 make report-app
 open outputs/app-platform-plan-review-report.md
+```
+
+Drift triage report:
+
+```bash
+make drift-report
+open outputs/drift-triage-report.md
 ```
 
 Live safe report:
@@ -363,6 +394,7 @@ TFCTL_WORKSPACE=ai-infra-copilot make agent-tfctl
 | `make validate` | repo validation passes |
 | `terraform ... validate` | app-platform configuration is valid |
 | `make report-app` | fixture report is generated |
+| `make drift-report` | prioritized drift triage report is generated |
 | `make terraform-live-review` | safe live plan report is generated if credentials are available |
 | `make terraform-live-risky-review` | risky live plan report blocks apply pending review |
 | `tfctl run status ai-infra-copilot` | current HCP Terraform run status, errored run, or no current run |

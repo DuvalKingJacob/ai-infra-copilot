@@ -17,6 +17,12 @@ The project should stay focused on one practitioner thesis:
 
 ### AI-Assisted Drift Triage
 
+Status:
+
+```text
+scaffolded with sample drift events and a Markdown report
+```
+
 Problem:
 
 Large Terraform estates can produce more drift events than a platform team can manually triage.
@@ -27,6 +33,13 @@ Demo idea:
 - Classify drift as cosmetic, configuration, security, critical production, or needs investigation.
 - Enrich each event with workspace, project, owner, environment, resource type, previous run, and policy context.
 - Generate a prioritized Markdown report for human review.
+
+Current command:
+
+```bash
+make drift-report
+open outputs/drift-triage-report.md
+```
 
 Why it matters:
 
@@ -129,7 +142,7 @@ Near term:
 
 1. Improve the existing `tfctl` demo output.
 2. Finish the AI plan review walkthrough.
-3. Add a small drift triage fixture and report only after the plan review demo is stable.
+3. Expand the drift triage fixture only after the basic report is validated with the video storyline.
 
 Later:
 

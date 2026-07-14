@@ -4,6 +4,8 @@ PLAN ?= data/terraform-plan.prod-network.json
 REPORT ?= outputs/terraform-plan-review-report.md
 APP_PLAN := data/terraform-plan.app-platform.json
 APP_REPORT := outputs/app-platform-plan-review-report.md
+DRIFT_EVENTS ?= data/drift-events.json
+DRIFT_REPORT ?= outputs/drift-triage-report.md
 LIVE_TERRAFORM_DIR ?= terraform/app-platform
 LIVE_PLAN_OUT ?= $(CURDIR)/outputs/live-app-platform.tfplan
 LIVE_PLAN_JSON ?= outputs/live-app-platform-plan.json
@@ -14,7 +16,7 @@ LIVE_RISKY_PLAN_JSON ?= outputs/live-risky-app-platform-plan.json
 LIVE_RISKY_REPORT ?= outputs/live-risky-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
+.PHONY: help validate review report review-app report-app drift-report terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -25,6 +27,7 @@ help:
 	@printf '%s\n' '  make report        Write the default Markdown review report'
 	@printf '%s\n' '  make review-app    Review the SRE-style app-platform plan'
 	@printf '%s\n' '  make report-app    Write the app-platform Markdown review report'
+	@printf '%s\n' '  make drift-report  Write the AI-assisted drift triage report'
 	@printf '%s\n' '  make demo          Run the main local demo path'
 	@printf '%s\n' '  make ci            Run the non-cloud CI checks'
 	@printf '%s\n' ''
@@ -67,6 +70,9 @@ review-app:
 report-app:
 	$(MAKE) report PLAN=$(APP_PLAN) REPORT=$(APP_REPORT)
 
+drift-report:
+	node src/write-drift-triage-report.mjs $(DRIFT_EVENTS) $(DRIFT_REPORT)
+
 terraform-live-init:
 	terraform -chdir=$(LIVE_TERRAFORM_DIR) init
 
@@ -94,9 +100,9 @@ terraform-live-risky-report:
 
 terraform-live-risky-review: terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report
 
-demo: validate review report review-app report-app agent
+demo: validate review report review-app report-app drift-report agent
 
-ci: validate review report review-app report-app agent tool-check-local sentinel-check
+ci: validate review report review-app report-app drift-report agent tool-check-local sentinel-check
 
 agent:
 	node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=local
@@ -130,4 +136,4 @@ tool-check-tfctl:
 	node src/tool-call.mjs alice terraform.review_plan --provider=local --terraform-context=tfctl
 
 clean-reports:
-	rm -f outputs/terraform-plan-review-report.md outputs/app-platform-plan-review-report.md outputs/live-*
+	rm -f outputs/terraform-plan-review-report.md outputs/app-platform-plan-review-report.md outputs/drift-triage-report.md outputs/live-*

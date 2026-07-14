@@ -13,6 +13,7 @@
     "authz:validate": "node src/validate-spicedb-fixtures.mjs",
     "terraform:review": "node src/review-terraform-plan.mjs",
     "terraform:report": "node src/write-terraform-report.mjs",
+    "drift:report": "node src/write-drift-triage-report.mjs",
     "tool:call": "node src/tool-call.mjs",
     "tool:tfctl": "node src/tool-call.mjs alice terraform.review_plan --provider=local --terraform-context=tfctl",
     "check": "node src/check-demo-script.mjs"
