@@ -170,7 +170,7 @@ Say:
 
 > This is where AI can help HCP Terraform and TFE adoption. Not by replacing policy. Not by replacing approval. By making the review experience better for the operator.
 >
-> Sentinel can deterministically fail specific rules. AI can help summarize the combined story for a human reviewer: this is not just one risky attribute; it is data durability risk, availability risk, observability risk, and ownership risk arriving in one plan.
+> Sentinel can deterministically fail specific rules. Sentinel has already run by this point; the AI is explaining what Sentinel and the plan together mean for the operator. It can help summarize the combined story for a human reviewer: this is not just one risky attribute; it is data durability risk, availability risk, observability risk, and ownership risk arriving in one plan.
 
 ## 6:30 - 7:30 | Generate A Review Artifact
 
@@ -215,7 +215,7 @@ Say:
 >
 > Policy answers: is this Terraform change acceptable?
 >
-> Authorization answers: is this actor allowed to inspect this run, retrieve this context, or call this tool?
+> Authorization answers: is this actor allowed to retrieve this run context, pass it to an AI workflow, or call this tool?
 
 Show:
 
@@ -230,7 +230,7 @@ Say:
 >
 > The AI does not influence Sentinel evaluation. It can explain the policy result after HCP Terraform or Terraform Enterprise has already evaluated it.
 >
-> SpiceDB or AuthZed is a separate example of relationship-based authorization around AI tool access. It answers questions like: can Alice ask the agent to inspect this production run? Can Bob retrieve this workspace context? Can this agent call a Terraform tool for this environment?
+> SpiceDB or AuthZed is one example of relationship-based authorization around AI tool access. It answers questions like: can Alice ask the agent to retrieve this production run context? Can Bob retrieve this workspace context? Can this agent call a Terraform tool for this environment?
 
 Optional command:
 

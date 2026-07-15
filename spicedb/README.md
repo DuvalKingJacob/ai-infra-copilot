@@ -1,10 +1,10 @@
-# SpiceDB / AuthZed Integration
+# Optional SpiceDB / AuthZed Authorization Provider
 
-The browser demo uses an in-memory permission map. The CLI path can use SpiceDB/AuthZed for real authorization checks.
+The browser demo uses an in-memory permission map. The CLI path can optionally use SpiceDB/AuthZed for external relationship-based authorization checks.
 
-## Why Add SpiceDB/AuthZed
+## Why Include This Path
 
-Local role checks are enough for a teaching demo, but real infrastructure teams need relationship-based authorization:
+Local role checks are enough for a teaching demo, but real infrastructure teams often need an external authorization service:
 
 - Which users can read which document chunks?
 - Which teams can inspect which Terraform workspaces?
@@ -80,7 +80,7 @@ In production, this should move from user-to-object relationships to richer team
 - `document:postmortem-platform-204#reader@team:platform#member`
 - `environment:production#approver@team:platform-leads#member`
 
-That is where SpiceDB/AuthZed becomes much more valuable than local RBAC.
+That is where an external relationship-based authorization system becomes much more valuable than local RBAC. SpiceDB/AuthZed is the concrete example implemented here.
 
 ## Current Limitation
 

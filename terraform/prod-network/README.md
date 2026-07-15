@@ -2,7 +2,7 @@
 
 This is a small Terraform configuration used by the demo's plan-review workflow.
 
-It intentionally models a risky production change so the AI infrastructure copilot can review and explain the blast radius before anything is applied.
+It intentionally models a risky production change so the AI-assisted Terraform workflow can review and explain the blast radius before anything is applied.
 
 ## What It Contains
 

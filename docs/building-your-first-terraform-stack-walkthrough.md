@@ -51,12 +51,14 @@ Optional for later/live demos:
 
 Do not make the first walkthrough depend on `tf-migrate`. The first walkthrough should succeed even if migration tooling is unavailable or beta behavior changes.
 
-Validate current Stacks availability, syntax, and HCP Terraform / Terraform Enterprise requirements before recording. If a lightboard uses older or simplified terms such as `tfstack.hcl`, explain that this walkthrough shows the current file shapes used in this repo:
+Validate current Stacks availability, syntax, and HCP Terraform / Terraform Enterprise requirements before recording. The current Stacks file shapes used in this repo are:
 
 ```text
 components.tfcomponent.hcl
 deployments.tfdeploy.hcl
 ```
+
+If a lightboard or older draft uses simplified terms such as `tfstack.hcl`, correct that before recording or explicitly call it shorthand.
 
 ## Demo Environment
 
@@ -200,6 +202,7 @@ Show:
 
 ```text
 terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
+terraform/workspace-to-stacks/workspaces/eks-cluster/legacy-remote-state-example.hcl
 terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 ```
 
@@ -216,6 +219,7 @@ Point out:
 Command:
 
 ```bash
+sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/legacy-remote-state-example.hcl
 sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
 sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 ```
@@ -223,6 +227,7 @@ sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 Expected output:
 
 ```text
+The old example shows dependency context pulled from another workspace through remote state.
 The old root shows inputs normally copied or passed from another workspace.
 The Stack component shows direct references to the VPC component outputs.
 ```
@@ -376,6 +381,7 @@ Emphasize:
 - Stacks coordinate components; they do not replace modules.
 - Stacks improve dependency visibility; they do not provide cross-component saga rollback.
 - Production failure recovery still needs run history, state isolation, owner review, and approval.
+- Components fail independently; state is isolated per component, so recovery still requires inspecting the failed component and rerunning through the governed workflow.
 
 ### 8. Map To HCP Terraform / TFE
 
@@ -451,6 +457,7 @@ make ci
 find terraform/workspace-to-stacks/workspaces -maxdepth 2 -type f | sort
 find terraform/workspace-to-stacks/modules -maxdepth 2 -type f | sort
 
+sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/legacy-remote-state-example.hcl
 sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
 sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 sed -n '1,120p' terraform/workspace-to-stacks/migration-map.md
@@ -473,6 +480,7 @@ make agent
 | `find workspaces` | shows workspace-shaped roots |
 | `find modules` | shows reusable module implementations |
 | before/after HCL | shows implied workspace handoffs versus explicit component references |
+| state isolation caveat | components fail independently; state is isolated per component |
 | `migration-map.md` | explains old workspace handoffs |
 | `component-graph.md` | shows `vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app` |
 | `components.tfcomponent.hcl` | shows component references and dependencies |

@@ -2,6 +2,8 @@
 
 This review summarizes where the project is today and what would make it feel more useful for AI infrastructure and platform engineering audiences.
 
+Note: this is a historical review from an earlier AuthZed-oriented pass. The current center of gravity is AI-assisted Terraform operations inside HCP Terraform / Terraform Enterprise governance. SpiceDB/AuthZed remains a useful optional authorization provider example, not the primary product story.
+
 ## Current State
 
 The project has three layers:
@@ -47,7 +49,7 @@ This is the first part of the repo that moves beyond a static demo.
 
 ## What Is Scaffolded But Not Fully Wired
 
-### SpiceDB/AuthZed
+### Optional External Authorization Provider
 
 Status: executable CLI path exists; browser demo still uses local checks.
 
@@ -61,7 +63,7 @@ Files:
 - `src/authz-check.mjs`
 - `src/query-rag.mjs`
 
-This is now the strongest authorization implementation path. RAG filtering can use SpiceDB checks from the CLI.
+This is the concrete external authorization provider example currently implemented. RAG filtering can use SpiceDB checks from the CLI, while the primary Terraform story remains plan review, policy, approvals, and audit.
 
 Recommended first check:
 
@@ -123,15 +125,15 @@ That is a product and security decision, not a missing feature.
 | RAG | Medium | Use real embeddings or hybrid retrieval end-to-end |
 | MCP | Medium | Replace mock Terraform output with official Terraform MCP read-only call |
 | Agents | Medium | Make planner stages explicit in code |
-| Authorization | Medium-high | Wire browser/backend path to SpiceDB |
-| Relationship-based authorization | High | Extend schema to team/tenant relationships |
+| Authorization | Medium-high | Keep local provider as default; optionally wire browser/backend path to an external provider |
+| Relationship-based authorization | High | Optional extension: extend schema to team/tenant relationships |
 | OIDC | Low | Keep as production plan for now |
 | Production mutation | Correctly absent | Keep absent |
 | Auditability | Medium-high | Persist audit events from CLI/demo |
 
 ## Highest-Leverage Next Step
 
-Connect the browser demo to a tiny backend that calls the same SpiceDB-backed authorization path.
+Improve the HCP Terraform/TFE-facing demo path first, then optionally connect the browser demo to a tiny backend that calls an external authorization provider.
 
 Suggested command:
 
@@ -155,7 +157,7 @@ The CLI now supports this path. The next upgrade is to make the UI use it throug
 
 ## Why This Step Matters
 
-The SpiceDB CLI path already makes the project meaningfully more real:
+The optional SpiceDB CLI path makes the authorization story more concrete:
 
 - It turns the authorization story from conceptual to executable.
 - It shows that RAG context filtering can be backed by relationship-based authorization.
@@ -163,8 +165,8 @@ The SpiceDB CLI path already makes the project meaningfully more real:
 
 ## Recommended Next Order
 
-1. Wire the browser demo to a backend that uses SpiceDB.
-2. Extend SpiceDB relationships from direct users to teams and environments.
-3. Replace mock Terraform gateway output with an official Terraform MCP read-only call.
-4. Add persistent audit output.
+1. Keep the HCP Terraform/TFE control-plane story primary.
+2. Replace mock Terraform gateway output with an official Terraform MCP read-only call.
+3. Add persistent audit output.
+4. Optionally wire the browser demo to a backend that uses an external authorization provider.
 5. Leave OIDC as a documented production extension until the backend exists.

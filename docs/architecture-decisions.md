@@ -32,7 +32,7 @@ Production extension:
 
 - Use vector or hybrid search.
 - Store permissions at the chunk level.
-- Back authorization with SpiceDB/AuthZed.
+- Back authorization with an external provider such as SpiceDB/AuthZed.
 
 ## Decision 4: Separate Answering From Acting
 

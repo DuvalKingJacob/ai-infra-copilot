@@ -110,7 +110,7 @@ It demonstrates:
 - Terraform plan review over plan JSON.
 - Markdown reports that could be attached to a pull request, run review, run task, or approval workflow.
 - Sentinel-style policy findings for unsafe changes.
-- SpiceDB/AuthZed authorization checks before context or tool output is exposed.
+- Authorization checks before context or tool output is exposed, with SpiceDB/AuthZed included as an optional external provider example.
 - MCP-style Terraform and Kubernetes tool access.
 - A deterministic agent workflow that stops at proposal and approval.
 - A workspace-to-Stacks migration scenario for VPC, EKS, and app components.
@@ -121,7 +121,7 @@ AI augments the Terraform workflow here; it does not replace the workflow. Plans
 
 ## Demo Paths
 
-Detailed commands for the Terraform-native workflow, browser demo, SpiceDB/AuthZed path, MCP gateway, plan reviewer, and agent workflow live in:
+Detailed commands for the Terraform-native workflow, browser demo, optional external authorization path, MCP gateway, plan reviewer, and agent workflow live in:
 
 `docs/demo-paths.md`
 
@@ -145,13 +145,13 @@ This repo has three layers:
 
 1. A local browser demo in `demo/index.html`.
 2. Terraform-native CLI workflows for plan review, reports, policy examples, and agent execution.
-3. Production-shaped integration scaffolding for authorization, MCP, OIDC, HCP Terraform, and Stacks.
+3. Production-shaped integration scaffolding for HCP Terraform, Stacks, Sentinel, `tfctl`, MCP, OIDC, and optional external authorization.
 
 The integration scaffolding includes:
 
 - `data/`: source docs, users, and tool definitions.
 - `src/`: optional embedding and permission-aware retrieval scripts.
-- `spicedb/`: SpiceDB/AuthZed schema and relationship model.
+- `spicedb/`: optional SpiceDB/AuthZed relationship-based authorization provider example.
 - `mcp/`: official Terraform MCP Server example config.
 - `terraform/`: Terraform scenarios for plan review, app-platform risk, and workspace-to-Stacks migration.
 - `policies/sentinel/`: Sentinel-style policy examples.

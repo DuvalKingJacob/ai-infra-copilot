@@ -11,7 +11,7 @@ npm run tool:call -- alice terraform.get_recent_changes --provider=local
 npm run tool:call -- bob terraform.get_recent_changes --provider=local
 ```
 
-With SpiceDB running and loaded:
+With the optional SpiceDB provider running and loaded:
 
 ```bash
 npm run tool:call -- alice terraform.get_recent_changes --provider=spicedb
@@ -44,4 +44,3 @@ This config shows how the official HashiCorp Terraform MCP Server would be regis
 ## Why Not Direct Apply
 
 The project intentionally avoids agent-triggered production mutation. Terraform changes should go through controlled workflows such as CI/CD, Terraform Cloud run approval, or incident remediation approval.
-

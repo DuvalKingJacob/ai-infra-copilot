@@ -32,7 +32,7 @@ It should not replace Terraform MCP. They are different layers:
 
 - `tfctl`: practitioner/operator CLI for HCP Terraform and Terraform Enterprise.
 - Terraform MCP Server: model/tool protocol surface for AI assistants.
-- SpiceDB/AuthZed: authorization boundary before context or tool output is exposed.
+- Authorization layer: boundary before context or tool output is exposed; SpiceDB/AuthZed is one optional provider example in this repo.
 - Sentinel: policy boundary for whether the infrastructure change is acceptable.
 
 For the broader run-control model, see:

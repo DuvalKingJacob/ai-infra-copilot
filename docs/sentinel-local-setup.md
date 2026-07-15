@@ -35,7 +35,7 @@ Use the AMD64 archive instead of ARM64 if your Mac requires it. To install globa
 
 The local demo separates three concerns:
 
-1. SpiceDB/AuthZed checks who can inspect production context or call a tool.
+1. Authorization checks who can retrieve production context or call a tool.
 2. The local Terraform plan reviewer explains risk and emits policy-like findings.
 3. Sentinel examples show where Terraform Enterprise policy checks would live in production.
 

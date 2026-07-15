@@ -6,7 +6,7 @@ This repo uses small Node.js scripts internally, but the practitioner-facing dem
 
 - Node.js, used by the local helper scripts.
 - `make`, included with the macOS command line tools.
-- Docker Desktop, for running SpiceDB locally.
+- Docker Desktop, for running the optional SpiceDB provider locally.
 
 Check:
 
@@ -16,16 +16,10 @@ make --version
 docker --version
 ```
 
-Use either path locally:
+Use the repo path locally:
 
 ```bash
-cd /Users/jacobplicque/Documents/Codex/2026-06-21/context-i-am-a-senior-tpmm/work/authzed-ai-infra-copilot
-```
-
-The old path also works as a compatibility symlink:
-
-```bash
-cd /Users/jacobplicque/Documents/Codex/2026-06-21/context-i-am-a-senior-tpmm/work/ai-infra-copilot
+cd /path/to/ai-infra-copilot
 ```
 
 ## What Is Actually Running
@@ -40,7 +34,7 @@ Open:
 demo/index.html
 ```
 
-### SpiceDB
+### Optional External Authorization Provider
 
 Status: runs locally through Docker when you start it.
 
@@ -89,7 +83,7 @@ Expected:
 - Alice: allowed, returns read-only Terraform-shaped result.
 - Bob: denied, result withheld.
 
-With SpiceDB running:
+With the optional SpiceDB provider running:
 
 ```bash
 npm run tool:call -- alice terraform.get_recent_changes --provider=spicedb
@@ -130,7 +124,7 @@ Cannot connect to the Docker daemon
 
 That means Docker Desktop is not running yet.
 
-If SpiceDB checks fail, rerun:
+If optional SpiceDB checks fail, rerun:
 
 ```bash
 docker compose up -d spicedb
@@ -138,7 +132,7 @@ npm run authz:validate
 npm run authz:load
 ```
 
-If `authz:load` failed partway through and checks still look wrong, reset the in-memory SpiceDB container:
+If `authz:load` failed partway through and checks still look wrong, reset the in-memory optional provider container:
 
 ```bash
 docker compose down

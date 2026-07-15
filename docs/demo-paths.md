@@ -83,9 +83,9 @@ make agent
 
 If `OPENAI_API_KEY` is set, `embeddings:build` uses the OpenAI embeddings API. Without it, the script uses a deterministic local embedding fallback so the project remains runnable without secrets.
 
-## SpiceDB / AuthZed Path
+## Optional External Authorization Path
 
-The project includes an executable SpiceDB integration path for authorization checks.
+The project includes an executable SpiceDB/AuthZed integration path as an optional example of external relationship-based authorization around AI context and tool access.
 
 Start SpiceDB:
 
@@ -113,7 +113,7 @@ Use SpiceDB during RAG filtering:
 npm run rag:query -- alice "What do we know about the production outage?" --provider=spicedb
 ```
 
-This is the most important production-shaped part of the project: retrieved context can be filtered by relationship-based authorization before it reaches the model.
+The important production-shaped lesson is provider-agnostic: retrieved context should be filtered by authorization before it reaches the model.
 
 ## Terraform MCP Gateway Path
 
@@ -221,9 +221,9 @@ docs/hashibank-stacks-companion.md
 
 The point is not to replace policy-as-code. The point is to show how an AI-native workflow can explain infrastructure risk, require authorization before production plan context reaches the agent, surface Sentinel-style policy signals, and keep apply behind human approval.
 
-SpiceDB/AuthZed and Sentinel-style policy sit at different layers:
+Authorization and Sentinel-style policy sit at different layers:
 
-- SpiceDB/AuthZed: is this actor allowed to inspect this plan or call this tool?
+- Authorization: is this actor allowed to retrieve this plan context or call this tool?
 - Sentinel-style policy: is this Terraform change acceptable?
 
 See:

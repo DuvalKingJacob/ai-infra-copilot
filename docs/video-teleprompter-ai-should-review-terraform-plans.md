@@ -100,7 +100,7 @@ Say:
 
 The recommendation is `block_apply_pending_review`.
 
-That is the key outcome. The assistant is not making the final deployment decision, but it is producing a clear signal for the human review process.
+That is the key outcome. The assistant is not making the final deployment decision. It is producing a clear signal for the human review process.
 
 Point to the compound risk first.
 
@@ -179,7 +179,7 @@ Authorization asks:
 
 Is this actor allowed to retrieve this run context or call this tool?
 
-That is where something like SpiceDB or AuthZed fits.
+That is where an authorization layer fits; SpiceDB/AuthZed is one example of that pattern.
 
 The model should not see production context just because someone asked nicely in a prompt.
 

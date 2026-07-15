@@ -131,7 +131,7 @@ This demo uses local data and a simple in-browser permission map to keep the wor
 In production, I would add:
 
 - Real authentication through OIDC.
-- SpiceDB/AuthZed for relationship-based authorization.
+- An external authorization service for relationship-based access decisions; SpiceDB/AuthZed is one example included in this repo.
 - Real MCP servers, starting with read-only Terraform and Kubernetes integrations.
 - `tfctl` for controlled HCP Terraform/TFE API workflows where a CLI interface is more appropriate than MCP.
 - Vector or hybrid retrieval with chunk-level permissions.
@@ -151,7 +151,7 @@ That is intentional. The product stance is that tools retrieve authorized contex
 This is still an exploration, not a production service. But it includes concrete paths for the gaps an infrastructure team would naturally ask about:
 
 - Real embeddings: `src/build-embeddings.mjs`
-- SpiceDB/AuthZed: `spicedb/schema.zed`
+- Optional external authorization provider example: `spicedb/schema.zed`
 - Terraform MCP: `mcp/terraform-mcp.example.json`
 - OIDC: `docs/oidc-authentication-plan.md`
 - Production roadmap: `docs/production-milestones.md`

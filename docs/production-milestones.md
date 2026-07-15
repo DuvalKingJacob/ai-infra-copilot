@@ -28,7 +28,7 @@ Why this matters:
 - Moves the project beyond keyword matching.
 - Preserves the central security idea: retrieval candidates are filtered before model context.
 
-## Milestone 2: SpiceDB/AuthZed
+## Milestone 2: Optional External Authorization Provider
 
 Status: executable CLI path added.
 
@@ -44,8 +44,8 @@ Files:
 
 Why this matters:
 
-- Replaces local role checks with relationship-based authorization.
-- Directly maps the project to relationship-based authorization for AI workflows.
+- Shows how local role checks could be replaced by an external relationship-based authorization provider.
+- Keeps authorization around AI context and tool access visible without making any one authorization vendor required for the Terraform workflow.
 
 Run:
 

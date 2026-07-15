@@ -83,7 +83,7 @@ That keeps the story grounded:
 
 1. HCP Terraform / Stacks provide the infrastructure control plane.
 2. Terraform MCP can expose authorized run, workspace, Stack, and registry context.
-3. SpiceDB/AuthZed can authorize which actor can inspect context or call tools.
+3. An authorization layer can control which actor can retrieve context or call tools.
 4. Sentinel/policy checks decide whether the infrastructure change is acceptable.
 5. Human approval controls production-impacting execution.
 

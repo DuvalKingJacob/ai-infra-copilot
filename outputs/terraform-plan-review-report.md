@@ -54,9 +54,9 @@ Yes. A human reviewer should approve or reject this plan before apply.
 - It did not run `terraform apply`.
 - It did not mutate cloud infrastructure.
 - It did not bypass Terraform policy checks.
-- It did not bypass authorization to inspect production context.
+- It did not bypass authorization to retrieve production context.
 - It produced an explainable review artifact for a human-controlled workflow.
 
 ## Architecture Note
 
-SpiceDB/AuthZed answers whether the actor is allowed to access the plan review capability. Sentinel-style policy answers whether the Terraform change itself is acceptable.
+Authorization answers whether the actor is allowed to access the plan review capability. Sentinel-style policy answers whether the Terraform change itself is acceptable.

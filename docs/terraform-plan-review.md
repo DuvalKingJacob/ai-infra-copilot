@@ -101,9 +101,9 @@ They illustrate where Terraform Enterprise policy checks would sit in a producti
 - `minimum-prod-service-capacity.sentinel`
 - `require-prod-tags.sentinel`
 
-These policies do not conflict with SpiceDB/AuthZed because they answer a different question:
+These policies do not conflict with authorization because they answer a different question:
 
-- SpiceDB/AuthZed: who can inspect this plan or call this tool?
+- Authorization: who can retrieve this plan context or call this tool?
 - Sentinel: is this Terraform change allowed?
 
 That distinction is the demo's core governance point.
@@ -156,6 +156,6 @@ The Markdown report includes:
 - What the agent did not do
 - Architecture note
 
-## Interview Talking Point
+## Practitioner Talking Point
 
-> I used Terraform plan review because it maps directly to platform engineering workflows: plans, blast radius, peer review, policy checks, approval, and auditability. The AI system can explain risk and propose next steps, but authorization controls who can inspect production plans, policy controls whether the change is acceptable, and approval controls whether anything proceeds.
+> I used Terraform plan review because it maps directly to platform engineering workflows: plans, blast radius, peer review, policy checks, approval, and auditability. The AI system can explain risk and propose next steps, but authorization controls who can retrieve production plan context, policy controls whether the change is acceptable, and approval controls whether anything proceeds.

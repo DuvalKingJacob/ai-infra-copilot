@@ -8,7 +8,6 @@ Explore AI-assisted infrastructure workflows through Terraform, MCP-style tools,
 
 The focus is not autonomous infrastructure mutation. The focus is safe assistance:
 
-- inspect
 - retrieve
 - explain
 - review
@@ -110,7 +109,7 @@ Deliverable:
 Current state:
 
 - Docs are retrieved and filtered before becoming model-visible context.
-- SpiceDB can back the document authorization checks.
+- The local provider handles demo authorization checks; SpiceDB can optionally back the same checks as an external provider example.
 
 Next ideas:
 
@@ -129,7 +128,7 @@ Next build:
 1. Add Terraform module docs and workspace runbooks to `data/docs.json`.
 2. Split docs into chunks with individual permissions.
 3. Generate embeddings per chunk.
-4. Keep SpiceDB checks before context assembly.
+4. Keep authorization checks before context assembly.
 
 Deliverable:
 
@@ -174,7 +173,7 @@ Deliverable:
 ### Week 2: Make Tool Access More Real
 
 - Build a local MCP-style adapter for Terraform plan/workspace context.
-- Keep SpiceDB authorization in front of every tool call.
+- Keep authorization in front of every tool call.
 - Document the path to the official Terraform MCP Server.
 
 ### Week 3: Improve RAG Quality

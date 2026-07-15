@@ -25,6 +25,40 @@ The companion videos should be tactical, demo-first, and grounded in Terraform p
 | Episode 8: The AI Estate | AI agents need Terraform context, domain knowledge, identity, policy, and audit boundaries | AI Reviews Terraform Plans, Not Applies Them | already started in this repo |
 | Episode 9: Grand Orchestration | The platform story is strongest when all lifecycle layers work together | From Commit to Governed Terraform Run | recommended after earlier walkthroughs |
 
+## Practitioner Curriculum
+
+The companion roadmap should follow the practitioner journey, not a one-to-one episode count. Companion walkthroughs should attach only where a practitioner needs a concrete demo path after the strategic explanation.
+
+```text
+Build   -> Building Your First Terraform Stack
+Govern  -> Adding Policy, Identity, and Cost Gates
+Manage  -> Detecting and Remediating Drift in HCP Terraform
+Operate -> AI Reviews Terraform Plans, Not Applies Them
+Scale   -> From Commit to Governed Terraform Run
+```
+
+| Episode | Overview Topic | Companion Decision | Why |
+| --- | --- | --- | --- |
+| 1 | Beyond the Workspace / Stacks | add companion | Stacks adoption needs a hands-on file-shape and workflow walkthrough. |
+| 2 | Identity, Policy, and Cost | add companion | Practitioners need to see where policy sets, run tasks, and dynamic credentials sit in the run lifecycle. |
+| 3 | Drift Detection and Remediation | add companion | Drift is operationally familiar and benefits from a reviewed remediation workflow demo. |
+| 4 | Terraform Actions and Event-Driven Workflows | defer companion | Add later only if the Actions episode needs a concrete day-2 runbook demo. |
+| 5 | Terraform + Ansible Automation Platform | no immediate companion | This is a hybrid integration story; keep the Terraform companions focused first. |
+| 6 | Packer / Waypoint / TDP | removed from current series scope | Removed from the current roadmap to reflect product priorities. |
+| 7 | IBM Turbonomic | no immediate companion | This is optimization/right-sizing content and should not distract from Terraform adoption walkthroughs. |
+| 8 | AI Estate | add companion | This repo already demonstrates AI-assisted Terraform plan review and drift triage inside governance boundaries. |
+| 9 | Grand Orchestration | defer companion | Strong final scenario, but only after the earlier building blocks are validated. |
+
+Recommended companion order:
+
+1. Building Your First Terraform Stack.
+2. Adding Policy, Identity, and Cost Gates.
+3. Detecting and Remediating Drift in HCP Terraform.
+4. AI Reviews Terraform Plans, Not Applies Them.
+5. From Commit to Governed Terraform Run.
+
+Do not try to create companion videos for every lightboard episode. The companion lane should stay practitioner-first and demo-led. If a topic is removed from the active product/content roadmap, remove it from the companion plan rather than carrying it as a placeholder.
+
 ## Review Notes For Owned Episodes
 
 These are TPMM/SME notes to consider when reviewing the scripts. They are not rewrites.
@@ -44,6 +78,7 @@ These are TPMM/SME notes to consider when reviewing the scripts. They are not re
 - The "speed vs safety" framing is strong; the companion should show the gate, not just describe it.
 - Likely owner: Jacob, unless Steve/Apoorva assign otherwise.
 - Avoid making this Stacks-specific until the exact policy input shape and current product support are validated.
+- Known script correction to validate with Steve/Apoorva: `import "tfstack"` appears to be illustrative shorthand, not a real current Stacks Sentinel import. Do not build the Episode 2 companion around it unless Product confirms current support.
 
 ### Episode 3: Drift
 

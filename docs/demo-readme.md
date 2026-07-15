@@ -47,7 +47,7 @@ The assistant can summarize authorized context and propose. It cannot directly a
 
 ## Production Extensions
 
-- Replace the local permission map with SpiceDB/AuthZed.
+- Replace the local permission map with an external authorization provider such as SpiceDB/AuthZed.
 - Use real embeddings or hybrid search.
 - Connect the official Terraform MCP Server in read-only mode.
 - Add a custom Kubernetes MCP server.

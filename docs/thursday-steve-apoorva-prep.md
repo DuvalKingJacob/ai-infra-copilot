@@ -62,11 +62,19 @@ If Steve's episode order is already fixed, keep the companion order aligned to t
 
    Stacks does not have Drift Detection yet. If the current lightboard implies Stack-level drift, the script should be adjusted before publishing.
 
-3. Is Episode 9 intentionally deferred?
+3. Do the Stacks syntax examples need revision?
+
+   The current Stacks file shapes in this repo are `components.tfcomponent.hcl` and `deployments.tfdeploy.hcl`. Steve's draft material appears to use `tfstack.hcl` and an illustrative `import "tfstack"` Sentinel example. Confirm whether those are shorthand or need to be corrected before recording.
+
+4. Is Episode 9 intentionally deferred?
 
    Recommendation: yes. The end-to-end orchestration companion should wait until earlier walkthroughs are recorded or at least validated.
 
-4. What records first?
+5. Is Packer / Waypoint / TDP removed from the current series?
+
+   If the topic is not moving forward, remove it from the current companion roadmap instead of keeping a placeholder walkthrough.
+
+6. What records first?
 
    Recommended order:
 
@@ -106,7 +114,7 @@ Drift Detection works with Stacks.
 Say:
 
 ```text
-This Drift walkthrough is workspace-based. Stacks and Drift are adjacent Infrastructure Lifecycle Management topics.
+This Drift walkthrough is workspace-based. Stacks and Drift Detection are separate features. Drift Detection runs against standard workspaces. Stacks does not currently have native Drift Detection.
 ```
 
 Avoid:

@@ -51,7 +51,7 @@ tfctl harness context
 
 If auth is inactive, keep `tfctl` as a talk-track item and use the local plan files for the live demo.
 
-Optional SpiceDB check:
+Optional external authorization check:
 
 ```bash
 docker compose up -d spicedb
@@ -134,7 +134,7 @@ HashiCorp adoption talk track:
 
 > In HCP Terraform or TFE, this type of artifact could sit next to the run, policy checks, and approval workflow. The agent is improving review quality, not becoming a parallel deployment system.
 
-### 4. Explain Sentinel Versus SpiceDB
+### 4. Explain Policy Versus Authorization
 
 Say:
 
@@ -157,7 +157,7 @@ Expected point:
 - Policy examples correspond to the report findings.
 - Sentinel or OPA is Terraform policy evaluation.
 - HCP Terraform/TFE policy checks and approvals are the primary HashiCorp governance story.
-- SpiceDB/AuthZed is an example authorization layer around AI tool and context access.
+- SpiceDB/AuthZed is one example authorization provider around AI tool and context access.
 
 ### 5. Show Authorization Before Tool Use
 
@@ -180,7 +180,7 @@ make tool-check-local
 
 Say:
 
-> The local provider keeps the demo runnable. The SpiceDB path shows the production-shaped authorization boundary around the AI interface.
+> The local provider keeps the demo runnable. The SpiceDB path is an optional example of a production-shaped authorization boundary around the AI interface.
 
 ### 6. Show The Agent Boundary
 
@@ -245,7 +245,7 @@ Keep this optional in the first video. It is a bridge to the HCP Terraform/TFE c
 If Docker or SpiceDB is not running:
 
 - Use `--provider=local`.
-- Explain that the authorization model is the same shape but backed by local fixtures.
+- Explain that the authorization model is the same shape but backed by local fixtures instead of an external provider.
 
 If Sentinel is not on PATH:
 

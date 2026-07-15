@@ -23,7 +23,7 @@ The goal is to reinforce a clear practitioner lane over time:
 | `tfctl` For HCP Terraform | short demo | Gives practitioners a CLI path into HCP Terraform workflows | planned |
 | Terraform MCP Server | explainer / demo | Connects AI assistants to Terraform context and Registry knowledge | planned |
 | AI Reviews Terraform Plans | walkthrough | Shows AI as reviewer inside governance, not autonomous operator | in progress |
-| AI Authorization For Terraform Tools | deep dive | Shows where AuthZed/SpiceDB-style authorization fits | in progress |
+| AI Authorization For Terraform Tools | deep dive | Shows where external authorization around AI tool access fits | in progress |
 | Agent Skills And Terraform Workflows | explainer | Useful if current product positioning validates before recording | needs validation |
 | Infragraph And Infrastructure Context | future-looking explainer | Connects dependency context to future AI reasoning | future |
 | From Commit To Governed Terraform Run | end-to-end demo | Companion to Episode 9 after earlier walkthroughs exist | future |
