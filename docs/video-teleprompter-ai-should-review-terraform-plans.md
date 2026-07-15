@@ -26,7 +26,7 @@ If a platform team already depends on HCP Terraform or Terraform Enterprise for 
 
 The safer pattern is:
 
-AI reviews the plan.
+AI summarizes authorized Terraform context and reviews the plan.
 
 Terraform owns the run.
 
@@ -102,7 +102,7 @@ The recommendation is `block_apply_pending_review`.
 
 That is the key outcome. The assistant is not making the final deployment decision, but it is producing a clear signal for the human review process.
 
-Point to the findings.
+Point to the compound risk first.
 
 Say:
 
@@ -112,7 +112,19 @@ It creates a production service with desired count one.
 
 It is missing required ownership and environment tags.
 
-Those are exactly the kinds of things platform engineers and SREs look for during review, but they can be easy to miss in a large plan.
+But the more important story is the combination:
+
+database replacement,
+
+deletion protection off,
+
+service capacity reduced,
+
+monitoring removed,
+
+and ownership metadata missing.
+
+Sentinel and static checks can catch individual rules. The AI-assisted review is useful because it summarizes the combined operational risk for the human reviewer.
 
 ## 3:30 - Explain The Governance Model
 
@@ -157,9 +169,15 @@ Is this Terraform change acceptable?
 
 That is where Sentinel, OPA, policy checks, and run tasks fit.
 
+Sentinel is deterministic policy code written by the platform team.
+
+The AI does not influence policy evaluation.
+
+It can explain the result after HCP Terraform or Terraform Enterprise has already evaluated it.
+
 Authorization asks:
 
-Is this actor allowed to inspect this run, retrieve this context, or call this tool?
+Is this actor allowed to retrieve this run context or call this tool?
 
 That is where something like SpiceDB or AuthZed fits.
 
@@ -232,7 +250,7 @@ HCP Terraform and Terraform Enterprise remain the system of record.
 
 Policy evaluates the change.
 
-Authorization controls what context and tools the agent can access.
+Authorization controls which context and tools can be passed to the agent.
 
 Human approval controls whether anything proceeds.
 

@@ -23,7 +23,7 @@ GitHub or CI change
   -> state and audit history
 ```
 
-The assistant can inspect context, classify risk, summarize policy signals, and propose next steps. It should not directly apply Terraform, override policy, or destroy infrastructure outside the Terraform run lifecycle.
+The workflow can retrieve authorized context for the assistant to summarize, classify risk, explain policy signals, and propose next steps. The assistant should not directly apply Terraform, override policy, or destroy infrastructure outside the Terraform run lifecycle.
 
 ## When To Use Each Control Path
 

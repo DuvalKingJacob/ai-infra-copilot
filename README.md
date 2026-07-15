@@ -6,7 +6,7 @@ Terraform-native plan review with policy signals, authorization boundaries, agen
 
 This project explores a practical question for platform engineers:
 
-> If an AI assistant can inspect Terraform run context and call operational tools, how should it fit into the governance model teams already use for policy, approval, state, and audit?
+> If an AI assistant can summarize authorized Terraform run context and call operational tools, how should it fit into the governance model teams already use for policy, approval, state, and audit?
 
 The answer here is intentionally conservative: Terraform remains the infrastructure control point. HCP Terraform or Terraform Enterprise remains the system of record for runs, plans, policy checks, approvals, variables, state, and audit. The assistant can summarize plans, identify risky changes, retrieve authorized context, and propose next steps. It does not apply Terraform or bypass the HCP Terraform/TFE run lifecycle.
 
@@ -99,6 +99,7 @@ Start here:
 - `docs/stacks-video-validation-checklist.md`: product, narrative, and demo readiness checklist.
 - `docs/hashibank-stacks-companion.md`: how the companion repo should relate to this reference architecture.
 - `docs/hcp-terraform-run-control.md`: when to use UI, CI, `tfctl`, and HCP Terraform approvals.
+- `docs/thursday-steve-apoorva-prep.md`: meeting prep and product-safety decision asks.
 
 ## What This Is
 
@@ -128,7 +129,7 @@ Detailed commands for the Terraform-native workflow, browser demo, SpiceDB/AuthZ
 
 Most AI demos stop at chat.
 
-Infrastructure teams need something different. A useful platform assistant needs to answer questions from trusted internal context, inspect operational systems, reason about risk, and propose actions without silently bypassing the controls teams already depend on.
+Infrastructure teams need something different. A useful platform assistant needs to answer questions from trusted internal context, summarize authorized operational context, reason about risk, and propose actions without silently bypassing the controls teams already depend on.
 
 This demo explores one core idea:
 

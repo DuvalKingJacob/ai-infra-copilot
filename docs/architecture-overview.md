@@ -100,7 +100,7 @@ This demo treats retrieved documents as protected resources.
 
 ## Why Approval Gates
 
-Production infrastructure workflows often need plans, reviews, approvals, and audit trails. The assistant can inspect and propose, but it should not directly mutate production just because a prompt asked it to.
+Production infrastructure workflows often need plans, reviews, approvals, and audit trails. The assistant can summarize authorized context and propose next steps, but it should not directly mutate production just because a prompt asked it to.
 
 The demo intentionally stops at approval recording. In a production version, approval would hand off to a controlled deployment or incident remediation workflow inside the Terraform control plane.
 
@@ -144,7 +144,7 @@ In production, I would add:
 
 The project does not directly mutate production infrastructure.
 
-That is intentional. The product stance is that an agent can inspect, explain, and propose, but production-impacting actions should hand off to a controlled workflow with explicit approval and auditability.
+That is intentional. The product stance is that tools retrieve authorized context, the agent explains and proposes, and production-impacting actions hand off to a controlled workflow with explicit approval and auditability.
 
 ## Current Status
 

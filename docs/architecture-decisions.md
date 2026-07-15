@@ -36,7 +36,7 @@ Production extension:
 
 ## Decision 4: Separate Answering From Acting
 
-The assistant can inspect, explain, and propose. It does not directly mutate production.
+The assistant can summarize authorized context, explain, and propose. It does not directly mutate production.
 
 This matches platform engineering norms: plan, review, approve, execute, and audit.
 
@@ -56,4 +56,3 @@ Production extension:
 - Persist audit events.
 - Add OpenTelemetry traces.
 - Add evals for unauthorized retrieval, prompt injection, and unsafe tool use.
-

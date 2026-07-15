@@ -132,4 +132,4 @@ This report treats drift as a review workflow:
 
 ## Architecture Note
 
-Plan review and drift triage share the same operating boundary: AI can inspect, classify, explain, and propose, but Terraform remains the execution and audit control point.
+Plan review and drift triage share the same operating boundary: tools retrieve authorized context, AI can classify, explain, and propose, and Terraform remains the execution and audit control point.

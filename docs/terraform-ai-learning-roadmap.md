@@ -53,7 +53,7 @@ Deliverable:
 Questions to explore:
 
 - Where should an AI reviewer run: local CLI, pull request, run task, or workspace event?
-- What workspace data is safe for an agent to inspect?
+- What workspace data is safe to retrieve as agent context?
 - Which outputs, variables, and run metadata should be redacted?
 - How should approval hand off to existing Terraform Cloud workflows?
 
@@ -64,7 +64,7 @@ Safe target:
 Next build:
 
 1. Add a workflow diagram for where an AI reviewer could sit: pull request, local CLI, run task, workspace event, or incident workflow.
-2. Define the minimum safe metadata the agent can inspect.
+2. Define the minimum safe metadata that tools may retrieve for the agent.
 3. Define sensitive fields that should be redacted before model exposure.
 4. Map approval handoff to existing Terraform Cloud run approval concepts.
 
@@ -150,7 +150,7 @@ Next ideas:
 
 Design principle:
 
-> The agent can inspect and propose; production mutation belongs in controlled workflows.
+> The agent can summarize authorized context and propose; production mutation belongs in controlled workflows.
 
 Next build:
 

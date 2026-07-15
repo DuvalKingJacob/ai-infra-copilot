@@ -22,7 +22,7 @@ How AI Should Fit Into Terraform Runs
 
 ## Core Thesis
 
-AI agents should improve Terraform plan review inside the governance model teams already use in HCP Terraform and Terraform Enterprise. The agent can inspect context, explain risk, surface policy signals, and propose next steps, but production apply should remain controlled by Terraform runs, policy checks, approvals, audit logs, and human operators.
+AI agents should improve Terraform plan review inside the governance model teams already use in HCP Terraform and Terraform Enterprise. The agent can summarize authorized context, explain compound operational risk, surface policy results, and propose next steps, but production apply should remain controlled by Terraform runs, policy checks, approvals, audit logs, and human operators.
 
 ## Opening Hook
 
@@ -140,7 +140,11 @@ Say:
 
 Say:
 
-> The smaller example proves the pattern, but it does not feel like a full SRE review. So here is a more realistic app-platform scenario.
+> The smaller example proves the pattern, but it does not answer the most important skeptical question: why not just use Sentinel, Checkov, or another deterministic scanner?
+>
+> The answer is not that AI should replace those tools. It should not.
+>
+> The stronger case is compound operational risk. Here is a more realistic app-platform scenario.
 >
 > This plan touches a load balancer, an ECS service, a database, monitoring, and tags. This is the kind of change where practitioners need context, not just a green or red result.
 
@@ -150,20 +154,23 @@ Run:
 make review-app
 ```
 
-Call out expected findings:
+Call out the compound risk first:
 
-- Internal load balancer becomes internet-facing.
 - Production database is replaced.
 - Database deletion protection is disabled.
 - ECS desired count drops from `6` to `1`.
 - Latency alarm is deleted.
 - Required ownership and environment tags are missing.
 
+Then mention the individual findings:
+
+- Internal load balancer becomes internet-facing.
+
 Say:
 
 > This is where AI can help HCP Terraform and TFE adoption. Not by replacing policy. Not by replacing approval. By making the review experience better for the operator.
 >
-> The agent can explain the blast radius across security, data durability, availability, observability, and governance.
+> Sentinel can deterministically fail specific rules. AI can help summarize the combined story for a human reviewer: this is not just one risky attribute; it is data durability risk, availability risk, observability risk, and ownership risk arriving in one plan.
 
 ## 6:30 - 7:30 | Generate A Review Artifact
 
@@ -219,7 +226,9 @@ spicedb/schema.zed
 
 Say:
 
-> Sentinel or OPA belongs close to the Terraform run. That is where you evaluate rules like no public load balancers, no production database replacement, no dangerous capacity reduction, and no missing required tags.
+> Sentinel or OPA belongs close to the Terraform run. That is where your platform team writes deterministic policy code for rules like no public load balancers, no production database replacement, no dangerous capacity reduction, and no missing required tags.
+>
+> The AI does not influence Sentinel evaluation. It can explain the policy result after HCP Terraform or Terraform Enterprise has already evaluated it.
 >
 > SpiceDB or AuthZed is a separate example of relationship-based authorization around AI tool access. It answers questions like: can Alice ask the agent to inspect this production run? Can Bob retrieve this workspace context? Can this agent call a Terraform tool for this environment?
 
@@ -253,7 +262,7 @@ Say:
 >
 > Before the assistant receives plan review output, we check whether the actor is allowed to call that capability.
 >
-> Alice can inspect production Terraform context. Bob cannot. The denied output never becomes model context.
+> Alice can request authorized production Terraform context. Bob cannot. The denied output never becomes model context.
 
 Connect to MCP:
 
@@ -290,7 +299,7 @@ Say:
 
 Say:
 
-> The demo uses local plan JSON so the workflow is easy to inspect. In production, I would expect HCP Terraform or Terraform Enterprise to provide the real source of truth: runs, plans, policy checks, variables, state versions, workspace metadata, audit logs, and Stack deployments.
+> The demo uses local plan JSON so the workflow is easy to review. In production, I would expect HCP Terraform or Terraform Enterprise to provide the real source of truth: runs, plans, policy checks, variables, state versions, workspace metadata, audit logs, and Stack deployments.
 >
 > `tfctl` and the Terraform MCP Server are interesting because they can become bridges between an AI assistant and that Terraform control plane.
 
@@ -318,7 +327,7 @@ Say:
 >
 > The goal is to make the agent a better reviewer inside the same Terraform governance model the platform already trusts.
 >
-> Terraform plans remain the control point. HCP Terraform and Terraform Enterprise remain the system of record for runs, policy checks, approvals, variables, state, and audit. Sentinel or OPA evaluates the change. Authorization controls what context and tools the agent can access.
+> Terraform plans remain the control point. HCP Terraform and Terraform Enterprise remain the system of record for runs, policy checks, approvals, variables, state, and audit. Sentinel or OPA evaluates the change. Authorization controls which context and tools can be passed to the agent.
 >
 > That is the pattern I want from AI-assisted Terraform operations: helpful, explainable, policy-aware, authorized, and still human-controlled where it matters.
 

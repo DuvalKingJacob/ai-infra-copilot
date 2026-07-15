@@ -138,7 +138,7 @@ HashiCorp adoption talk track:
 
 Say:
 
-> There are two different questions here. Sentinel or OPA answers whether the Terraform change is acceptable. Authorization answers who can inspect a run, retrieve context, or call an AI-accessible Terraform capability.
+> There are two different questions here. Sentinel or OPA answers whether the Terraform change is acceptable. Authorization answers who can retrieve run context, pass it to an AI workflow, or call an AI-accessible Terraform capability.
 
 Show:
 

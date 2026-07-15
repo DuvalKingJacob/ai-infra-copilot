@@ -32,6 +32,7 @@ By the end, the viewer should understand:
 - where components and deployments live
 - how dependency context helps review blast radius
 - how this maps to HCP Terraform / Terraform Enterprise
+- what Stacks does and does not orchestrate
 - why migration tooling should be treated as a separate workflow from the first conceptual walkthrough
 
 ## Prerequisites
@@ -49,6 +50,13 @@ Optional for later/live demos:
 - cloud credentials if using a real AWS/Kubernetes HashiBank implementation
 
 Do not make the first walkthrough depend on `tf-migrate`. The first walkthrough should succeed even if migration tooling is unavailable or beta behavior changes.
+
+Validate current Stacks availability, syntax, and HCP Terraform / Terraform Enterprise requirements before recording. If a lightboard uses older or simplified terms such as `tfstack.hcl`, explain that this walkthrough shows the current file shapes used in this repo:
+
+```text
+components.tfcomponent.hcl
+deployments.tfdeploy.hcl
+```
 
 ## Demo Environment
 
@@ -76,6 +84,48 @@ terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
 terraform/workspace-to-stacks/component-graph.md
 terraform/workspace-to-stacks/migration-map.md
 ```
+
+## Demo Spine
+
+The spine of this walkthrough is the before/after HCL, not the directory tree.
+
+Before:
+
+```hcl
+data "terraform_remote_state" "vpc" {
+  backend = "remote"
+
+  config = {
+    organization = "example"
+    workspaces = {
+      name = "hashibank-vpc-prod"
+    }
+  }
+}
+
+module "eks" {
+  source             = "../../modules/eks"
+  vpc_id             = data.terraform_remote_state.vpc.outputs.vpc_id
+  private_subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnet_ids
+}
+```
+
+After:
+
+```hcl
+component "eks_cluster" {
+  source = "../modules/eks"
+
+  inputs = {
+    vpc_id             = component.vpc.vpc_id
+    private_subnet_ids = component.vpc.private_subnet_ids
+  }
+}
+```
+
+Practitioner takeaway:
+
+> The old model hides orchestration in remote state references, CI order, and runbooks. The Stack model makes the relationship explicit in the configuration practitioners review.
 
 ## Preflight Commands
 
@@ -144,41 +194,37 @@ Do not use `tf-migrate` in the first walkthrough unless the full beta migration 
 
 ## Step-By-Step Recording Plan
 
-### 1. Start With The Old Shape
+### 1. Start With The Before/After HCL
 
 Show:
 
 ```text
-terraform/workspace-to-stacks/workspaces
+terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
+terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 ```
 
 Talk track:
 
-> These roots represent the kind of separate HCP Terraform workspaces teams often grow into: network, cluster, platform add-ons, namespace, and application. Each workspace is reasonable alone, but the overall system depends on handoffs between them.
+> This is the difference the walkthrough is really about. In the old workspace-shaped model, the cluster root receives network context through copied variables, remote state, CI order, or human runbooks. In the Stack model, the dependency is represented directly as a component input reference.
 
 Point out:
 
-- `vpc`
-- `eks-cluster`
-- `platform-addons`
-- `app-namespace`
-- `hashibank-app`
+- Before: dependency context is implied by workspace outputs and handoffs.
+- After: dependency context is explicit in `component.vpc.vpc_id` and `component.vpc.private_subnet_ids`.
+- The module implementation can stay reusable; Stacks coordinate how modules are assembled.
 
 Command:
 
 ```bash
-find terraform/workspace-to-stacks/workspaces -maxdepth 2 -type f | sort
+sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
+sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 ```
 
 Expected output:
 
 ```text
-terraform/workspace-to-stacks/workspaces/app-namespace/main.tf
-terraform/workspace-to-stacks/workspaces/app/main.tf
-terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
-terraform/workspace-to-stacks/workspaces/hashibank-app/main.tf
-terraform/workspace-to-stacks/workspaces/platform-addons/main.tf
-terraform/workspace-to-stacks/workspaces/vpc/main.tf
+The old root shows inputs normally copied or passed from another workspace.
+The Stack component shows direct references to the VPC component outputs.
 ```
 
 ### 2. Name The Operational Pain
@@ -203,6 +249,7 @@ Expected point:
 
 - dependencies are visible to the viewer
 - the old workflow requires humans, CI, or runbooks to coordinate rollout order
+- a directory listing alone does not prove the pain; the pain is hidden coupling between runs
 
 ### 3. Show The Modules
 
@@ -318,7 +365,19 @@ Expected point:
 - development has an auto-approval check
 - production keeps approval stricter
 
-### 7. Map To HCP Terraform / TFE
+### 7. Explain State Isolation And Failure Recovery
+
+Talk track:
+
+> Stacks make orchestration and dependency context more explicit, but they do not turn Terraform into an automatic rollback engine. Components still have their own state boundaries. If a later component fails after an earlier component succeeds, the recovery path is still a Terraform/operator workflow: inspect the failed component, understand state, fix configuration or prerequisites, and rerun through the governed workflow.
+
+Emphasize:
+
+- Stacks coordinate components; they do not replace modules.
+- Stacks improve dependency visibility; they do not provide cross-component saga rollback.
+- Production failure recovery still needs run history, state isolation, owner review, and approval.
+
+### 8. Map To HCP Terraform / TFE
 
 Talk track:
 
@@ -343,7 +402,7 @@ Expected point:
 - the live path requires HCP Terraform/TFE access and real credentials
 - production demonstrations need stricter recording hygiene
 
-### 8. Bridge To AI-Assisted Review
+### 9. Bridge To AI-Assisted Review
 
 Ask:
 
@@ -371,12 +430,13 @@ Recommended window order:
 
 1. Terminal in repo root.
 2. Editor opened to `terraform/workspace-to-stacks`.
-3. `migration-map.md`.
-4. `component-graph.md`.
-5. `components.tfcomponent.hcl`.
-6. `deployments.tfdeploy.hcl`.
-7. `docs/stacks-live-prerequisites.md`.
-8. Optional terminal output from `make agent`.
+3. `workspaces/eks-cluster/main.tf`.
+4. `components.tfcomponent.hcl`.
+5. `migration-map.md`.
+6. `component-graph.md`.
+7. `deployments.tfdeploy.hcl`.
+8. `docs/stacks-live-prerequisites.md`.
+9. Optional terminal output from `make agent`.
 
 Keep the screen calm. This walkthrough is about file shape and mental model, not speed-running commands.
 
@@ -391,6 +451,8 @@ make ci
 find terraform/workspace-to-stacks/workspaces -maxdepth 2 -type f | sort
 find terraform/workspace-to-stacks/modules -maxdepth 2 -type f | sort
 
+sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
+sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
 sed -n '1,120p' terraform/workspace-to-stacks/migration-map.md
 sed -n '1,120p' terraform/workspace-to-stacks/component-graph.md
 sed -n '1,220p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
@@ -410,6 +472,7 @@ make agent
 | `make ci` | completes successfully |
 | `find workspaces` | shows workspace-shaped roots |
 | `find modules` | shows reusable module implementations |
+| before/after HCL | shows implied workspace handoffs versus explicit component references |
 | `migration-map.md` | explains old workspace handoffs |
 | `component-graph.md` | shows `vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app` |
 | `components.tfcomponent.hcl` | shows component references and dependencies |
@@ -422,6 +485,8 @@ make agent
 - Treating Stacks as a replacement for modules.
 - Treating every existing workspace as a perfect future component boundary.
 - Hiding rollout order in scripts instead of modeling dependencies.
+- Assuming Stacks provide automatic rollback across every component.
+- Skipping the state-isolation and failure-recovery conversation.
 - Making the demo require live cloud credentials too early.
 - Letting the AI story distract from the Terraform adoption story.
 - Turning the first walkthrough into a beta migration troubleshooting session.

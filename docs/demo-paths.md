@@ -219,7 +219,7 @@ The richer HashiBank Stacks companion scenario is documented at:
 docs/hashibank-stacks-companion.md
 ```
 
-The point is not to replace policy-as-code. The point is to show how an AI-native workflow can explain infrastructure risk, require authorization to inspect production plans, surface Sentinel-style policy signals, and keep apply behind human approval.
+The point is not to replace policy-as-code. The point is to show how an AI-native workflow can explain infrastructure risk, require authorization before production plan context reaches the agent, surface Sentinel-style policy signals, and keep apply behind human approval.
 
 SpiceDB/AuthZed and Sentinel-style policy sit at different layers:
 

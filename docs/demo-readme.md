@@ -31,7 +31,7 @@ The point is that the assistant is not just a chatbot. It is a workflow with exp
 
 ## Why MCP
 
-MCP-style tools make infrastructure capabilities explicit. The assistant can inspect Terraform and Kubernetes context through named tools instead of hidden glue code.
+MCP-style tools make infrastructure capabilities explicit. Named tools can retrieve authorized Terraform and Kubernetes context instead of relying on hidden glue code.
 
 The security lesson is that MCP does not remove the need for authorization. It makes tool access easier, which makes permission boundaries more important.
 
@@ -43,7 +43,7 @@ The security lesson is that retrieved context is a protected resource. Unauthori
 
 ## Why Approval Gates
 
-The assistant can inspect and propose. It cannot directly apply a production rollback. Production-impacting actions require a human approver with the right permission.
+The assistant can summarize authorized context and propose. It cannot directly apply a production rollback. Production-impacting actions require a human approver with the right permission.
 
 ## Production Extensions
 
