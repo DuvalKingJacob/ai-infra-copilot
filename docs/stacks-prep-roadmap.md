@@ -1,6 +1,6 @@
 # Stacks Prep Roadmap
 
-This repo should model the HashiBank Stacks architecture, not copy it wholesale.
+The first practitioner walkthrough should use the HashiBank Stacks architecture as the primary demo. This repo should model that architecture as a sanitized fallback, not copy it wholesale.
 
 The goal is to prepare the next practitioner deep dive:
 
@@ -40,7 +40,7 @@ But keep this repo small and sanitized:
 
 ## What To Model Here
 
-The local scenario should mirror the shape of HashiBank:
+The local fallback scenario should mirror the shape of HashiBank:
 
 ```text
 network -> cluster -> platform services -> application
@@ -131,19 +131,20 @@ Hook:
 
 Flow:
 
-1. Show the old workspace shape.
+1. Show the old workspace-shaped problem.
 2. Explain the operational pain: remote state, sequencing, one-plan-at-a-time review.
-3. Show the Stack component graph.
-4. Explain deployments and deployment groups.
+3. Show the HashiBank Stack component graph.
+4. Explain deployments and deployment groups through `components.tfcomponent.hcl` and `deployments.tfdeploy.hcl`.
 5. Ask the AI reviewer for blast radius.
-6. Map the local demo to HashiBank and HCP Terraform.
+6. Use the local scaffold only as a fallback or simplified teaching aid.
 7. Close with the approval boundary: AI explains, Terraform controls execution.
 
 ## Do Not Do Yet
 
 - Do not merge the full HashiBank repo into this repo.
 - Do not add real HCP Terraform org/project/workspace values.
-- Do not require AWS/Kubernetes credentials for the default Stacks demo.
+- Do not require AWS/Kubernetes credentials for the fallback Stacks scaffold.
+- Do not make `tf-migrate` or workspace migration the first Stacks episode.
 - Do not make the agent apply Stack changes.
 
 ## Definition Of Ready
@@ -152,6 +153,7 @@ The Stacks deep dive is ready to record when:
 
 - the local component graph is visible in code
 - the migration map explains old versus new workflow
+- the HashiBank recording path has passed a screen-safety review
 - the demo can answer blast-radius questions without cloud credentials
-- HashiBank is linked as the advanced real implementation
+- the local scaffold can carry the demo if HashiBank cannot be shown live
 - the talk track clearly maps to HCP Terraform/TFE adoption

@@ -1,12 +1,12 @@
 # HashiBank Stacks Companion Scenario
 
-This AI infrastructure operations repo has a simplified local workspace-to-Stacks scenario under:
+This AI infrastructure operations repo has a simplified local workspace-to-Stacks scaffold under:
 
 ```text
 terraform/workspace-to-stacks
 ```
 
-There is also a real companion Stacks repo:
+The primary practitioner walkthrough should use the real companion Stacks repo:
 
 ```text
 https://github.com/DuvalKingJacob/tfstacks-vpc-eks-hashibank
@@ -20,19 +20,19 @@ Local clone inspected:
 
 ## Why Keep Both?
 
-The local scenario in this repo is intentionally provider-free. It uses `terraform_data` so the AI demo can run anywhere and focus on the workflow:
-
-```text
-workspace sprawl -> Stack components -> plan review -> policy signal -> approval
-```
-
-The HashiBank repo is the richer practitioner implementation:
+The HashiBank repo is the better first recording path because it shows a real platform-shaped Stack:
 
 ```text
 VPC -> EKS Fargate -> Kubernetes RBAC -> EKS addons -> namespace -> HashiBank app
 ```
 
-That makes it better for a deeper Terraform/HCP Terraform walkthrough, but less ideal as the first local AI demo because it depends on AWS, HCP Terraform, OIDC, Kubernetes, Helm, and real account configuration.
+The local scenario in this repo is intentionally provider-free. It uses `terraform_data` so the demo can fall back to a sanitized, inspectable workflow:
+
+```text
+workspace sprawl -> Stack components -> plan review -> policy signal -> approval
+```
+
+Keep both. HashiBank carries the practitioner credibility. The local scaffold protects the recording if cloud access, screen-safety, or current product behavior gets in the way.
 
 ## What The Companion Repo Demonstrates
 
@@ -89,22 +89,31 @@ That keeps the story grounded:
 
 ## Recommended Content Use
 
-Use this repo first:
+Use the HashiBank companion first:
 
-- local demo
-- plan review
-- authorization boundary
-- policy signal
-- AI report
-
-Use the HashiBank companion second:
-
-- real Stacks architecture
+- real platform-shaped Stacks architecture
 - VPC/EKS/app dependency graph
 - HCP Terraform deployment groups
 - OIDC for non-human identity
-- deeper practitioner walkthrough
+- production-shaped practitioner walkthrough
 
-## Caution
+Use this repo second:
 
-Do not blindly copy the companion repo into this project. It contains real-environment configuration such as account IDs, ARNs, organization names, and local Terraform artifacts. Keep the AI demo repo small and sanitized, and link to the companion as the advanced implementation.
+- fallback local demo
+- sanitized file-shape explanation
+- plan review and AI report tie-in
+- authorization and policy boundary explanation
+
+## Recording Safety
+
+The recording copy now references environment-specific account, role, administrator, and organization values through the HCP Terraform variable set `hashibank-stack-runtime`. It does not contain a deployment marked for destruction, and its checked configuration no longer contains the original account identifiers.
+
+Before recording or pushing, repeat the static scan and inspect the HCP Terraform UI separately. Do not show variable-set contents, state, account IDs, role values, kubeconfigs, or cloud-provider output on screen.
+
+## Verified Recording State
+
+The development deployment has completed successfully through the full component chain: VPC, EKS 1.34, Kubernetes RBAC, EKS add-ons, namespace, and a running HashiBank workload. Use that deployment as the live recording path.
+
+The production deployment contains stale historical state for an IAM OIDC provider in a different AWS account. The current deployment role cannot refresh that object, so planning and destroying fail before configuration evaluation. This is an environment-recovery issue, not evidence that the current Stack configuration is invalid. Keep production out of the live recording until the Stacks team clears the stale state entry.
+
+When code or variable-set values change, start a new deployment run. Retrying a failed deployment reuses its previous configuration version and can make fixed code appear unchanged.

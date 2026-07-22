@@ -4,17 +4,17 @@ Working title:
 
 > AI Should Review Terraform Plans, Not Apply Them
 
-Related artifacts:
+Related production artifacts:
 
-- `docs/video-script-ai-agents-review-terraform-plans.md`
-- `docs/video-teleprompter-ai-should-review-terraform-plans.md`
 - `docs/video-architecture-diagram.md`
+
+The polished script and teleprompter copy live outside this repo as Word production documents. This repo keeps the technical demo runbook, commands, and source-of-truth implementation.
 
 ## Demo Goal
 
 Show how AI can improve Terraform plan review without bypassing the governance model teams already use in HCP Terraform and Terraform Enterprise.
 
-The demo should make four ideas obvious:
+The demo should make five ideas obvious:
 
 1. HCP Terraform/TFE remains the production control plane for runs, plans, policy checks, approvals, state, variables, and audit.
 2. The local repo is a simplified reference implementation of that production workflow.

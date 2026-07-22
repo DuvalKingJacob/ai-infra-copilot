@@ -22,12 +22,12 @@ This should be the practitioner deep dive that follows the higher-level Stacks o
 | --- | --- | --- |
 | Steve's `Episode 1_ Beyond the Workspace` script | Positioning baseline for the high-level Stacks overview | reviewed |
 | Steve's `Terraform Enterprise Video Series - Overview` | Series-level fit and episode sequencing | reviewed |
-| HashiCorp Stacks docs | Product truth for components, deployments, deployment groups, and HCP Terraform workflow | needs final reread before recording |
+| HashiCorp Stacks docs | Product truth for components, deployments, deployment groups, and HCP Terraform workflow | reviewed against current GA docs |
 | Terraform MCP Server docs | Product truth for MCP capabilities, HCP Terraform/TFE access, and security caveats | needs final reread before recording |
 | Existing HashiConf / HashiCorp YouTube Stacks walkthrough | Continuity check against previous public explanation | deck inspected |
 | `HashiCorp_PresentationKit_JacobPlicqueFinal.key` | Local copy of the HashiConf talk deck and embedded demo source | inspected |
-| `tfstacks-vpc-eks-hashibank` companion repo | Advanced real implementation reference | needs human review |
-| This repo's local Stacks scenario | Safe demo and teaching scaffold | ready for local validation |
+| `tfstacks-vpc-eks-hashibank` companion repo | Primary practitioner recording demo | local validation passed; development deployed successfully end to end in HCP Terraform |
+| This repo's local Stacks scenario | Fallback demo and teaching scaffold | ready for local validation |
 
 ## HashiConf Continuity Baseline
 
@@ -55,8 +55,8 @@ For the broader companion walkthrough plan, see `docs/terraform-video-companion-
 | Claim | Validation Question | Proof |
 | --- | --- | --- |
 | Workspaces are useful but become difficult as orchestration boundaries | Does the script avoid saying workspaces are bad? | Steve's overview frames workspaces as strong isolation/state containers but weak orchestrators |
-| Stacks coordinate modules; they do not replace modules | Does the demo show existing modules under Stack components? | `terraform/workspace-to-stacks/modules/*` and `stack/components.tfcomponent.hcl` |
-| Components make dependencies visible | Does the graph show `vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app`? | `terraform/workspace-to-stacks/component-graph.md` |
+| Stacks coordinate modules; they do not replace modules | Does the demo show existing modules under Stack components? | HashiBank component directories and fallback `terraform/workspace-to-stacks/modules/*` |
+| Components make dependencies visible | Does the graph show `VPC -> EKS -> RBAC/addons -> namespace -> HashiBank app`? | HashiBank `components.tfcomponent.hcl` and fallback `terraform/workspace-to-stacks/component-graph.md` |
 | Deployments model repeatable environments | Does the script distinguish component shape from deployment targets? | `stack/deployments.tfdeploy.hcl` |
 | This talk extends the HashiConf talk | Does it reuse the Stacks foundation but add AI-assisted blast-radius review? | `HashiCorp_PresentationKit_JacobPlicqueFinal.key` continuity baseline |
 | HCP Terraform/TFE remains the control plane | Does the script map local files to HCP Terraform/TFE runs, policy, approvals, state, and audit? | `docs/hcp-terraform-stacks-plan.md` |
@@ -65,7 +65,7 @@ For the broader companion walkthrough plan, see `docs/terraform-video-companion-
 
 ## Demo Validation
 
-Run before recording:
+Run against this repo before recording:
 
 ```bash
 make ci
@@ -91,7 +91,17 @@ terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app init -ba
 terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app validate
 ```
 
-Stacks-specific commands for the live path:
+HashiBank screen-safety preflight:
+
+```bash
+cd /Users/jacobplicque/Projects/tfstacks-vpc-eks-hashibank
+git status --short
+terraform fmt -check -recursive
+sed -n '1,220p' components.tfcomponent.hcl
+sed -n '1,180p' deployments.tfdeploy.hcl
+```
+
+Stacks-specific commands for the fallback live path:
 
 ```bash
 terraform -chdir=terraform/workspace-to-stacks/stack stacks init
@@ -110,8 +120,12 @@ Those commands may require HCP Terraform discovery and network access to `app.te
 | AWS identity available | `aws sts get-caller-identity` | needs user check |
 | Kubernetes context correct | `kubectl config current-context` | needs user check |
 | Helm available if charts are used | `helm version --short` | local tool present |
-| HCP Terraform org/project/workspace values sanitized | manual review | required before recording |
-| No secrets in repo | `git status --short` and secret scan | required before push |
+| HashiBank Stack configuration valid | `terraform stacks fmt`, `terraform stacks init`, and `terraform stacks validate` | passed locally on July 17, 2026 |
+| HashiBank development deployment | HCP Terraform Stack deployment plus workload verification | passed: VPC, EKS 1.34, RBAC, add-ons, namespace, and HashiBank workload |
+| HashiBank production deployment | HCP Terraform Stack deployment | excluded from recording; stale cross-account state requires platform support |
+| HCP Terraform org/project/workspace values sanitized | variable-set references plus manual review | static configuration sanitized |
+| HashiBank repo screen-safety checked | manual review | static scan passed; verify HCP UI before recording |
+| No secrets in repo | `git status --short` and secret scan | static scan passed in recording copy; repeat before push |
 
 ## Series Fit
 
@@ -131,8 +145,8 @@ This deep dive should complement the planned Terraform Enterprise series:
 - The demo shows files, not only slides.
 - The old workspace model is visible before the Stack model.
 - The component graph is visible on screen.
-- The local demo is explained as a safe reference implementation.
-- The HashiBank repo is framed as the advanced real implementation, not copied into this repo.
+- The HashiBank repo is the primary practitioner demo.
+- The local demo is explained as a safe fallback and teaching scaffold.
 - HCP Terraform/TFE concepts are named explicitly: runs, plans, state, policy, approvals, deployment groups, and audit logs.
 - MCP and AI are positioned as context/review layers, not autonomous apply mechanisms.
 - The fallback path works without cloud access.
@@ -142,10 +156,11 @@ This deep dive should complement the planned Terraform Enterprise series:
 
 The Stacks package is ready to record when:
 
-- local validation passes
+- local `terraform stacks fmt`, `init`, and `validate` pass
 - the script has a distinct practitioner angle from Steve's overview
 - claims have been checked against current HashiCorp docs
 - HashiConf/YouTube continuity has been reviewed
-- the HashiBank companion path has been sanity-checked
+- the HashiBank recording path has been sanity-checked and screen-safety reviewed
 - the fallback local demo can be completed in under five minutes
 - the live path has been tested, or intentionally deferred
+- the recording uses the healthy development deployment; production is shown only as configuration until its stale state is cleared

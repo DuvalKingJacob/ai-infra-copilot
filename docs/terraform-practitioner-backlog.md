@@ -10,29 +10,29 @@ The goal is to reinforce a clear practitioner lane over time:
 
 | Topic | Format | Why It Matters | Status |
 | --- | --- | --- | --- |
-| Why Terraform Stacks Exist | lightboard companion / blog | Establishes the problem: workspace sprawl and orchestration limits | planned |
-| Building Your First Terraform Stack | walkthrough | First hands-on companion to Episode 1 | next |
+| Why Terraform Stacks Exist | lightboard follow-up / blog | Establishes the problem: workspace sprawl and orchestration limits | planned |
+| Building Your First Terraform Stack | practitioner episode | First hands-on walkthrough after Episode 1 | next |
+| Adding Policy, Identity, And Cost Gates | practitioner episode | Turns Episode 2 governance into a concrete run lifecycle demo | walkthrough drafted |
+| Detecting And Remediating Drift In HCP Terraform | practitioner episode | Turns Episode 3 into an operational workflow | drafted |
+| AI Should Review Terraform Plans, Not Apply Them | practitioner episode | Shows AI as reviewer inside governance, not autonomous operator | demo ready |
 | Workspace To Stacks Migration | walkthrough / repo demo | Connects legacy workspace reality to Stacks adoption | in progress |
 | Deployment Groups | walkthrough | Helps practitioners understand promotion and rollout boundaries | planned |
 | Linked Stacks | deep dive | Useful for larger platform architectures and cross-stack dependencies | planned |
 | Policy As Code For Stacks | walkthrough | Bridges Episode 2 to actionable Sentinel/OPA usage | planned |
 | Run Tasks And Cost Gates | walkthrough | Makes cost governance concrete inside HCP Terraform/TFE | planned |
-| Drift Detection | walkthrough | Turns Episode 3 into an operational workflow | drafted |
-| Drift Remediation | walkthrough | Shows review/approval boundaries for fixing drift | drafted |
 | AI-Assisted Drift Triage | future demo | Shows how agents could classify, prioritize, and recommend drift remediation at estate scale without bypassing Terraform governance | future |
 | `tfctl` For HCP Terraform | short demo | Gives practitioners a CLI path into HCP Terraform workflows | planned |
 | Terraform MCP Server | explainer / demo | Connects AI assistants to Terraform context and Registry knowledge | planned |
-| AI Reviews Terraform Plans | walkthrough | Shows AI as reviewer inside governance, not autonomous operator | in progress |
 | AI Authorization For Terraform Tools | deep dive | Shows where external authorization around AI tool access fits | in progress |
 | Agent Skills And Terraform Workflows | explainer | Useful if current product positioning validates before recording | needs validation |
 | Infragraph And Infrastructure Context | future-looking explainer | Connects dependency context to future AI reasoning | future |
-| From Commit To Governed Terraform Run | end-to-end demo | Companion to Episode 9 after earlier walkthroughs exist | future |
+| From Commit To Governed Terraform Run | end-to-end demo | Capstone after earlier walkthroughs exist | future |
 
 ## Near-Term Execution
 
 ### Next
 
-Produce the first companion walkthrough:
+Produce the first practitioner episode:
 
 ```text
 Building Your First Terraform Stack
@@ -49,30 +49,39 @@ Deliverables:
 
 ### Then
 
-Turn the AI repo into a repeatable Terraform practitioner demo:
+Draft the second practitioner episode:
 
 ```text
-AI Reviews Terraform Plans, Not Applies Them
+Adding Policy, Identity, And Cost Gates
 ```
 
 Deliverables:
 
-- validated README
-- 5-7 minute teleprompter
-- safe local demo
-- risky plan demo
-- HCP Terraform/TFE mapping
-- authorization and approval explanation
+- one-page outline
+- HCP Terraform/TFE run lifecycle map
+- Sentinel/OPA policy gate
+- run task / cost gate
+- Vault/OIDC identity boundary
+- common mistakes
+- recording fallback path
+
+Draft walkthrough:
+
+```text
+docs/adding-policy-identity-cost-gates-walkthrough.md
+```
+
+Keep this walkthrough workspace-based. Current public feature support lists dynamic credentials for workspaces and Stacks, but policy as code, run tasks, drift detection, and cost optimization for workspaces only.
 
 ### Also Drafted
 
-The Drift companion walkthrough now has a recording runbook:
+The Drift practitioner episode now has a recording runbook:
 
 ```text
 docs/detecting-and-remediating-drift-walkthrough.md
 ```
 
-Use it next to the Stacks foundation to show another Infrastructure Lifecycle Management workflow before going deeper on AI.
+Use it after the policy/identity/cost walkthrough to show another Infrastructure Lifecycle Management workflow before going deeper on AI.
 
 Scope note:
 
@@ -82,10 +91,10 @@ This is a workspace-based Drift Detection walkthrough, not a Stacks drift demo.
 
 ### Later
 
-Use the companion roadmap to decide the next walkthrough based on team needs:
+Use the practitioner episode roadmap to decide the next walkthrough based on team needs:
 
-- policy and cost gates
 - drift detection/remediation
+- AI plan review
 - AI-assisted drift triage at scale
 - deployment groups
 - `tfctl`

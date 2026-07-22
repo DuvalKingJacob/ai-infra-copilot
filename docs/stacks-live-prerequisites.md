@@ -1,6 +1,6 @@
 # Stacks Live Prerequisites
 
-This repo keeps the default Stacks demo provider-light, but the advanced HashiBank-style path needs real tooling and access.
+The first Stacks practitioner walkthrough should use the HashiBank Stack as the primary demo. This repo keeps a provider-light scaffold as the fallback path.
 
 ## Current Local Tooling
 
@@ -10,7 +10,7 @@ Observed locally:
 | --- | --- |
 | Terraform | installed: `1.15.5` |
 | `tfctl` | installed: `0.3.0` |
-| `tf-migrate` | not found |
+| `tf-migrate` | optional for future migration episode |
 | AWS CLI | installed: `2.27.28` |
 | `kubectl` | installed: `1.35.3` |
 | Helm | installed: `4.1.3` |
@@ -19,7 +19,25 @@ Observed locally:
 
 Terraform reported that a newer patch version is available. Updating is optional for the local demo, but staying current is useful before recording live HCP Terraform or Stacks content.
 
-## Needed For The Local Stacks Demo
+## Needed For The HashiBank Primary Demo
+
+The richer HashiBank path needs:
+
+- Terraform with Stacks support.
+- HCP Terraform / Terraform Enterprise access.
+- `tfctl` authenticated to the right HCP Terraform host if CLI/API inspection is part of the recording.
+- AWS CLI authenticated to the target account if live cloud inspection is part of the recording.
+- OIDC or another non-static credential path for AWS in HCP Terraform.
+- `kubectl` for cluster inspection.
+- Helm if the app/add-on path uses charts.
+- A screen-safety pass for org names, account IDs, ARNs, state, outputs, and local artifacts.
+- Access to the companion repo:
+
+```text
+https://github.com/DuvalKingJacob/tfstacks-vpc-eks-hashibank
+```
+
+## Needed For The Local Fallback Demo
 
 The sanitized local scenario only needs:
 
@@ -28,35 +46,22 @@ The sanitized local scenario only needs:
 
 It uses `terraform_data` resources so it can be formatted, inspected, and validated without AWS, Kubernetes, Helm, or HCP Terraform access.
 
-## Needed For The HashiBank Companion Demo
-
-The richer companion path needs:
-
-- `tf-migrate` 2.0+ for the beta workspace-to-Stacks migration flow.
-- Terraform with Stacks support.
-- HCP Terraform / Terraform Enterprise access.
-- `tfctl` authenticated to the right HCP Terraform host.
-- AWS CLI authenticated to the target account.
-- OIDC or another non-static credential path for AWS in HCP Terraform.
-- `kubectl` for cluster inspection.
-- Helm if the app/add-on path uses charts.
-- Access to the companion repo:
-
-```text
-https://github.com/DuvalKingJacob/tfstacks-vpc-eks-hashibank
-```
-
 ## Commands To Check Before Recording
 
 ```bash
 terraform version
-tf-migrate version
 tfctl --version
 tfctl auth status
 aws sts get-caller-identity
 kubectl config current-context
 helm version --short
 docker --version
+```
+
+For future migration-specific recording only:
+
+```bash
+tf-migrate version
 ```
 
 For Stacks specifically:
@@ -83,7 +88,7 @@ Do not commit:
 
 ## Recommended Next Step
 
-Use this repo for the educational local story first. Use the HashiBank companion repo when the video needs a real HCP Terraform / AWS / Kubernetes implementation.
+Use the HashiBank companion repo for the first practitioner walkthrough if the screens are safe. Use this repo's local scaffold as the fallback. Keep `tf-migrate` for a dedicated migration walkthrough after the Stack mental model is already clear.
 
 For the beta migration-specific path, see:
 

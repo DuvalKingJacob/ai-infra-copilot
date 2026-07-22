@@ -77,29 +77,35 @@ CI validates the demo browser script, Terraform formatting, fixture-based plan r
 
 ## Stacks / HashiBank Path
 
-The repo now includes a workspace-to-Stacks migration scenario shaped like a real platform stack:
+The Stacks practitioner path now has two layers. The primary walkthrough should use the HashiBank Stacks repo because it shows a real platform-shaped Stack:
+
+```text
+VPC -> EKS Fargate -> Kubernetes RBAC -> EKS addons -> namespace -> HashiBank app
+```
+
+This repo keeps a provider-light workspace-to-Stacks scaffold so the architecture can still be reviewed without cloud credentials:
 
 ```text
 vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app
 ```
 
-The local version stays provider-light so the architecture can be reviewed without cloud credentials. The advanced path maps the same story to a HashiBank-style HCP Terraform / AWS / Kubernetes implementation.
+Do not make `tf-migrate` the first Stacks video. Workspace migration is a future practitioner episode after the Stack mental model is clear.
 
 Start here:
 
 - `docs/stacks-prep-roadmap.md`: what the Stacks deep dive is building toward.
-- `docs/terraform-video-companion-roadmap.md`: companion walkthrough plan for the Terraform video series.
-- `docs/building-your-first-terraform-stack-walkthrough.md`: first Stacks companion walkthrough.
-- `docs/detecting-and-remediating-drift-walkthrough.md`: Drift Detection companion walkthrough.
+- `docs/terraform-video-companion-roadmap.md`: practitioner walkthrough plan for the Terraform video series.
+- `docs/building-your-first-terraform-stack-walkthrough.md`: first Stacks practitioner episode.
+- `docs/detecting-and-remediating-drift-walkthrough.md`: Drift Detection practitioner episode.
 - `docs/terraform-practitioner-backlog.md`: working backlog for practitioner education topics.
-- `terraform/workspace-to-stacks/README.md`: local migration scenario.
+- `terraform/workspace-to-stacks/README.md`: local fallback scaffold and migration-shaped scenario.
 - `terraform/workspace-to-stacks/component-graph.md`: component dependency graph.
 - `docs/stacks-live-prerequisites.md`: tools and access needed before recording a live HCP Terraform / HashiBank demo.
 - `docs/workspace-to-stacks-beta-migration.md`: current `tf-migrate` beta migration path.
 - `docs/stacks-video-validation-checklist.md`: product, narrative, and demo readiness checklist.
 - `docs/hashibank-stacks-companion.md`: how the companion repo should relate to this reference architecture.
 - `docs/hcp-terraform-run-control.md`: when to use UI, CI, `tfctl`, and HCP Terraform approvals.
-- `docs/thursday-steve-apoorva-prep.md`: meeting prep and product-safety decision asks.
+- `docs/adding-policy-identity-cost-gates-walkthrough.md`: recording runbook for OIDC identity, cost context, Sentinel policy, and the human-controlled apply boundary.
 
 ## What This Is
 
@@ -113,7 +119,7 @@ It demonstrates:
 - Authorization checks before context or tool output is exposed, with SpiceDB/AuthZed included as an optional external provider example.
 - MCP-style Terraform and Kubernetes tool access.
 - A deterministic agent workflow that stops at proposal and approval.
-- A workspace-to-Stacks migration scenario for VPC, EKS, and app components.
+- A provider-light workspace-to-Stacks scaffold for VPC, EKS, and app components.
 
 The goal is not to show off every AI framework. The goal is to make the Terraform operational control points visible.
 
@@ -161,7 +167,7 @@ The integration scaffolding includes:
 - `docs/demo-paths.md`: runnable demo commands.
 - `docs/production-milestones.md`: honest roadmap from demo to production-shaped system.
 - `docs/stacks-prep-roadmap.md`: Stacks deep-dive roadmap.
-- `docs/terraform-video-companion-roadmap.md`: Terraform series companion roadmap.
+- `docs/terraform-video-companion-roadmap.md`: Terraform practitioner episode roadmap.
 - `docs/terraform-practitioner-backlog.md`: working content backlog.
 - `docs/stacks-live-prerequisites.md`: live HashiBank / HCP Terraform prerequisites.
 

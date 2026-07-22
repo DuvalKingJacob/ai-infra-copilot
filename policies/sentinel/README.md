@@ -26,6 +26,17 @@ In short:
 - `require-prod-tags.sentinel`
 - `review-prod-replacement.sentinel`
 
+## HCP Terraform Demo Policy Set
+
+`sentinel.hcl` intentionally publishes only `require-prod-tags` for the Episode 2 practitioner walkthrough. The other policies remain local examples until they have dedicated mocks and HCP Terraform run validation.
+
+This keeps the live demo focused:
+
+- `require-prod-tags`: platform governance owned by this repository
+- `aws-costing.sentinel`: separate organization-level cost policy already enforced in HCP Terraform
+
+The demo policy uses `soft-mandatory` so an authorized reviewer can see the override boundary. The recording does not override or apply the intentionally risky plan.
+
 For local Sentinel installation notes, see:
 
 `docs/sentinel-local-setup.md`

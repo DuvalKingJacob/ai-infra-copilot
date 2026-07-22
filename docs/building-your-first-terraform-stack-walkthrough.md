@@ -1,574 +1,454 @@
 # Building Your First Terraform Stack
 
-This is the first practitioner companion walkthrough for the Terraform Enterprise video series.
+This is the first practitioner walkthrough episode for the Terraform Enterprise video series.
 
-The lightboard episode explains why Stacks exist. This walkthrough shows what a practitioner should look at first.
+Steve's lightboard explains why Stacks exist. This walkthrough shows how a practitioner authors, reviews, and operates a real Stack.
 
-## Format
+## Recommendation
 
-Recording runbook, not a finished script.
-
-Target length:
+Use the HashiBank Stacks repo as the primary recording demo:
 
 ```text
-8-12 minutes
+https://github.com/DuvalKingJacob/tfstacks-vpc-eks-hashibank
 ```
 
-Companion role:
+Use this repo's local `terraform/workspace-to-stacks` scenario as the safe fallback and teaching scaffold.
+
+Do not make `tf-migrate` or workspace-to-Stacks migration the first video. Migration is a future, dedicated episode.
+
+## HashiConf Talk Alignment
+
+The original HashiConf HashiBank talk is the narrative source of truth for this walkthrough. Preserve its strongest teaching sequence:
 
 ```text
-Steve's lightboard: why Stacks exist
-Jacob's walkthrough: how practitioners should inspect and reason about a Stack
+complexity -> Stack model -> coordinated deployment -> deferred work -> approval posture -> published output
 ```
 
-## Learning Objectives
+The talk introduced three practitioner capabilities that should remain visible:
 
-Show how a platform team moves from separate workspace-shaped Terraform roots to a Stack with explicit components, deployments, and dependency context.
+- coordinated deployments through deployment groups
+- dependency management through deferred changes and linked outputs
+- a VCS-driven workflow in which configuration and deployment behavior are reviewed as code
+
+Use the talk's practical adoption test:
+
+> Consider Stacks when teams spend more time wiring configurations together than configuring the infrastructure itself.
+
+Do not copy the old talk mechanically. Use the current GA file shapes and current product behavior. Keep workspace migration in the later `tf-migrate` episode.
+
+## Target Outcome
 
 By the end, the viewer should understand:
 
 - why workspace sprawl becomes hard to operate
-- how Stacks coordinate modules rather than replacing them
-- where components and deployments live
-- how dependency context helps review blast radius
-- how this maps to HCP Terraform / Terraform Enterprise
-- what Stacks does and does not orchestrate
-- why migration tooling should be treated as a separate workflow from the first conceptual walkthrough
+- how Stacks model a real platform as components and deployments
+- how component outputs become downstream inputs
+- how deployment groups shape dev/prod approval posture
+- how HCP Terraform / Terraform Enterprise remains the control plane
+- what Stacks do and do not orchestrate
+- why migration tooling belongs after the Stack model is clear
 
-## Prerequisites
+## Primary Demo
 
-Required for the local walkthrough:
+Local clone:
 
-- Terraform installed
-- this repository
+```text
+/Users/jacobplicque/Projects/tfstacks-vpc-eks-hashibank
+```
 
-Optional for later/live demos:
+Primary files:
 
-- HCP Terraform or Terraform Enterprise access
-- Stacks enabled in the relevant organization
-- `tf-migrate` 2.0+ for the beta workspace-to-Stacks migration path
-- cloud credentials if using a real AWS/Kubernetes HashiBank implementation
+```text
+components.tfcomponent.hcl
+deployments.tfdeploy.hcl
+providers.tfcomponent.hcl
+variables.tfcomponent.hcl
+outputs.tfcomponent.hcl
+aws-vpc/
+aws-eks-fargate/
+k8s-rbac/
+aws-eks-addon/
+k8s-namespace/
+hashibank-deploy/
+```
 
-Do not make the first walkthrough depend on `tf-migrate`. The first walkthrough should succeed even if migration tooling is unavailable or beta behavior changes.
+Architecture:
 
-Validate current Stacks availability, syntax, and HCP Terraform / Terraform Enterprise requirements before recording. The current Stacks file shapes used in this repo are:
+```text
+VPC
+  -> EKS Fargate
+    -> Kubernetes RBAC
+      -> EKS add-ons
+        -> namespace
+          -> HashiBank app
+```
+
+## Local Fallback
+
+If the live HashiBank path is not ready, use this repo's provider-light scaffold:
+
+```text
+terraform/workspace-to-stacks
+```
+
+It mirrors the same shape without AWS, Kubernetes, Helm, or HCP Terraform credentials:
+
+```text
+vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app
+```
+
+This fallback is for recording safety, not the preferred first story.
+
+## Demo Spine
+
+The spine is not "run a migration." The spine is:
+
+```text
+components -> dependencies -> deferred work -> deployment groups -> published output
+```
+
+Show that a Stack makes the platform operating model visible and lets HCP Terraform coordinate the deployment lifecycle.
+
+### Before Mental Model
+
+Separate workspace-shaped layers:
+
+```text
+network workspace
+cluster workspace
+platform services workspace
+namespace workspace
+application workspace
+```
+
+Operational pain:
+
+- dependency context lives in remote state, variables, CI order, or runbooks
+- review is fragmented across multiple runs
+- promotion and approval behavior are hard to explain as one system
+- humans carry too much of the orchestration model in their heads
+
+### Stack Mental Model
+
+Show:
 
 ```text
 components.tfcomponent.hcl
 deployments.tfdeploy.hcl
 ```
 
-If a lightboard or older draft uses simplified terms such as `tfstack.hcl`, correct that before recording or explicitly call it shorthand.
+Practitioner takeaway:
 
-## Demo Environment
+> Stacks do not replace modules. Modules remain the implementation units. Stacks coordinate modules as components across deployments.
 
-Use the provider-light scenario:
+## Preflight
+
+For this repo:
+
+```bash
+make validate
+terraform fmt -recursive terraform/workspace-to-stacks
+```
+
+For the HashiBank repo, run only safe read/format checks before recording unless cloud access is intentionally part of the demo:
+
+```bash
+cd /Users/jacobplicque/Projects/tfstacks-vpc-eks-hashibank
+git status --short
+terraform fmt -check -recursive
+terraform version
+```
+
+Do not show unsanitized account IDs, ARNs, organization names, state, kubeconfigs, or live plan output on screen.
+
+### Live Run Safety Gate
+
+Do not trigger the current HashiBank configuration from VCS until all of these are true:
+
+- `destroy = true` is absent from the recording deployment
+- account IDs, role ARNs, usernames, and organization names are replaced with recording-safe values or HCP-managed variables
+- comments match the active configuration and do not describe blocks as commented out when they are enabled
+- the target deployments and AWS resources are disposable and confirmed
+- the development deployment has been tested immediately before recording
+- the exact commit and expected component sequence are documented
+
+For this recording, production is not part of the live execution path. Its historical state references an AWS account that the current deployment identity cannot access. Show the production deployment and manual approval posture in configuration only until the stale state is cleared by the Stacks team.
+
+If any item is unresolved, use a previously captured run or stay in code-inspection mode.
+
+## Recording Plan
+
+### 1. Start With The Operational Test
+
+Open with the HashiConf talk's practical threshold:
+
+> If you spend more time wiring configurations together than configuring the infrastructure itself, you have reached the point where Stacks are worth evaluating.
+
+Show the workspace-shaped layers briefly, then move directly to the Stack configuration.
+
+### 2. Show The Platform Shape
+
+Show the repo root and the component folders:
+
+```bash
+find . -maxdepth 2 \( -name '*.tf' -o -name '*.hcl' \) -type f | sort
+```
+
+Say:
+
+> This is not a toy single-resource Stack. It is a platform-shaped Stack: network, cluster, Kubernetes permissions, add-ons, namespace, and application.
+
+### 3. Show Components
+
+Open:
+
+```text
+components.tfcomponent.hcl
+```
+
+Call out:
+
+- `component "vpc"`
+- `component "eks"`
+- `component "k8s-rbac"`
+- `component "k8s-addons"`
+- `component "k8s-namespace"`
+- `component "deploy-hashibank"`
+- `for_each = var.regions`
+- downstream inputs such as `component.vpc[each.value].vpc_id`
+- explicit `depends_on` where operational sequencing matters
+
+Say:
+
+> The interesting part is not that each component exists. The interesting part is that the dependency graph is now visible in the configuration reviewers can inspect.
+
+### 4. Show The Dependency Handoff
+
+Use the VPC to EKS handoff:
+
+```text
+component.vpc[each.value].vpc_id
+component.vpc[each.value].private_subnets
+```
+
+Say:
+
+> In a workspace-only model, this relationship often hides behind remote state, copied variables, CI sequencing, or documentation. In a Stack, the relationship becomes part of the reviewed configuration.
+
+Connect this explicitly to deferred work:
+
+> Kubernetes resources cannot be planned completely until the EKS endpoint and credentials exist. The Stack records that dependency, defers the affected work, and continues it when those values become available.
+
+Do not imply that every component waits. Point to the components that consume EKS outputs and explain why their work is deferred.
+
+### 5. Show The Coordinated Run
+
+Preferred path, when the live-run safety gate is satisfied:
+
+1. Show the clean recording commit.
+2. Start a new development deployment or open the previously successful development deployment.
+3. Follow the HCP Terraform development deployment timeline.
+4. Point out which component plans can proceed immediately.
+5. Point out which Kubernetes-facing component work is deferred.
+6. Show the follow-up plan or convergence check after the EKS values resolve.
+
+Do not use **Retry deployment run** after changing code or variable-set values. Retry replays the failed deployment's existing configuration version. Use **Start new run** so HCP Terraform evaluates the current VCS revision and current inputs.
+
+Say:
+
+> This is the important behavior from the original HashiBank demo. HCP Terraform is coordinating the component lifecycle from the dependency graph. The deferred work is visible; it is not hidden in a custom pipeline.
+
+If a clean live run is not available, use a previously captured run and keep the code inspection live.
+
+### 6. Show Deployments And Approval Posture
+
+Open:
+
+```text
+deployments.tfdeploy.hcl
+```
+
+Call out:
+
+- identity tokens for AWS and Kubernetes
+- `deployment_auto_approve "safe_dev_plans"`
+- `deployment_group "dev_group"`
+- `deployment_group "prod_group"`
+- `deployment "development"`
+- `deployment "prod"`
+
+Say:
+
+> The component model answers what the platform is. The deployment model answers where and how it runs. Dev can have safer auto-approval rules. Prod can keep manual approval posture.
+
+Use the successful development deployment to show the actual auto-approval outcome:
+
+- development passes the configured auto-approval check when the plan removes no resources
+
+Show the production deployment group's manual approval posture in configuration, but do not open or execute the unhealthy production deployment during recording.
+
+Say:
+
+> Auto-approval is an explicit rule in the Stack configuration. Production's manual gate is equally explicit. The platform team is defining different operating postures for the same component model.
+
+### 7. Show The Published Output
+
+Open:
+
+```text
+components.tfcomponent.hcl
+deployments.tfdeploy.hcl
+```
+
+Call out:
+
+```text
+output "published_vpc_id"
+publish_output "vpc_id"
+```
+
+Say:
+
+> The original talk ended by publishing the VPC ID for another Stack to consume. This repository demonstrates the publishing side of that contract. A separate consuming Stack is required for a complete Linked Stacks demo.
+
+Keep the consumer as an optional extension unless the recording environment includes and validates that second Stack.
+
+### 8. Map To HCP Terraform / TFE
+
+Say:
+
+> In production, HCP Terraform or Terraform Enterprise owns the run lifecycle: plan, policy, deployment behavior, approval, state, outputs, and audit. Stacks give that control plane a more explicit model of the platform.
+
+Mention:
+
+- runs
+- plans
+- state
+- deployment groups
+- policy checks
+- approvals
+- audit logs
+- published outputs
+
+### 9. Explain What Stacks Do Not Do
+
+Say:
+
+> Stacks improve orchestration and dependency visibility, but they are not magic rollback. Components still have state boundaries. Failure recovery still requires inspecting the failed component, fixing the issue, and rerunning through the governed workflow.
+
+Avoid implying:
+
+- Stacks replace modules
+- Stacks auto-fix failed deployments
+- Stacks make Drift Detection Stack-native
+- an AI agent should apply changes directly
+
+### 10. Bridge To The Local Scaffold
+
+If the live path is not safe to show, switch to:
 
 ```text
 terraform/workspace-to-stacks
 ```
 
-This path uses `terraform_data` resources so the walkthrough can be inspected without AWS, Kubernetes, Helm, or HCP Terraform credentials.
-
-Core component graph:
-
-```text
-vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app
-```
-
-Key files:
-
-```text
-terraform/workspace-to-stacks/workspaces/
-terraform/workspace-to-stacks/modules/
-terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
-terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
-terraform/workspace-to-stacks/component-graph.md
-terraform/workspace-to-stacks/migration-map.md
-```
-
-## Demo Spine
-
-The spine of this walkthrough is the before/after HCL, not the directory tree.
-
-Before:
-
-```hcl
-data "terraform_remote_state" "vpc" {
-  backend = "remote"
-
-  config = {
-    organization = "example"
-    workspaces = {
-      name = "hashibank-vpc-prod"
-    }
-  }
-}
-
-module "eks" {
-  source             = "../../modules/eks"
-  vpc_id             = data.terraform_remote_state.vpc.outputs.vpc_id
-  private_subnet_ids = data.terraform_remote_state.vpc.outputs.private_subnet_ids
-}
-```
-
-After:
-
-```hcl
-component "eks_cluster" {
-  source = "../modules/eks"
-
-  inputs = {
-    vpc_id             = component.vpc.vpc_id
-    private_subnet_ids = component.vpc.private_subnet_ids
-  }
-}
-```
-
-Practitioner takeaway:
-
-> The old model hides orchestration in remote state references, CI order, and runbooks. The Stack model makes the relationship explicit in the configuration practitioners review.
-
-## Preflight Commands
-
-Run before recording:
-
-```bash
-terraform version
-terraform fmt -recursive terraform/workspace-to-stacks
-make ci
-```
-
-Expected result:
-
-```text
-Terraform prints its installed version.
-terraform fmt exits cleanly.
-make ci completes successfully.
-```
-
-Validate representative legacy workspace roots:
-
-```bash
-terraform -chdir=terraform/workspace-to-stacks/workspaces/vpc init -backend=false
-terraform -chdir=terraform/workspace-to-stacks/workspaces/vpc validate
-
-terraform -chdir=terraform/workspace-to-stacks/workspaces/eks-cluster init -backend=false
-terraform -chdir=terraform/workspace-to-stacks/workspaces/eks-cluster validate
-
-terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app init -backend=false
-terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app validate
-```
-
-Expected result:
-
-```text
-Success! The configuration is valid.
-```
-
-Optional Stacks CLI check:
-
-```bash
-terraform -chdir=terraform/workspace-to-stacks/stack stacks init
-terraform -chdir=terraform/workspace-to-stacks/stack stacks validate
-```
-
-Expected result:
-
-```text
-If authenticated and configured correctly, Terraform initializes and validates the Stack.
-If this fails because HCP Terraform discovery, auth, or beta behavior is unavailable, use the fallback path and keep the walkthrough focused on the files and mental model.
-```
-
-Optional migration tool check:
-
-```bash
-tf-migrate version
-```
-
-Expected result:
-
-```text
-tf-migrate v2.0.0-rc1 or newer
-```
-
-Do not use `tf-migrate` in the first walkthrough unless the full beta migration path has already been tested end to end.
-
-## Step-By-Step Recording Plan
-
-### 1. Start With The Before/After HCL
-
 Show:
-
-```text
-terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
-terraform/workspace-to-stacks/workspaces/eks-cluster/legacy-remote-state-example.hcl
-terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
-```
-
-Talk track:
-
-> This is the difference the walkthrough is really about. In the old workspace-shaped model, the cluster root receives network context through copied variables, remote state, CI order, or human runbooks. In the Stack model, the dependency is represented directly as a component input reference.
-
-Point out:
-
-- Before: dependency context is implied by workspace outputs and handoffs.
-- After: dependency context is explicit in `component.vpc.vpc_id` and `component.vpc.private_subnet_ids`.
-- The module implementation can stay reusable; Stacks coordinate how modules are assembled.
-
-Command:
-
-```bash
-sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/legacy-remote-state-example.hcl
-sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
-sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
-```
-
-Expected output:
-
-```text
-The old example shows dependency context pulled from another workspace through remote state.
-The old root shows inputs normally copied or passed from another workspace.
-The Stack component shows direct references to the VPC component outputs.
-```
-
-### 2. Name The Operational Pain
-
-Show:
-
-```text
-terraform/workspace-to-stacks/migration-map.md
-```
-
-Talk track:
-
-> The issue is not that workspaces are bad. The issue is that the dependency graph is implied through outputs, variables, remote state, CI jobs, and runbooks. The platform exists, but Terraform cannot see the whole operating model in one place.
-
-Command:
-
-```bash
-sed -n '1,120p' terraform/workspace-to-stacks/migration-map.md
-```
-
-Expected point:
-
-- dependencies are visible to the viewer
-- the old workflow requires humans, CI, or runbooks to coordinate rollout order
-- a directory listing alone does not prove the pain; the pain is hidden coupling between runs
-
-### 3. Show The Modules
-
-Show:
-
-```text
-terraform/workspace-to-stacks/modules
-```
-
-Talk track:
-
-> Stacks do not replace modules. Modules remain the reusable implementation units. Stacks coordinate those modules across components and deployments.
-
-Command:
-
-```bash
-find terraform/workspace-to-stacks/modules -maxdepth 2 -type f | sort
-```
-
-Expected output:
-
-```text
-terraform/workspace-to-stacks/modules/app-namespace/main.tf
-terraform/workspace-to-stacks/modules/app/main.tf
-terraform/workspace-to-stacks/modules/eks/main.tf
-terraform/workspace-to-stacks/modules/hashibank-app/main.tf
-terraform/workspace-to-stacks/modules/platform-addons/main.tf
-terraform/workspace-to-stacks/modules/vpc/main.tf
-```
-
-### 4. Show The Component Graph
-
-Show:
-
-```text
-terraform/workspace-to-stacks/component-graph.md
-```
-
-Core graph:
-
-```text
-vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app
-```
-
-Talk track:
-
-> This is the moment the operational model becomes visible. The app is not just an app. It depends on namespace, add-ons, cluster, and network context.
-
-Command:
 
 ```bash
 sed -n '1,120p' terraform/workspace-to-stacks/component-graph.md
+sed -n '1,160p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
+sed -n '1,120p' terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
 ```
 
-Expected point:
+Say:
 
-- the graph is understandable without cloud credentials
-- dependency context becomes explainable to a human reviewer or an AI assistant
+> This local scaffold exists so the same mental model can be reviewed without cloud credentials. It is not the main demo, but it is the fallback path that keeps the recording safe.
 
-### 5. Show Components
+### 11. Close With The Migration Boundary
 
-Show:
+Say:
 
-```text
-terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
-```
+> If you already have existing HCP Terraform workspaces, migration is its own topic. For this walkthrough, I am starting with the Stack model directly so the architecture is clear before we talk about converting existing estates.
 
-Talk track:
+## Commands
 
-> Components describe the major pieces of the platform and how outputs from one component become inputs to another.
-
-Look for:
-
-- `component "vpc"`
-- `component "eks_cluster"`
-- `component "platform_addons"`
-- `component "app_namespace"`
-- `component "hashibank_app"`
-
-Command:
+Primary HashiBank inspection:
 
 ```bash
-sed -n '1,220p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
+cd /Users/jacobplicque/Projects/tfstacks-vpc-eks-hashibank
+git status --short
+terraform fmt -check -recursive
+find . -maxdepth 2 \( -name '*.tf' -o -name '*.hcl' \) -type f | sort
+sed -n '1,220p' components.tfcomponent.hcl
+sed -n '1,180p' deployments.tfdeploy.hcl
+sed -n '1,120p' variables.tfcomponent.hcl
+sed -n '1,80p' outputs.tfcomponent.hcl
 ```
 
-Expected point:
-
-- component inputs reference outputs from earlier components
-- the app component depends on namespace and cluster context
-- the Stack makes dependency context explicit
-
-### 6. Show Deployments
-
-Show:
-
-```text
-terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
-```
-
-Talk track:
-
-> Deployments answer where this Stack runs. The same component model can be promoted through different deployment contexts with different inputs and approval expectations.
-
-Command:
+Before any VCS-triggered recording run, inspect the recording-safe diff and confirm no destroy directive or private identifier will appear:
 
 ```bash
-sed -n '1,180p' terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
+git diff --check
+git diff -- components.tfcomponent.hcl deployments.tfdeploy.hcl outputs.tfcomponent.hcl
 ```
 
-Expected point:
-
-- `dev` and `prod` have different inputs
-- development has an auto-approval check
-- production keeps approval stricter
-
-### 7. Explain State Isolation And Failure Recovery
-
-Talk track:
-
-> Stacks make orchestration and dependency context more explicit, but they do not turn Terraform into an automatic rollback engine. Components still have their own state boundaries. If a later component fails after an earlier component succeeds, the recovery path is still a Terraform/operator workflow: inspect the failed component, understand state, fix configuration or prerequisites, and rerun through the governed workflow.
-
-Emphasize:
-
-- Stacks coordinate components; they do not replace modules.
-- Stacks improve dependency visibility; they do not provide cross-component saga rollback.
-- Production failure recovery still needs run history, state isolation, owner review, and approval.
-- Components fail independently; state is isolated per component, so recovery still requires inspecting the failed component and rerunning through the governed workflow.
-
-### 8. Map To HCP Terraform / TFE
-
-Talk track:
-
-> In production, HCP Terraform or Terraform Enterprise becomes the control plane. It owns state, runs, policy checks, deployment behavior, approvals, audit logs, and workspace or Stack context.
-
-Point to:
-
-```text
-docs/stacks-live-prerequisites.md
-docs/hcp-terraform-stacks-plan.md
-```
-
-Command:
+Fallback scaffold:
 
 ```bash
-sed -n '1,120p' docs/stacks-live-prerequisites.md
-```
-
-Expected point:
-
-- the local demo is intentionally safe and provider-light
-- the live path requires HCP Terraform/TFE access and real credentials
-- production demonstrations need stricter recording hygiene
-
-### 9. Bridge To AI-Assisted Review
-
-Ask:
-
-> If this app change modifies replicas, service shape, or namespace assumptions, what is actually in the blast radius?
-
-Talk track:
-
-> This is where Stacks connect to the AI story. The assistant is not applying Terraform. It is using explicit dependency context to explain what changed, what depends on it, and where approval should happen.
-
-Command:
-
-```bash
-make agent
-```
-
-Expected point:
-
-- the agent can explain and propose
-- `mutationExecuted` remains `false`
-- this keeps the AI story tied to governed Terraform workflows
-
-## Screen Order
-
-Recommended window order:
-
-1. Terminal in repo root.
-2. Editor opened to `terraform/workspace-to-stacks`.
-3. `workspaces/eks-cluster/main.tf`.
-4. `components.tfcomponent.hcl`.
-5. `migration-map.md`.
-6. `component-graph.md`.
-7. `deployments.tfdeploy.hcl`.
-8. `docs/stacks-live-prerequisites.md`.
-9. Optional terminal output from `make agent`.
-
-Keep the screen calm. This walkthrough is about file shape and mental model, not speed-running commands.
-
-## Exact Command Block
-
-Use this block while recording:
-
-```bash
+cd /Users/jacobplicque/Projects/ai-infra-copilot
+make validate
 terraform fmt -recursive terraform/workspace-to-stacks
-make ci
-
-find terraform/workspace-to-stacks/workspaces -maxdepth 2 -type f | sort
-find terraform/workspace-to-stacks/modules -maxdepth 2 -type f | sort
-
-sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/legacy-remote-state-example.hcl
-sed -n '1,80p' terraform/workspace-to-stacks/workspaces/eks-cluster/main.tf
-sed -n '1,90p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
-sed -n '1,120p' terraform/workspace-to-stacks/migration-map.md
 sed -n '1,120p' terraform/workspace-to-stacks/component-graph.md
-sed -n '1,220p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
-sed -n '1,180p' terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
-
-terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app init -backend=false
-terraform -chdir=terraform/workspace-to-stacks/workspaces/hashibank-app validate
-
-make agent
+sed -n '1,160p' terraform/workspace-to-stacks/stack/components.tfcomponent.hcl
+sed -n '1,120p' terraform/workspace-to-stacks/stack/deployments.tfdeploy.hcl
 ```
 
-## Expected Outputs
+## Recovery Path
 
-| Step | Expected Output |
-| --- | --- |
-| `terraform fmt` | exits without changing meaningful files |
-| `make ci` | completes successfully |
-| `find workspaces` | shows workspace-shaped roots |
-| `find modules` | shows reusable module implementations |
-| before/after HCL | shows implied workspace handoffs versus explicit component references |
-| state isolation caveat | components fail independently; state is isolated per component |
-| `migration-map.md` | explains old workspace handoffs |
-| `component-graph.md` | shows `vpc -> eks_cluster -> platform_addons -> app_namespace -> hashibank_app` |
-| `components.tfcomponent.hcl` | shows component references and dependencies |
-| `deployments.tfdeploy.hcl` | shows dev/prod deployment differences |
-| workspace validate | `Success! The configuration is valid.` |
-| `make agent` | proposal requires approval and `mutationExecuted` is `false` |
+If HashiBank has unsanitized values or live state on screen:
 
-## Common Mistakes
+- stop using the live repo for the recording
+- switch to the local scaffold
+- explain that the production-shaped path exists, but the walkthrough is about the Stack model
 
-- Treating Stacks as a replacement for modules.
-- Treating every existing workspace as a perfect future component boundary.
-- Hiding rollout order in scripts instead of modeling dependencies.
-- Assuming Stacks provide automatic rollback across every component.
-- Skipping the state-isolation and failure-recovery conversation.
-- Making the demo require live cloud credentials too early.
-- Letting the AI story distract from the Terraform adoption story.
-- Turning the first walkthrough into a beta migration troubleshooting session.
+If the production deployment appears unhealthy:
 
-## Recovery / Fallback Path
+- do not retry, destroy, or troubleshoot it during recording
+- stay on the verified development deployment
+- describe production approval behavior from `deployments.tfdeploy.hcl`
+- treat stale-state cleanup as a separate platform-support operation
 
 If Stacks CLI commands fail:
 
-- Do not troubleshoot live unless that is the point of the video.
-- Say: "The local walkthrough is focused on the practitioner model. The live HCP Terraform path requires org configuration and auth."
-- Continue with `components.tfcomponent.hcl`, `deployments.tfdeploy.hcl`, and `component-graph.md`.
+- do not troubleshoot live unless the video is specifically about setup
+- keep the recording focused on `components.tfcomponent.hcl` and `deployments.tfdeploy.hcl`
 
-If `tf-migrate` is unavailable or confusing:
+If `tf-migrate` comes up:
 
-- Do not use it in this walkthrough.
-- Say: "Workspace-to-Stacks migration is its own workflow and deserves a separate migration-focused video."
-- Point to `docs/workspace-to-stacks-beta-migration.md`.
+- do not run it
+- say it is a future migration episode
+- point to `docs/workspace-to-stacks-beta-migration.md`
 
-If `make ci` fails:
+## Common Mistakes
 
-- Use `terraform fmt -recursive terraform/workspace-to-stacks`.
-- Validate only `workspaces/hashibank-app`.
-- Keep the recording focused on the Stacks file model.
-
-If `make agent` fails:
-
-- Skip the AI bridge.
-- Close with the component graph and HCP Terraform mapping.
-- Keep AI-assisted review for the separate Terraform plan review video.
-
-## Should `tf-migrate` Be In This Walkthrough?
-
-Recommendation:
-
-```text
-No. Keep it as a future migration-specific episode.
-```
-
-Reason:
-
-- This first walkthrough teaches the Stack mental model.
-- `tf-migrate` is beta and depends on real HCP Terraform workspace state.
-- A migration demo needs its own prerequisites, auth setup, generated files, review steps, and failure modes.
-- If migration fails during the first walkthrough, the viewer learns the wrong lesson.
-
-Better future walkthrough:
-
-```text
-Migrating HCP Terraform Workspaces To Stacks With tf-migrate
-```
-
-That video can focus on:
-
-- prerequisites
-- `tf-migrate modules create`
-- `tf-migrate stacks prepare`
-- `tf-migrate stacks execute`
-- generated files
-- import behavior
-- migration review and rollback plan
+- Making the first Stacks video a beta migration demo.
+- Treating Stacks as a replacement for modules.
+- Treating every existing workspace as a perfect future component boundary.
+- Hiding rollout order in scripts instead of modeling dependencies.
+- Describing deferred work as if every component pauses at once.
+- Claiming a complete Linked Stacks demo when only the publishing Stack is present.
+- Assuming Stacks provide automatic rollback across every component.
+- Showing account IDs, ARNs, state, kubeconfigs, or org-specific values in a public recording.
+- Using **Retry deployment run** after changing the VCS revision or variable-set values and expecting it to load the new configuration.
+- Depending on an unhealthy production deployment when the development deployment already proves the complete component workflow.
+- Letting the AI story distract from the Terraform adoption story.
 
 ## HCP Terraform Adoption Close
 
-Tie the demo back to adoption:
-
 > Stacks are not just a new file format. They are a way to make the operating model visible. Once the component graph is explicit, HCP Terraform and Terraform Enterprise can give teams a stronger control plane for orchestration, plans, policy, approvals, state, audit, and eventually AI-assisted review.
-
-## Close
-
-> Stacks make the relationships explicit. Once the relationships are explicit, platform teams can reason about deployment order, blast radius, policy, approvals, and eventually AI-assisted review. Drift Detection is an adjacent workspace-based lifecycle topic, not part of this Stacks walkthrough.
 
 ## Next Walkthroughs
 
-- Deployment Groups
-- Policy and Cost Gates
-- Drift Detection and Remediation
-- AI Reviews Terraform Plans, Not Applies Them
+- Adding Policy, Identity, and Cost Gates
+- Detecting and Remediating Drift in HCP Terraform
+- AI Should Review Terraform Plans, Not Apply Them
+- Migrating HCP Terraform Workspaces To Stacks With `tf-migrate`
