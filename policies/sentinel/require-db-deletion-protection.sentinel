@@ -1,9 +1,13 @@
 import "tfplan/v2" as tfplan
 
+# Require deletion_protection on every planned aws_db_instance.
+# The before check was removed because before is null on create runs, making
+# the original policy silent for any new database. This enforces the attribute
+# as an absolute requirement regardless of prior state.
 violations = filter tfplan.resource_changes as _, change {
 	change.type is "aws_db_instance" and
-		change.change.before.deletion_protection is true and
-		change.change.after.deletion_protection is false
+		change.change.after else null is not null and
+		change.change.after.deletion_protection is not true
 }
 
 main = rule {

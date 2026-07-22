@@ -6,8 +6,20 @@ required_tags = [
 	"ManagedBy",
 ]
 
+# Scope to resource types that the platform team owns and that carry production
+# cost or operational impact. Keeps policy failures focused and avoids
+# false-positives on data sources or provider-internal resources.
+taggable_types = [
+	"aws_lb",
+	"aws_ecs_cluster",
+	"aws_ecs_service",
+	"aws_db_instance",
+	"aws_cloudwatch_metric_alarm",
+]
+
 violations = filter tfplan.resource_changes as _, change {
-	change.change.after else null is not null and
+	change.type in taggable_types and
+		change.change.after else null is not null and
 		any required_tags as tag {
 			tag not in keys(change.change.after.tags else {})
 		}

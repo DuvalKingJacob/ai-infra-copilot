@@ -36,7 +36,7 @@ By the end, viewers should be able to:
 - distinguish Sentinel/OPA policy checks from external run tasks
 - identify advisory, overridable, and mandatory governance behavior without treating every signal as identical
 - explain why an external integration does not replace Terraform policy or human accountability
-- create a safe plan-only demonstration that never applies the intentionally risky change
+- create a safe review-only demonstration that never applies the intentionally risky change
 
 ## Core Mental Model
 
@@ -121,29 +121,34 @@ The `ai-infra-copilot` workspace currently has:
 - organization-wide cost estimation: enabled
 - organization-wide Sentinel policy set: `AWS_Policies`
 - current cost policy: `aws-costing.sentinel`, soft-mandatory and overridable
+- workspace-scoped Sentinel policy set: `ai-infra-governance`
+- workspace policy: `require-prod-tags`, soft-mandatory
 - run tasks: none configured
 - AWS dynamic credential set: active
 - static AWS access-key variables: removed
 - AWS run role: dedicated to this workspace and limited to read-only access
 
-The OIDC-only validation run is:
+The canonical governance validation run is:
 
 ```text
-run-dMbCC7iEo9yiDtmg
+run-8JNbGjio2Sd4xNe4
 ```
 
-HCP Terraform completed the speculative Terraform plan and identified two resources to create after the static AWS credentials had been removed. This verifies that the run authenticated through the dynamic AWS credential set. The overall run then reported `Errored` because the separate organization-wide Sentinel cost policy failed. No apply was available because the run was plan-only.
+HCP Terraform completed a standard plan with auto-apply disabled and identified two resources to create. AWS dynamic OIDC credentials were used successfully - no static access keys were present in the workspace. Native cost estimation completed at +$0.30/month (safe defaults: runtime resources disabled, only the ECS cluster and CloudWatch alarm planned). The `require-prod-tags` policy passed because the default `common_tags` variable satisfies all three required tags. The existing organization-wide cost policy was overridden by an authorized reviewer to allow the run to continue through the remaining governance phases. The override included a comment and remains attributed to the reviewer in the run timeline. The run was discarded at the confirmation boundary; no infrastructure was created.
+
+An earlier OIDC-only validation run (`run-dMbCC7iEo9yiDtmg`) confirmed dynamic credential delivery after static keys were removed. That run reported `Errored` due to the org-wide cost policy failing at the policy phase — not an identity failure. Use `run-8JNbGjio2Sd4xNe4` as the primary fallback artifact for recording.
 
 This is the desired teaching sequence:
 
 1. OIDC establishes a temporary AWS identity.
 2. Terraform successfully creates the plan.
-3. Sentinel evaluates the completed plan independently.
-4. The speculative-run boundary prevents apply regardless of the policy result.
+3. Sentinel evaluates the completed plan independently of the plan phase and any run-task result.
+4. An authorized override can advance an overridable policy failure without erasing the decision or its audit trail.
+5. The human confirmation boundary and explicit discard prevent apply.
 
 Do not describe the overall `Errored` status as an identity failure. The Terraform plan finished successfully; the later policy phase produced the failing governance decision.
 
-The repository now contains `policies/sentinel/sentinel.hcl`, which publishes only `require-prod-tags` as a soft-mandatory demo policy. Create a second, project- or workspace-scoped policy set from `policies/sentinel` so the recording can distinguish platform tagging governance from the existing global cost policy.
+The repository contains `policies/sentinel/sentinel.hcl`, which publishes only `require-prod-tags` as a soft-mandatory demo policy. The VCS-backed `ai-infra-governance` policy set is scoped to this workspace and was validated in the canonical run. This separates platform tagging governance from the existing global cost policy.
 
 ## Prerequisites
 
@@ -154,7 +159,8 @@ The repository now contains `policies/sentinel/sentinel.hcl`, which publishes on
 - AWS trust policy scoped to the intended HCP Terraform organization, project, workspace, and run phases
 - cost estimation enabled for the organization
 - Sentinel policy set attached to the workspace or its project
-- permission to start speculative plans and inspect policy results
+- VCS policy path set to `policies/sentinel` and scoped to the intended workspace or project
+- permission to start standard runs and inspect policy results
 - a prepared risky-plan commit or workspace-variable change
 - no static AWS access keys visible in the workspace variables screen
 
@@ -163,12 +169,22 @@ Optional:
 - a real cost or security run task associated with the workspace
 - a safe baseline run captured before the risky run
 
+To recreate the workspace policy set in the HCP Terraform UI:
+
+1. Open **Organization Settings > Policy sets > Create policy set**.
+2. Select **Sentinel** and a VCS-backed source.
+3. Select this repository and set the policies path to `policies/sentinel`.
+4. Scope the set to the `ai-infra-copilot` workspace or its project.
+5. Use the platform execution environment and verify that the next run shows `ai-infra-governance` as a separate policy phase.
+
+The enforcement level comes from `sentinel.hcl`; the demo policy is `soft-mandatory` so only a reviewer with policy-override permission can advance a failure.
+
 ## Preflight
 
 Local checks:
 
 ```bash
-cd /Users/jacobplicque/Projects/ai-infra-copilot
+cd ai-infra-copilot
 make validate
 terraform -chdir=terraform/app-platform validate
 git status --short
@@ -222,6 +238,8 @@ Say:
 
 > Terraform is not pulling a long-lived AWS key from a shared variable. HCP Terraform presents a signed workload identity to AWS, receives temporary credentials, and discards them with the run environment.
 
+> For AWS, HCP Terraform issues a run-specific OIDC token and exchanges it through STS `AssumeRoleWithWebIdentity`. The IAM role trust policy constrains the token subject to the intended HCP Terraform organization, project, workspace, and run phase.
+
 ### 3. Show The Risky Terraform Change
 
 Open:
@@ -242,9 +260,9 @@ Say:
 
 > The policy engine is not guessing whether this looks risky. It evaluates explicit rules against the Terraform plan.
 
-### 4. Start A Speculative Plan
+### 4. Start A Governed Standard Run
 
-Use a prepared VCS commit or start a speculative plan from the HCP Terraform UI. Keep auto-apply disabled.
+Use a prepared VCS commit or start a standard plan from the HCP Terraform UI. Keep auto-apply disabled. A speculative plan cannot demonstrate the authorized override required to reach cost estimation and the later workspace-policy phase in this environment.
 
 If using `tfctl`:
 
@@ -267,6 +285,10 @@ Say:
 
 > Cost estimation is context. A cost policy can turn that context into a deterministic threshold, but the estimate and the policy decision are still separate artifacts.
 
+> This run estimates only a $0.30 monthly increase because the safe live configuration plans an ECS cluster and CloudWatch alarm while apply-sensitive runtime resources remain disabled. It proves the cost-estimation workflow, not the full production cost of the modeled payments platform.
+
+Keep the risky fixture as the policy-review example. Do not substitute an invented production-scale cost estimate or imply that disabled resources were priced in the live run.
+
 If the existing cost Sentinel policy fails, show the threshold and result. Do not imply that a failed third-party run task is being consumed by Sentinel unless the implementation genuinely does that.
 
 ### 6. Show Deterministic Policy
@@ -286,6 +308,10 @@ Say:
 
 Explain the enforcement level shown in the actual run. Avoid describing OPA as having Sentinel's three enforcement levels; use the enforcement terms displayed by the selected framework.
 
+Sentinel `soft-mandatory` failures stop the run until an authorized user overrides them. In HCP Terraform, the user needs **Manage Policy Overrides** permission for the applicable scope. The run timeline records the override, reviewer, timestamp, and comment; eligible audit-trail events also record the actor. A Sentinel `hard-mandatory` failure normally blocks progress unless the containing policy set has been explicitly configured to allow mandatory overrides.
+
+In the canonical run, an authorized reviewer overrode the existing organization-wide cost policy only to continue into native cost estimation and the workspace-scoped policy phase. That did not delete or convert the failed decision into a pass. The reviewer supplied a validation-only comment, and the run was discarded before apply.
+
 ### 7. Show The Optional External Gate
 
 Only include this beat if a real run task is configured.
@@ -303,11 +329,13 @@ Say:
 
 Do not call a run task a Sentinel policy and do not imply that Sentinel enforces every run-task response.
 
+For a post-plan task, the initial POST includes run and workspace metadata, the lifecycle stage, an access token, a callback URL, and a `plan_json_api_url`. The external service retrieves the plan when needed and reports `running`, `passed`, or `failed` back to HCP Terraform with an optional message and detailed outcomes.
+
 ### 8. Stop At The Approval Boundary
 
 End on the blocked or awaiting-confirmation run.
 
-Do not override the policy and do not apply the risky plan.
+For the canonical safe-default run, override only the known organization-wide soft-mandatory cost policy, include a clear validation-only comment, and continue long enough to show cost estimation and `require-prod-tags`. Never confirm apply. If the intentionally risky workspace policy fails, do not override it.
 
 Say:
 
@@ -318,7 +346,7 @@ Say:
 1. Completed safe run or run overview
 2. Sanitized dynamic credential configuration
 3. Risky Terraform diff
-4. New speculative plan
+4. New standard plan with auto-apply disabled
 5. Cost estimate
 6. Sentinel policy results
 7. Optional run-task result
@@ -333,8 +361,8 @@ The recording succeeds if viewers see:
 - temporary run identity explained accurately
 - a real Terraform plan
 - a visible cost estimate or cost-policy result
-- at least one deterministic policy failure
-- no policy override
+- a deterministic policy result from the workspace-scoped policy set
+- an attributed override and comment if the organization-wide soft-mandatory policy is advanced
 - no apply
 - a clear audit trail in HCP Terraform
 
@@ -344,6 +372,7 @@ The recording succeeds if viewers see:
 - Claiming Stacks produce a single unified policy input for the whole component graph.
 - Using `import "tfstack"` as if it were a documented Sentinel import.
 - Saying Sentinel and OPA have identical enforcement-level names.
+- Saying OPA enforcement is configured only in the HCP Terraform UI. VCS-backed OPA policies declare `advisory` or `mandatory` in `policies.hcl` or `policies.json`; the Rego logic returns the policy decision.
 - Saying HCP Terraform sends the entire plan JSON directly in the initial run-task webhook.
 - Treating a run task as another name for a Sentinel policy.
 - Implying Sentinel automatically consumes and enforces every run-task result.

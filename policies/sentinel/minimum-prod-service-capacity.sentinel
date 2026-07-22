@@ -1,9 +1,12 @@
 import "tfplan/v2" as tfplan
 
+# Enforce an absolute floor of 2 tasks for any planned ECS service.
+# Checking change.change.before caused the policy to be silent on create-only
+# runs where before is null. The floor applies regardless of prior state.
 violations = filter tfplan.resource_changes as _, change {
 	change.type is "aws_ecs_service" and
-		change.change.before.desired_count >= 3 and
-		change.change.after.desired_count < 2
+		change.change.after else null is not null and
+		(change.change.after.desired_count else 0) < 2
 }
 
 main = rule {
