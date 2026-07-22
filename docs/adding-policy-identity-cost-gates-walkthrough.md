@@ -308,7 +308,7 @@ Say:
 
 Explain the enforcement level shown in the actual run. Avoid describing OPA as having Sentinel's three enforcement levels; use the enforcement terms displayed by the selected framework.
 
-Sentinel `soft-mandatory` failures stop the run until an authorized user overrides them. In HCP Terraform, the user needs **Manage Policy Overrides** permission for the applicable scope. The run timeline records the override, reviewer, timestamp, and comment; eligible audit-trail events also record the actor. A Sentinel `hard-mandatory` failure cannot be overridden by any user — it blocks the run completely until the policy code or enforcement level is changed.
+Sentinel `soft-mandatory` failures stop the run until an authorized user overrides them. In HCP Terraform, the user needs **Manage Policy Overrides** permission for the applicable scope. The run timeline records the override, reviewer, timestamp, and comment; eligible audit-trail events also record the actor. For Sentinel policy checks in the platform execution environment used here, a `hard-mandatory` failure cannot be overridden and blocks the run. Sentinel policy evaluations use different override behavior: soft- and hard-mandatory levels are converted to `mandatory`, which authorized users may override when the policy set permits it.
 
 In the canonical run, an authorized reviewer overrode the existing organization-wide cost policy only to continue into native cost estimation and the workspace-scoped policy phase. That did not delete or convert the failed decision into a pass. The reviewer supplied a validation-only comment, and the run was discarded before apply.
 
@@ -372,7 +372,7 @@ The recording succeeds if viewers see:
 - Claiming Stacks produce a single unified policy input for the whole component graph.
 - Using `import "tfstack"` as if it were a documented Sentinel import.
 - Saying Sentinel and OPA have identical enforcement-level names.
-- Saying OPA enforcement is configured only in the HCP Terraform UI. VCS-backed OPA policies declare `advisory` or `mandatory` in `policies.hcl`; the Rego logic returns the policy decision.
+- Saying OPA enforcement is configured only in the HCP Terraform UI. VCS-backed OPA policies declare `advisory` or `mandatory` in `policies.hcl` or `policies.json`; the Rego logic returns the policy decision.
 - Saying HCP Terraform sends the entire plan JSON directly in the initial run-task webhook.
 - Treating a run task as another name for a Sentinel policy.
 - Implying Sentinel automatically consumes and enforces every run-task result.
