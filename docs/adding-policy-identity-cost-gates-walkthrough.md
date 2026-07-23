@@ -120,7 +120,7 @@ The `ai-infra-copilot` workspace currently has:
 - auto-destroy: off
 - organization-wide cost estimation: enabled
 - organization-wide Sentinel policy set: `AWS_Policies`
-- current cost policy: `aws-costing.sentinel`, soft-mandatory and overridable
+- existing global cost policy: `aws-costing.sentinel`, running in the HCP Terraform Agent execution environment
 - workspace-scoped Sentinel policy set: `ai-infra-governance`
 - workspace policy: `require-prod-tags`, soft-mandatory
 - run tasks: none configured
@@ -131,24 +131,44 @@ The `ai-infra-copilot` workspace currently has:
 The canonical governance validation run is:
 
 ```text
-run-8JNbGjio2Sd4xNe4
+run-8ewJgjxUkTDQKgwv
 ```
 
-HCP Terraform completed a standard plan with auto-apply disabled and identified two resources to create. AWS dynamic OIDC credentials were used successfully - no static access keys were present in the workspace. Native cost estimation completed at +$0.30/month (safe defaults: runtime resources disabled, only the ECS cluster and CloudWatch alarm planned). The `require-prod-tags` policy passed because the default `common_tags` variable satisfies all three required tags. The existing organization-wide cost policy was overridden by an authorized reviewer to allow the run to continue through the remaining governance phases. The override included a comment and remains attributed to the reviewer in the run timeline. The run was discarded at the confirmation boundary; no infrastructure was created.
+HCP Terraform completed a standard plan with auto-apply disabled and identified two resources to create. AWS dynamic OIDC credentials were used successfully — no static access keys were present in the workspace. Native cost estimation completed at +$0.30/month (safe defaults: runtime resources disabled, only the ECS cluster and CloudWatch alarm planned). The workspace-scoped `ai-infra-governance/require-prod-tags` policy failed intentionally because the prepared `common_tags` variable omitted `Owner`. An authorized reviewer overrode the soft-mandatory failure with a validation-only comment; the run timeline preserved the reviewer identity, timestamp, and decision. The run reached the confirmation boundary and was discarded. No infrastructure was applied.
 
-An earlier OIDC-only validation run (`run-dMbCC7iEo9yiDtmg`) confirmed dynamic credential delivery after static keys were removed. That run reported `Errored` due to the org-wide cost policy failing at the policy phase — not an identity failure. Use `run-8JNbGjio2Sd4xNe4` as the primary fallback artifact for recording.
+The existing `AWS_Policies` set is not a valid cost-threshold demonstration for this walkthrough. It uses the HCP Terraform Agent execution environment, which does not receive cost-estimation data. Its policy substitutes `1000.0` when `tfrun.cost_estimate` is null, so any failure from that set does not mean the actual $0.30 estimate exceeded the $100 threshold. Do not narrate it as a legitimate cost-policy failure.
+
+Prior validation runs for troubleshooting context:
+
+- `run-8JNbGjio2Sd4xNe4`: standard plan, OIDC confirmed, cost estimation at +$0.30/month, `require-prod-tags` passed (default `common_tags` satisfied all tags), org cost policy overridden to reach later phases, discarded before apply.
+- `run-dMbCC7iEo9yiDtmg`: OIDC-only validation after static keys were removed. Reported `Errored` due to the org-wide cost policy failing at the policy phase — not an identity failure.
+
+For a clean recording, exclude only the `ai-infra-copilot` workspace from the legacy global policy set and use the workspace-scoped policy as the deliberate failure. Do not change the global policy set's execution mode solely for this demo; that would affect every workspace in the organization.
 
 This is the desired teaching sequence:
 
 1. OIDC establishes a temporary AWS identity.
 2. Terraform successfully creates the plan.
-3. Sentinel evaluates the completed plan independently of the plan phase and any run-task result.
-4. An authorized override can advance an overridable policy failure without erasing the decision or its audit trail.
-5. The human confirmation boundary and explicit discard prevent apply.
-
-Do not describe the overall `Errored` status as an identity failure. The Terraform plan finished successfully; the later policy phase produced the failing governance decision.
+3. Native cost estimation exposes the plan's actual financial signal.
+4. The workspace-scoped `require-prod-tags` policy fails because the prepared `common_tags` value intentionally omits `Owner`.
+5. An authorized reviewer overrides the soft-mandatory failure with a validation-only comment; the run timeline preserves the reviewer and decision.
+6. The human confirmation boundary and explicit discard prevent apply.
 
 The repository contains `policies/sentinel/sentinel.hcl`, which publishes only `require-prod-tags` as a soft-mandatory demo policy. The VCS-backed `ai-infra-governance` policy set is scoped to this workspace and was validated in the canonical run. This separates platform tagging governance from the existing global cost policy.
+
+### Prepared Recording Variable
+
+Create a temporary, non-sensitive Terraform variable named `common_tags` in the workspace, enable HCL parsing, and use:
+
+```hcl
+{
+  Service     = "payments-api"
+  Environment = "prod"
+  ManagedBy   = "terraform"
+}
+```
+
+The missing `Owner` tag causes the workspace-scoped policy to fail for an explainable reason. After recording, delete this workspace override so the configuration returns to its safe defaults.
 
 ## Prerequisites
 
@@ -208,8 +228,10 @@ Confirm in the UI:
 - cost estimation is enabled and appears in a recent run
 - any optional run task is attached at the intended stage and enforcement level
 - auto-apply is disabled for the risky demo
+- the `ai-infra-copilot` workspace is excluded from the legacy `AWS_Policies` set
+- the temporary `common_tags` variable omits only `Owner`
 
-The verified run above is the fallback artifact if a fresh OIDC plan is unavailable during recording.
+`run-8ewJgjxUkTDQKgwv` is the fallback artifact if a fresh run is unavailable during recording.
 
 ## Recording Plan
 
@@ -262,7 +284,7 @@ Say:
 
 ### 4. Start A Governed Standard Run
 
-Use a prepared VCS commit or start a standard plan from the HCP Terraform UI. Keep auto-apply disabled. A speculative plan cannot demonstrate the authorized override required to reach cost estimation and the later workspace-policy phase in this environment.
+Use the prepared `common_tags` workspace variable and start a standard plan from the HCP Terraform UI. Keep auto-apply disabled. A speculative plan cannot demonstrate the authorized override and confirmation boundary used in this walkthrough.
 
 If using `tfctl`:
 
@@ -289,7 +311,7 @@ Say:
 
 Keep the risky fixture as the policy-review example. Do not substitute an invented production-scale cost estimate or imply that disabled resources were priced in the live run.
 
-If the existing cost Sentinel policy fails, show the threshold and result. Do not imply that a failed third-party run task is being consumed by Sentinel unless the implementation genuinely does that.
+Do not use the legacy global cost-policy failure as the cost teaching moment. It runs in an agent environment without cost-estimation data and fails closed on a null input. Use the native cost estimate shown in the run.
 
 ### 6. Show Deterministic Policy
 
@@ -300,7 +322,8 @@ Use one clear failure as the main teaching moment, such as:
 - internet-facing production load balancer
 - missing required tags
 - minimum production capacity
-- cost above the approved threshold
+
+For this recording, use the missing `Owner` tag. It directly matches `require-prod-tags` and avoids conflating native cost estimation with policy input that is unavailable in the legacy agent-executed policy set.
 
 Say:
 
@@ -310,7 +333,7 @@ Explain the enforcement level shown in the actual run. Avoid describing OPA as h
 
 Sentinel `soft-mandatory` failures stop the run until an authorized user overrides them. In HCP Terraform, the user needs **Manage Policy Overrides** permission for the applicable scope. The run timeline records the override, reviewer, timestamp, and comment; eligible audit-trail events also record the actor. For Sentinel policy checks in the platform execution environment used here, a `hard-mandatory` failure cannot be overridden and blocks the run. Sentinel policy evaluations use different override behavior: soft- and hard-mandatory levels are converted to `mandatory`, which authorized users may override when the policy set permits it.
 
-In the canonical run, an authorized reviewer overrode the existing organization-wide cost policy only to continue into native cost estimation and the workspace-scoped policy phase. That did not delete or convert the failed decision into a pass. The reviewer supplied a validation-only comment, and the run was discarded before apply.
+In the fresh recording run, an authorized reviewer may override `require-prod-tags` only to demonstrate the approval and audit boundary. That does not delete or convert the failed decision into a pass. Supply a validation-only comment, continue to the confirmation boundary, and discard before apply.
 
 ### 7. Show The Optional External Gate
 
@@ -335,7 +358,7 @@ For a post-plan task, the initial POST includes run and workspace metadata, the 
 
 End on the blocked or awaiting-confirmation run.
 
-For the canonical safe-default run, override only the known organization-wide soft-mandatory cost policy, include a clear validation-only comment, and continue long enough to show cost estimation and `require-prod-tags`. Never confirm apply. If the intentionally risky workspace policy fails, do not override it.
+For the fresh recording run, override only the intentionally failed workspace-scoped `require-prod-tags` policy, include a clear validation-only comment, and continue only to the confirmation boundary. Never confirm apply.
 
 Say:
 
@@ -362,7 +385,7 @@ The recording succeeds if viewers see:
 - a real Terraform plan
 - a visible cost estimate or cost-policy result
 - a deterministic policy result from the workspace-scoped policy set
-- an attributed override and comment if the organization-wide soft-mandatory policy is advanced
+- an attributed override and comment for the workspace-scoped soft-mandatory policy
 - no apply
 - a clear audit trail in HCP Terraform
 
@@ -392,12 +415,12 @@ If dynamic credentials fail:
 If cost estimation is empty:
 
 - explain that not every resource is estimable
-- show a previously captured estimate or the cost Sentinel result
+- show the previously captured native cost estimate
 - do not invent a dollar amount
 
 If the policy set is missing:
 
-- use local Sentinel formatting and the existing captured HCP Terraform policy failure
+- use local Sentinel formatting and the existing captured HCP Terraform workspace-policy result
 - do not attach or rewrite policies while recording
 
 If no real run task is configured:
