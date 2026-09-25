@@ -23,11 +23,7 @@ resource "aws_security_group" "payments_ingress" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = {
-    Service     = "payments-api"
-    Environment = "production"
-    ManagedBy   = "terraform"
-  }
+  tags = var.common_tags
 }
 
 data "aws_iam_policy_document" "deploy_bot" {
@@ -48,6 +44,8 @@ resource "aws_iam_policy" "deploy_bot" {
   name        = "payments-prod-deploy-bot"
   description = "Scoped permissions for the production payments deploy bot"
   policy      = data.aws_iam_policy_document.deploy_bot.json
+
+  tags = var.common_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "payments_latency" {
@@ -67,5 +65,7 @@ resource "aws_cloudwatch_metric_alarm" "payments_latency" {
   dimensions = {
     Service = "payments-api"
   }
+
+  tags = var.common_tags
 }
 

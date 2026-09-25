@@ -28,3 +28,14 @@ variable "enable_latency_alarm" {
   default     = true
 }
 
+variable "common_tags" {
+  description = "Required tags for production resources."
+  type        = map(string)
+  default = {
+    Service     = "payments-api"
+    Environment = "production"
+    Owner       = "platform"
+    ManagedBy   = "terraform"
+  }
+}
+
