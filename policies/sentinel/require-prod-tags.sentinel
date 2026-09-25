@@ -26,5 +26,6 @@ violations = filter tfplan.resource_changes as _, change {
 }
 
 main = rule {
+	print("violations:", violations)
 	length(violations) is 0
 }
