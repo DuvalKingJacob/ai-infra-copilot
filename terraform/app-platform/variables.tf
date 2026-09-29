@@ -35,9 +35,9 @@ variable "assign_public_ip" {
 }
 
 variable "container_image" {
-  description = "Container image for the payments-api task definition. Defaults to the public Amazon ECS sample image."
+  description = "Container image for the payments-api task definition."
   type        = string
-  default     = "public.ecr.aws/amazonlinux/amazonlinux:latest"
+  default     = "nginx:alpine"
 }
 
 variable "desired_count" {

@@ -90,7 +90,7 @@ resource "aws_ecs_task_definition" "api" {
       ]
 
       healthCheck = {
-        command     = ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+        command     = ["CMD-SHELL", "wget -q -O /dev/null http://localhost/ || exit 1"]
         interval    = 30
         timeout     = 5
         retries     = 3
