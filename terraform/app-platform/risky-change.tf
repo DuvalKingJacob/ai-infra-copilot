@@ -9,7 +9,7 @@
 
 locals {
   risky_change_examples = {
-    desired_count = 1     # capacity reduction below safe baseline
-    missing_tags  = true  # Owner and Environment omitted from common_tags
+    desired_count = 1    # capacity reduction below safe baseline
+    missing_tags  = true # Owner and Environment omitted from common_tags
   }
 }
