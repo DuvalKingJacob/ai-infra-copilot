@@ -1,14 +1,15 @@
-# This file is intentionally illustrative and not required for the default plan.
-# It mirrors the risky changes represented in data/terraform-plan.app-platform.json:
-# public load balancer exposure, database replacement, capacity reduction,
-# monitoring removal, and missing production tags.
+# This file documents the risky-scenario variable values represented in
+# data/terraform-plan.app-platform.json. It is illustrative only — not applied
+# in the default workspace configuration.
+#
+# The drift demo story:
+#   Terraform baseline: desired_count = 3
+#   On-call engineer scales out manually to 6 during an incident.
+#   HCP Terraform Health detects drift and surfaces a codify-or-revert decision.
 
 locals {
   risky_change_examples = {
-    public_load_balancer = true
-    desired_count        = 1
-    db_instance_class    = "db.t4g.micro"
-    enable_latency_alarm = false
+    desired_count = 1     # capacity reduction below safe baseline
+    missing_tags  = true  # Owner and Environment omitted from common_tags
   }
 }
-

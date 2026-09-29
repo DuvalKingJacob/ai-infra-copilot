@@ -17,66 +17,60 @@ variable "vpc_id" {
 }
 
 variable "private_subnet_ids" {
-  description = "Private subnets for ECS tasks and the database."
+  description = "Private subnets for ECS tasks."
   type        = list(string)
   default     = ["subnet-private-a", "subnet-private-b"]
 }
 
 variable "public_subnet_ids" {
-  description = "Public subnets for internet-facing load balancing when explicitly approved."
+  description = "Public subnets reserved for internet-facing load balancing when explicitly approved."
   type        = list(string)
   default     = ["subnet-public-a", "subnet-public-b"]
 }
 
-variable "create_runtime_resources" {
-  description = "Whether to create apply-sensitive runtime resources such as the ALB, ECS service, and RDS instance. Keep false for safe demo applies."
-  type        = bool
-  default     = false
-}
-
-variable "public_load_balancer" {
-  description = "Whether the application load balancer is internet-facing."
-  type        = bool
-  default     = false
+variable "container_image" {
+  description = "Container image for the payments-api task definition. Defaults to the public Amazon ECS sample image."
+  type        = string
+  default     = "public.ecr.aws/amazonlinux/amazonlinux:latest"
 }
 
 variable "desired_count" {
-  description = "Desired ECS task count for the API service."
+  description = "Terraform-declared baseline task count for the ECS service. An on-call engineer scaling this manually produces the drift the demo detects."
   type        = number
-  default     = 6
+  default     = 3
 }
 
-variable "ecs_task_definition" {
-  description = "Existing ECS task definition family:revision used when create_runtime_resources is true."
-  type        = string
-  default     = "payments-api:42"
+variable "create_runtime_resources" {
+  description = "Whether to create the RDS instance. Keep false for stage demos; the ECS service runs without it."
+  type        = bool
+  default     = false
+}
+
+variable "enable_cpu_alarm" {
+  description = "Whether to create the ECS CPU utilisation alarm."
+  type        = bool
+  default     = true
 }
 
 variable "db_instance_class" {
-  description = "RDS instance class for the application database."
+  description = "RDS instance class. Only used when create_runtime_resources is true."
   type        = string
   default     = "db.r6g.large"
 }
 
 variable "db_username" {
-  description = "Database admin username used when create_runtime_resources is true."
+  description = "Database admin username. Only used when create_runtime_resources is true."
   type        = string
   default     = "demo_admin"
 }
 
-variable "enable_latency_alarm" {
-  description = "Whether to create the API latency alarm."
-  type        = bool
-  default     = true
-}
-
 variable "common_tags" {
-  description = "Required tags for production resources."
+  description = "Required tags applied to all production resources. Must include Environment, Owner, and ManagedBy to satisfy the require-prod-tags Sentinel policy."
   type        = map(string)
   default = {
-    Service     = "payments-api"
     Environment = "production"
     Owner       = "platform"
     ManagedBy   = "terraform"
+    Service     = "payments-api"
   }
 }

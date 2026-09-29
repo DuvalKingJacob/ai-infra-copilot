@@ -1,8 +1,15 @@
-create_runtime_resources = true
-public_load_balancer     = true
-desired_count            = 1
+# Risky scenario overrides — used to generate a plan that exercises all
+# Sentinel policies simultaneously. Do not apply without AWS prerequisites.
+#
+# Demonstrates:
+#   - capacity reduction (desired_count 3 → 1)
+#   - missing required tags (Owner and Environment dropped)
+#   - RDS instance creation (triggers no-prod-db-replacement if replacing)
+
+desired_count = 1
 
 common_tags = {
   Service   = "payments-api"
   ManagedBy = "terraform"
+  # Owner and Environment intentionally omitted to trigger require-prod-tags
 }
