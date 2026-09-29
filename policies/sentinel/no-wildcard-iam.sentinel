@@ -1,10 +1,28 @@
-import "json"
 import "strings"
 import "tfplan/v2" as tfplan
 
+# Check for wildcard actions or resources on IAM policy documents.
+# Inspects the inline_policy and assume_role_policy fields directly
+# rather than marshalling the entire change to JSON.
+
+iam_types = [
+	"aws_iam_role",
+	"aws_iam_policy",
+	"aws_iam_role_policy",
+	"aws_iam_user_policy",
+	"aws_iam_group_policy",
+]
+
 violations = filter tfplan.resource_changes as _, change {
-	strings.contains(change.type, "iam") and
-		strings.contains(json.marshal(change.change.after), "\"*\"")
+	change.type in iam_types and
+		change.change.after else null is not null and
+		any [
+			change.change.after.policy else "",
+			change.change.after.inline_policy else "",
+			change.change.after.assume_role_policy else "",
+		] as doc {
+			strings.contains(doc, "\"*\"")
+		}
 }
 
 main = rule {
