@@ -135,11 +135,6 @@ resource "aws_ecs_service" "api" {
   }
 
   tags = var.common_tags
-
-  # Prevent Terraform from fighting back against manual scale events mid-demo.
-  lifecycle {
-    ignore_changes = [desired_count]
-  }
 }
 
 # ── CloudWatch alarm – ECS CPU utilisation ───────────────────────────────────
