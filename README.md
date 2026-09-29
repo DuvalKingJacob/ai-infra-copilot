@@ -73,7 +73,7 @@ GitHub Actions runs the non-cloud validation path on pushes and pull requests:
 make ci
 ```
 
-CI validates the demo browser script, Terraform formatting, fixture-based plan review/report generation, local authorization checks, agent workflow, and Sentinel policy formatting. It does not run live cloud plans and it never runs `terraform apply`.
+CI validates the demo browser script, Terraform formatting, fixture-based plan review/report generation, local authorization checks, and agent workflow. It does not run live cloud plans and it never runs `terraform apply`.
 
 ## Stacks / HashiBank Path
 
@@ -105,7 +105,7 @@ Start here:
 - `docs/stacks-video-validation-checklist.md`: product, narrative, and demo readiness checklist.
 - `docs/hashibank-stacks-companion.md`: how the companion repo should relate to this reference architecture.
 - `docs/hcp-terraform-run-control.md`: when to use UI, CI, `tfctl`, and HCP Terraform approvals.
-- `docs/adding-policy-identity-cost-gates-walkthrough.md`: recording runbook for OIDC identity, cost context, Sentinel policy, and the human-controlled apply boundary.
+- `docs/adding-policy-identity-cost-gates-walkthrough.md`: recording runbook for OIDC identity, cost context, tfpolicy, and the human-controlled apply boundary.
 
 ## What This Is
 
@@ -115,7 +115,7 @@ It demonstrates:
 
 - Terraform plan review over plan JSON.
 - Markdown reports that could be attached to a pull request, run review, run task, or approval workflow.
-- Sentinel-style policy findings for unsafe changes.
+- tfpolicy findings for unsafe changes.
 - Authorization checks before context or tool output is exposed, with SpiceDB/AuthZed included as an optional external provider example.
 - MCP-style Terraform and Kubernetes tool access.
 - A deterministic agent workflow that stops at proposal and approval.
@@ -151,7 +151,7 @@ This repo has three layers:
 
 1. A local browser demo in `demo/index.html`.
 2. Terraform-native CLI workflows for plan review, reports, policy examples, and agent execution.
-3. Production-shaped integration scaffolding for HCP Terraform, Stacks, Sentinel, `tfctl`, MCP, OIDC, and optional external authorization.
+3. Production-shaped integration scaffolding for HCP Terraform, Stacks, tfpolicy, `tfctl`, MCP, OIDC, and optional external authorization.
 
 The integration scaffolding includes:
 
@@ -160,7 +160,8 @@ The integration scaffolding includes:
 - `spicedb/`: optional SpiceDB/AuthZed relationship-based authorization provider example.
 - `mcp/`: official Terraform MCP Server example config.
 - `terraform/`: Terraform scenarios for plan review, app-platform risk, and workspace-to-Stacks migration.
-- `policies/sentinel/`: Sentinel-style policy examples.
+- `policies/tfpolicy/`: tfpolicy capacity governance for the drift demo (live in HCP Terraform).
+- `policies/sentinel/`: Sentinel policy examples kept for reference; not attached to the TechXchange workspace.
 - `docs/terraform-mcp-integration.md`: Terraform MCP integration plan.
 - `docs/tfctl-hcp-terraform-bridge.md`: `tfctl` bridge into HCP Terraform/TFE workflows.
 - `docs/oidc-authentication-plan.md`: real authentication plan.

@@ -16,7 +16,7 @@ LIVE_RISKY_PLAN_JSON ?= outputs/live-risky-app-platform-plan.json
 LIVE_RISKY_REPORT ?= outputs/live-risky-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app drift-report terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl sentinel-check spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
+.PHONY: help validate review report review-app report-app drift-report terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -40,7 +40,6 @@ help:
 	@printf '%s\n' '  make terraform-live-risky-review  Run a risky plan-only demo and write the report'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Authorization and policy:'
-	@printf '%s\n' '  make sentinel-check  Check Sentinel policy formatting'
 	@printf '%s\n' '  make spicedb-up      Start SpiceDB'
 	@printf '%s\n' '  make authz-load      Validate and load SpiceDB fixtures'
 	@printf '%s\n' '  make tool-check      Show Alice/Bob plan-review tool decisions'
@@ -102,16 +101,13 @@ terraform-live-risky-review: terraform-live-risky-plan terraform-live-risky-expo
 
 demo: validate review report review-app report-app drift-report agent
 
-ci: validate review report review-app report-app drift-report agent tool-check-local sentinel-check
+ci: validate review report review-app report-app drift-report agent tool-check-local
 
 agent:
 	node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=local
 
 agent-tfctl:
 	node src/agent-workflow.mjs alice "Should we apply the Terraform change?" --provider=local --terraform-context=tfctl
-
-sentinel-check:
-	PATH="$$(dirname $(SENTINEL_BIN)):$$PATH" sentinel fmt -check policies/sentinel/*.sentinel
 
 spicedb-up:
 	docker compose up -d spicedb
