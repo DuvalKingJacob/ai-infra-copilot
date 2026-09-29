@@ -28,6 +28,12 @@ variable "public_subnet_ids" {
   default     = ["subnet-public-a", "subnet-public-b"]
 }
 
+variable "assign_public_ip" {
+  description = "Whether to assign a public IP to Fargate tasks. Required when using public subnets (e.g. default VPC) so tasks can reach ECR and CloudWatch Logs."
+  type        = bool
+  default     = false
+}
+
 variable "container_image" {
   description = "Container image for the payments-api task definition. Defaults to the public Amazon ECS sample image."
   type        = string
