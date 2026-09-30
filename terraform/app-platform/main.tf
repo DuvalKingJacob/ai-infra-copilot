@@ -2,6 +2,12 @@ provider "aws" {
   region = var.aws_region
 }
 
+# ── Test S3 Bucket without tags (for policy evaluation verification) ──────────
+
+resource "aws_s3_bucket" "test_untagged_bucket" {
+  bucket = "sterling-property-test-untagged-specimen"
+}
+
 # ── Observability ────────────────────────────────────────────────────────────
 
 resource "aws_cloudwatch_log_group" "api" {
