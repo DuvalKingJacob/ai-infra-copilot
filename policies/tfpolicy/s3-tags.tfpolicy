@@ -1,0 +1,32 @@
+# Production tagging governance policy for S3 storage assets.
+#
+# Governance story:
+#   Ensures all S3 buckets discovered or managed in production have the required
+#   platform governance tags ('Environment' and 'Owner').
+#   Unmanaged or newly generated starter configurations without tags will be flagged
+#   as noncompliant during HCP Terraform Search policy evaluation.
+
+policy "require-s3-production-tags" {
+  enforcement_level = "soft-mandatory"
+}
+
+locals {
+  s3_bucket_changes = [
+    for change in core.plan.resource_changes :
+    change if change.type == "aws_s3_bucket" && change.change.after != null
+  ]
+
+  required_tags = ["Environment", "Owner"]
+}
+
+enforce {
+  for_each = local.s3_bucket_changes
+  each.key = "s3_required_tags"
+
+  condition = alltrue([
+    for tag in local.required_tags :
+    contains(keys(each.value.change.after.tags != null ? each.value.change.after.tags : {}), tag)
+  ])
+
+  error_message = "S3 bucket '${each.value.address}' is missing mandatory governance tags ('Environment', 'Owner'). All production storage assets must declare an owner and target environment."
+}

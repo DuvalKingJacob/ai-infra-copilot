@@ -1,6 +1,11 @@
-policy_set "ai-infra-copilot-capacity" {
+policy_set "ai-infra-copilot-governance" {
   policy "prod-ecs-capacity-bounds" {
     source            = "./prod-capacity.tfpolicy"
+    enforcement_level = "soft-mandatory"
+  }
+
+  policy "require-s3-production-tags" {
+    source            = "./s3-tags.tfpolicy"
     enforcement_level = "soft-mandatory"
   }
 }
