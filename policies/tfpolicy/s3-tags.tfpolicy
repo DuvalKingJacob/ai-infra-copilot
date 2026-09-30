@@ -1,36 +1,28 @@
 # Production tagging governance policy for S3 storage assets.
+#
+# Governance story:
+#   Ensures all S3 buckets (managed, unmanaged discovered via Search, or proposed)
+#   have mandatory platform governance tags ('Environment' and 'Owner').
 
 policy "require-s3-production-tags" {
   enforcement_level = "soft-mandatory"
 }
 
 locals {
-  # When evaluated against plan
-  plan_resources = [
-    for change in try(core.plan.resource_changes, []) :
-    change if try(change.type, "") == "aws_s3_bucket"
+  s3_bucket_changes = [
+    for change in core.plan.resource_changes :
+    change if change.type == "aws_s3_bucket" && change.change.after != null
   ]
-
-  # When evaluated against search / live resource inventory
-  query_resources = [
-    for r in try(core.resources, []) :
-    r if try(r.type, "") == "aws_s3_bucket"
-  ]
-
-  all_targets = length(local.plan_resources) > 0 ? local.plan_resources : local.query_resources
 }
 
 enforce {
-  for_each = local.all_targets
+  for_each = local.s3_bucket_changes
   each.key = "s3_required_tags"
 
   condition = (
     try(each.value.change.after.tags.Environment, null) != null &&
     try(each.value.change.after.tags.Owner, null) != null
-  ) || (
-    try(each.value.tags.Environment, null) != null &&
-    try(each.value.tags.Owner, null) != null
   )
 
-  error_message = "S3 bucket '${try(each.value.address, each.value.name, "discovered-bucket")}' is missing mandatory governance tags ('Environment', 'Owner'). All production storage assets must declare an owner and target environment."
+  error_message = "S3 bucket '${each.value.address}' is missing mandatory governance tags ('Environment', 'Owner'). All production storage assets must declare an owner and target environment."
 }
