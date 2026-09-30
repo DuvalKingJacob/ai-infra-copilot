@@ -3,10 +3,7 @@
 # Governance story:
 #   This is the workspace-specific capacity guardrail written in HCL —
 #   the same language as the Terraform config itself. No new syntax to learn.
-#
-#   Sentinel (policies/sentinel/) handles org-wide controls: required tags,
-#   DB replacement protection, monitoring deletion. This policy handles the
-#   capacity ceiling specific to this workspace's production budget.
+#   This policy handles the capacity ceiling specific to this workspace's production budget.
 #
 # Demo flow:
 #   Drift detected: desired_count = 3 (Terraform) vs 6 (AWS)

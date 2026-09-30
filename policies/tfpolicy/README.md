@@ -24,8 +24,3 @@ the operator codifies `desired_count = 6`. This policy confirms 6 is within the
 approved production range before the change is applied. Codifying 1 or 20 would
 block the run with a clear message.
 
-## Sentinel
-
-The `policies/sentinel/` directory contains Sentinel policy examples kept for reference.
-They are not attached to the TechXchange demo workspace.
-Sentinel remains supported but tfpolicy is the recommended migration target.
