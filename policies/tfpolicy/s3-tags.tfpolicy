@@ -23,10 +23,13 @@ enforce {
   for_each = local.s3_bucket_changes
   each.key = "s3_required_tags"
 
-  condition = alltrue([
-    for tag in local.required_tags :
-    contains(keys(each.value.change.after.tags != null ? each.value.change.after.tags : {}), tag)
-  ])
+  condition = (
+    each.value.change.after.tags != null &&
+    alltrue([
+      for tag in local.required_tags :
+      contains(keys(each.value.change.after.tags), tag)
+    ])
+  )
 
   error_message = "S3 bucket '${each.value.address}' is missing mandatory governance tags ('Environment', 'Owner'). All production storage assets must declare an owner and target environment."
 }

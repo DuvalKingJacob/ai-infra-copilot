@@ -1,4 +1,4 @@
-policy_set "ai-infra-copilot-governance" {
+policy_set "ai-infra-capacity-policy" {
   policy "prod-ecs-capacity-bounds" {
     source            = "./prod-capacity.tfpolicy"
     enforcement_level = "soft-mandatory"
