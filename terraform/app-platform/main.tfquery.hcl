@@ -5,6 +5,4 @@
 
 list "aws_s3_bucket" "sterling_property_assets" {
   provider = aws
-
-  config {}
 }
