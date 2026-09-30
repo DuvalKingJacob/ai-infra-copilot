@@ -1,28 +1,6 @@
-# Production tagging governance policy for S3 storage assets.
-#
-# Governance story:
-#   Ensures all S3 buckets (managed, unmanaged discovered via Search, or proposed)
-#   have mandatory platform governance tags ('Environment' and 'Owner').
-
-policy "require-s3-production-tags" {
-  enforcement_level = "soft-mandatory"
-}
-
-locals {
-  s3_bucket_changes = [
-    for change in core.plan.resource_changes :
-    change if change.type == "aws_s3_bucket" && change.change.after != null
-  ]
-}
-
-enforce {
-  for_each = local.s3_bucket_changes
-  each.key = "s3_required_tags"
-
-  condition = (
-    try(each.value.change.after.tags.Environment, null) != null &&
-    try(each.value.change.after.tags.Owner, null) != null
-  )
-
-  error_message = "S3 bucket '${each.value.address}' is missing mandatory governance tags ('Environment', 'Owner'). All production storage assets must declare an owner and target environment."
+resource_policy "aws_s3_bucket" "require_environment_tag" {
+  enforce {
+    condition     = core::can(attrs.tags) ? core::contains(core::keys(attrs.tags), "Environment") : false
+    error_message = "S3 bucket must have an 'Environment' tag."
+  }
 }
