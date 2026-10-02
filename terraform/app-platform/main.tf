@@ -181,16 +181,3 @@ resource "aws_db_instance" "primary" {
 
   tags = var.common_tags
 }
-
-# ── S3 Assets (Imported) ─────────────────────────────────────────────────────
-
-import {
-  to = aws_s3_bucket.sterling_property_assets_0
-  id = "sterling-property-assets-unmanaged"
-}
-
-resource "aws_s3_bucket" "sterling_property_assets_0" {
-  bucket = "sterling-property-assets-unmanaged"
-
-  tags = var.common_tags
-}
