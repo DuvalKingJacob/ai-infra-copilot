@@ -16,7 +16,7 @@ LIVE_RISKY_PLAN_JSON ?= outputs/live-risky-app-platform-plan.json
 LIVE_RISKY_REPORT ?= outputs/live-risky-app-platform-plan-review-report.md
 SENTINEL_BIN ?= /Users/jacobplicque/Documents/Codex/bin/sentinel
 
-.PHONY: help validate review report review-app report-app drift-report terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
+.PHONY: test-lambda help validate review report review-app report-app drift-report terraform-live-init terraform-live-plan terraform-live-export terraform-live-report terraform-live-review terraform-live-risky-plan terraform-live-risky-export terraform-live-risky-report terraform-live-risky-review demo ci agent agent-tfctl spicedb-up authz-load authz-check tool-check tool-check-local tool-check-tfctl clean-reports
 
 help:
 	@printf '%s\n' 'AI-Assisted Terraform Operations'
@@ -56,6 +56,9 @@ validate:
 	terraform -chdir=terraform/prod-network fmt -check -diff
 	terraform -chdir=terraform/app-platform fmt -check -diff
 	terraform fmt -recursive -check -diff terraform/workspace-to-stacks
+
+test-lambda:
+	python3 -m unittest discover -s terraform/app-platform/lambda/verify_ecs_health/tests -v
 
 review:
 	node src/review-terraform-plan.mjs $(PLAN)

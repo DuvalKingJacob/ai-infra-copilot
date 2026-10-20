@@ -27,3 +27,14 @@ output "database_identifier" {
   description = "Primary database identifier. Empty when create_runtime_resources is false."
   value       = var.create_runtime_resources ? aws_db_instance.primary[0].identifier : ""
 }
+
+output "verify_function_name" {
+  description = "Read-only Lambda that verifies ECS service health (invoked by action.aws_lambda_invoke.verify_ecs_health)."
+  value       = aws_lambda_function.verify_ecs_health.function_name
+}
+
+output "verify_function_arn" {
+  description = "ARN of the ECS health verification Lambda."
+  value       = aws_lambda_function.verify_ecs_health.arn
+}
+

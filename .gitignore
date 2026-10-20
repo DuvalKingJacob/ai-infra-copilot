@@ -28,3 +28,7 @@ outputs/live-*
 
 # Keep provider selections local for this demo repo.
 **/.terraform.lock.hcl
+
+# Lambda packaging output
+**/.build/
+__pycache__/
