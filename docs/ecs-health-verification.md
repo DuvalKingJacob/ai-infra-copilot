@@ -1,8 +1,15 @@
-# ECS Health Verification Action
+# ECS Service Stability Verification Action
 
-Adds a read-only check that confirms the `payments-api` ECS service is healthy
-after governed remediation (the drift scenario: 3 tasks, manual scale to 6,
-approved Terraform baseline of 6, clean verification).
+Adds a read-only check that confirms the `payments-api` ECS service converged to
+the approved capacity with a completed deployment after governed remediation
+(the drift scenario: 3 tasks, manual scale to 6, approved Terraform baseline of
+6, clean verification).
+
+**Scope:** this verifies ECS *service stability*, not comprehensive application
+health. The service has no load balancer, so there are no target-group health
+signals, and the check does not read per-task health. Describe it to an
+audience as "did the service converge to six tasks with a completed
+deployment", not "is the application healthy".
 
 Nothing here changes `aws_ecs_service.api`, its desired count, or the workspace
 credentials. The action has no `action_trigger`; it runs only when invoked.
@@ -129,6 +136,48 @@ from the provider credentials.
 The run role (today, or Vault-issued later) needs the extra permissions in
 `docs/iam/hcp-run-role-verify-ecs-health.draft.json` before this can be applied.
 Review that file; it has not been applied and the existing role is untouched.
+
+### Run role assessment (read-only, 2026-10-20)
+
+Inspected `hcp-terraform-ai-infra-copilot` in account `009365819213` with
+`iam get-role`, `list-attached-role-policies`, `get-role-policy` and
+`simulate-principal-policy`. Nothing was modified.
+
+- **Permissions boundary:** none.
+- **Attached:** `ReadOnlyAccess`, `AmazonECS_FullAccess`, `CloudWatchFullAccess`.
+- **Inline:** `app-platform-demo-permissions` (IAM write actions scoped to the
+  task execution role only, EC2 security groups, `/ecs/payments-api` logs, ECS
+  task definitions, the S3 bucket).
+- **Trust:** web identity from `app.terraform.io`, audience
+  `aws.workload.identity`, subject limited to
+  `organization:Vearadyn:project:ai-infra-copilot:workspace:ai-infra-copilot:run_phase:*`.
+
+Simulated result for the new resources, before and after the draft:
+
+| Area | Already allowed | Missing (denied today) |
+| --- | --- | --- |
+| Lambda | Get/List reads | `CreateFunction`, `DeleteFunction`, `UpdateFunctionCode`, `UpdateFunctionConfiguration`, `TagResource`, `UntagResource`, `InvokeFunction` |
+| IAM role | Get/List reads | `CreateRole`, `DeleteRole`, `UpdateAssumeRolePolicy`, `TagRole`, `UntagRole`, `PutRolePolicy`, `DeleteRolePolicy`, `PassRole` to Lambda |
+| Log group | All needed actions, from `CloudWatchFullAccess` (`logs:*`) | None |
+
+The draft adds only the missing actions, on the exact `payments-production`
+function and role ARNs. With the draft added, the simulation allows every needed
+action. It still denies `iam:PassRole` to other services, role changes on any
+other role, Lambda actions on any other function, and `iam:AttachRolePolicy`.
+
+Limits of this check:
+
+- The simulation evaluates the role's identity policies and boundary only. It
+  does not model SCPs, resource policies, or session policies. Run
+  `aws organizations` or check for SCPs separately if the account is in an
+  organization.
+- It confirms permissions, not the exact API calls the provider makes. A first
+  apply could still reveal a read call that is not covered.
+- `CloudWatchFullAccess` already grants `logs:*` on all resources, so the log
+  group needs no new permission, although that is broader than ideal. It is
+  existing and unchanged.
+- The Lambda execution role grants no `logs:CreateLogGroup` because the log
+  group is Terraform-managed.
 
 ## Lambda role permissions
 
