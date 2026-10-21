@@ -80,3 +80,16 @@ variable "common_tags" {
     Service     = "payments-api"
   }
 }
+
+variable "verify_expected_task_count" {
+  description = "Task count the verify_ecs_health action expects. Null uses var.desired_count (the approved baseline). Set a different value only to demonstrate a FAIL verdict; it never changes the ECS service."
+  type        = number
+  default     = null
+}
+
+variable "verify_fail_on_fail" {
+  description = "When true, a FAIL verdict makes the Lambda raise so the action and run report an error. When false, a FAIL is only visible in the printed verdict."
+  type        = bool
+  default     = true
+}
+
